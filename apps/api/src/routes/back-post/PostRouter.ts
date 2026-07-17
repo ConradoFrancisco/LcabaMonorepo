@@ -1,0 +1,21 @@
+import { Router } from 'express';
+import PostController from '../../controllers/back-post/PostController';
+
+export const postRouter = Router();
+postRouter.get('/post/:id', PostController.getById);
+postRouter.get('/', PostController.getAllPosts);
+postRouter.get('/types', PostController.getTypes);
+postRouter.post('/post/:id/legislador', PostController.postLegisladores);
+postRouter.delete('/post/:id/legislador', PostController.deleteLegislador);
+postRouter.post('/post/:id/sesion', PostController.postSesion);
+postRouter.delete('/post/:id/sesion', PostController.deleteSesion);
+postRouter.post('/post/create', PostController.createPost);
+postRouter.post('/post/:idPost/expediente', PostController.postExpediente);
+postRouter.delete('/post/:idPost/expediente', PostController.deleteExpediente);
+postRouter.post('/post/:idPost/comision', PostController.postComision);
+postRouter.delete('/post/:idPost/comision', PostController.deleteComision);
+postRouter.post('/post/:idPost/audiencia', PostController.postAudiencia);
+postRouter.delete('/post/:idPost/audiencia', PostController.deleteAudiencia);
+postRouter.delete('/post/:id', PostController.deletePost);
+postRouter.put('/post/:id', PostController.updateStatePost);
+postRouter.patch('/post/:id/status', PostController.updateStatePost);

@@ -1,0 +1,36 @@
+# Resumen de Integración del Monorepo
+
+¡Hemos finalizado la estructura principal del monorepo! 🎉 
+A continuación, te detallo qué contiene ahora y cómo quedó armado todo el entorno.
+
+## 1. Migración de API y ABM
+
+Copiamos exitosamente los proyectos desde su ubicación original en `C:\xamppp\Lcaba-gitlab\`.
+Ahora forman parte del monorepo dentro de la carpeta `apps/`:
+
+- **API:** Se migró `back-api.legislatura.gob.ar` a la carpeta `apps/api`.
+  - *Ajuste técnico:* Se corrigieron pequeños errores de tipado en TypeScript (`string | string[]`) que impedían la compilación bajo la configuración estricta del monorepo.
+- **ABM:** Se migró `back.legislatura.gob.ar` a la carpeta `apps/abm`.
+  - *Ajuste técnico:* Agregamos reglas de `overrides` en el `package.json` principal del monorepo para resolver un conflicto de versiones de React (entre `react-jvectormap` y React 19).
+
+## 2. Nuevo Micrositio de Cultura
+
+Inicializamos una nueva aplicación Next.js vacía en `apps/cultura`. 
+Este micrositio ya cuenta con:
+- TypeScript, Tailwind CSS y App Router configurados.
+- Lista para que comiences a conectarla con la API de Cultura.
+
+> [!TIP]
+> **Levantar todo el entorno local:**
+> Ya podés levantar simultáneamente la API, el ABM y Cultura ejecutando un solo comando desde la raíz del monorepo:
+> ```bash
+> npm run dev
+> ```
+> (O en su defecto, `turbo run dev`). Cada proyecto se levantará en un puerto diferente (por ej. `3000`, `3001`, `3002`).
+
+## Próximos Pasos Recomendados
+
+- **Template Bootstrap para el ABM:** Mencionaste que la semana que viene compran un template. El ABM ya está en su lugar esperando a que reemplacemos los componentes/layouts una vez que tengamos los archivos del template.
+- **Micrositio de Cultura:** Podés empezar a diseñar las páginas (`app/page.tsx`) en `apps/cultura` haciendo las llamadas GET/POST a la URL de la API local.
+
+¿Querés que hagamos alguna modificación ahora, o que empecemos a diseñar alguna pantalla específica de Cultura?
