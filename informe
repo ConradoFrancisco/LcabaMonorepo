@@ -1,6 +1,6 @@
 # Resumen de Integración del Monorepo
 
-¡Hemos finalizado la estructura principal del monorepo! 🎉 
+¡Hemos finalizado la estructura principal del monorepo! 
 A continuación, te detallo qué contiene ahora y cómo quedó armado todo el entorno.
 
 ## 1. Migración de API y ABM
@@ -17,8 +17,8 @@ Ahora forman parte del monorepo dentro de la carpeta `apps/`:
 
 Inicializamos una nueva aplicación Next.js vacía en `apps/cultura`. 
 Este micrositio ya cuenta con:
-- TypeScript, Tailwind CSS y App Router configurados.
-- Lista para que comiences a conectarla con la API de Cultura.
+- TypeScript, Bootstrap 5.4 y App Router configurados.
+- Lista para que comiences a conectarla con la API y el modulo de Cultura.
 
 > [!TIP]
 > **Levantar todo el entorno local:**

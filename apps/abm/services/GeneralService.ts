@@ -114,6 +114,30 @@ class GeneralService {
     }
   }
 
+  public async getSectionById(id: string): Promise<any> {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/general/sections/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching section:', error);
+      throw error;
+    }
+  }
+
+  public async editSection(data: Record<string, any>): Promise<any> {
+    const id = data?.seteos?.id;
+    try {
+      const response = await axios.put(
+        `${process.env.NEXT_PUBLIC_API}/general/sections/${id}/edit`,
+        data
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error editing section:', error);
+      throw error;
+    }
+  }
+
   public async changeSectionStatus(id: number, status: number): Promise<any> {
     try {
       const response = await axios.put(

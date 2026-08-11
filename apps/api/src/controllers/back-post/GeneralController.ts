@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import ComprasModel from '../../models/back-post/ComprasModel';
 import GeneralModel from '../../models/back-post/GeneralModel';
 import EditPageDTO, { IEditPageParams } from '../../DTOS/configuracionGral/EditPageDTO';
+import EditSectionDTO, { IEditSectionParams } from '../../DTOS/configuracionGral/EditSectionDTO';
 
 class GeneralController {
   public async getAllPages(req: Request, res: Response): Promise<void> {
@@ -114,6 +115,39 @@ class GeneralController {
     } catch (error) {
       console.error('Error en changeSectionStatus:', error);
       res.status(500).json({ error: 'Error al cambiar el estado de la sección' });
+    }
+  }
+
+  public async getSectionById(req: Request, res: Response): Promise<void> {
+    try {
+      const id = req.params.id as string;
+      const response = await GeneralModel.getSectionById({ id });
+      res.status(200);
+      res.json(response);
+    } catch (error) {
+      console.error('Error en getSectionById:', error);
+      res.status(500).json({ error: 'Error al obtener la sección' });
+    }
+  }
+
+  public async editSection(req: Request, res: Response): Promise<void> {
+    try {
+      const params = req.body as IEditSectionParams;
+
+      if (!params.seteos?.id) {
+        res.status(400).json({ error: 'El id de la sección es obligatorio' });
+        return;
+      }
+
+      const dto = new EditSectionDTO(params);
+      const response = await GeneralModel.editSection({
+        mainData: dto.getMainData(),
+        translations: dto.getTranslations(),
+      });
+      res.status(200).json(response);
+    } catch (error) {
+      console.error('Error en editSection:', error);
+      res.status(500).json({ error: 'Error al editar la sección' });
     }
   }
 }

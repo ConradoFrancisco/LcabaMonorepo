@@ -401,5 +401,150 @@ class GeneralModel {
       throw new Error('Error al cambiar el estado de la sección');
     }
   }
+
+  private async getImages({ postId }: { postId: number }) {
+    const query = `SELECT * from 
+      menu_docs
+      inner join docs on menu_docs.fk_iddoc = docs.id
+      where menu_docs.fk_id = ? `;
+    try {
+      const [rows] = await pool.query(query, [postId]);
+      return rows;
+    } catch (e) {
+      console.error(e);
+      throw new Error('Error al obtener las imagenes del post');
+    }
+  }
+  private async getFiles({ postId }: { postId: number }) {
+    const query = `SELECT * from 
+      menu_files
+      inner join docs on menu_files.fk_iddoc = docs.id
+      where menu_files.fk_id = ? `;
+    try {
+      const [rows] = await pool.query(query, [postId]);
+      return rows;
+    } catch (e) {
+      console.error(e);
+      throw new Error('Error al obtener los archivos del post');
+    }
+  }
+
+  public async getSectionById({ id }: { id: string }) {
+    const query = `
+      SELECT 
+        m.*,
+        mt.title,
+        mt.subtitle,
+        mt.description,
+        mt.shortdesc,
+        mt.keywords,
+        mt.additional_text,
+        mt.lang
+      FROM menu m
+      LEFT JOIN menu_translations mt ON mt.fk_id = m.id AND mt.lang = 2
+      WHERE m.id = ?
+    `;
+    const images = await this.getImages({ postId: Number(id) });
+    const files = await this.getFiles({ postId: Number(id) })
+    try {
+      const [result] = (await pool.query(query, [id])) as [any[], any];
+      const row = result[0];
+      if (!row) return null;
+
+      const {
+        title,
+        subtitle,
+        description,
+        shortdesc,
+        keywords,
+        additional_text,
+        lang,
+        ...seteos
+      } = row;
+
+      const data = {
+        textos: {
+          title,
+          subtitle,
+          description,
+          shortdesc,
+          keywords,
+          additional_text,
+          lang,
+        },
+        seteos,
+        images,
+        archivos: files,
+      };
+      return data;
+    } catch (error) {
+      console.error('Error en getSectionById:', error);
+      throw new Error('Error al obtener la sección');
+    }
+  }
+
+  public async editSection({
+    mainData,
+    translations,
+  }: {
+    mainData: Record<string, any>;
+    translations: Record<string, any>;
+  }) {
+    const { id, ...mainFields } = mainData;
+    const sectionId = id;
+
+    // Campos bit(1) de la tabla menu — se normalizan a boolean true/false
+    const BOOLEAN_FIELDS = new Set([
+      'status',
+      'contact_form',
+      'show_top',
+      'show_bottom',
+      'megamenu',
+      'slidemenu',
+      'showrightcol',
+      'showinside',
+      'externallink',
+      'showbanner',
+      'specialsection',
+    ]);
+
+    const normalizeBool = (v: any): boolean | any => {
+      if (v === true || v === 1 || v === '1' || v === 'true') return true;
+      if (v === false || v === 0 || v === '0' || v === 'false') return false;
+      return v;
+    };
+
+    // UPDATE dinámico para menu (normalizando booleanos)
+    const mainEntries = Object.entries(mainFields)
+      .filter(([, v]) => v !== undefined && v !== null)
+      .map(([k, v]) => [k, BOOLEAN_FIELDS.has(k) ? normalizeBool(v) : v] as [string, any]);
+
+    const mainSetClause = mainEntries.map(([k]) => `${k} = ?`).join(', ');
+    const mainValues = mainEntries.map(([, v]) => v);
+
+    // UPDATE dinámico para menu_translations
+    const { fk_id: transFkId, lang: transLang, ...transFields } = translations;
+    const transEntries = Object.entries(transFields).filter(([, v]) => v !== undefined && v !== null);
+    const transSetClause = transEntries.map(([k]) => `${k} = ?`).join(', ');
+    const transValues = transEntries.map(([, v]) => v);
+    const translationLang = transLang ?? 2;
+
+    try {
+      if (mainSetClause) {
+        const queryMain = `UPDATE menu SET ${mainSetClause} WHERE id = ?`;
+        await pool.query(queryMain, [...mainValues, sectionId]);
+      }
+
+      if (transSetClause) {
+        const queryTrans = `UPDATE menu_translations SET ${transSetClause} WHERE fk_id = ? AND lang = ?`;
+        await pool.query(queryTrans, [...transValues, sectionId, translationLang]);
+      }
+
+      return { id: sectionId };
+    } catch (error) {
+      console.error('Error en editSection:', error);
+      throw new Error('Error al editar la sección');
+    }
+  }
 }
 export default new GeneralModel();

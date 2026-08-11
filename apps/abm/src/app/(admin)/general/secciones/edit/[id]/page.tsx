@@ -1,14 +1,22 @@
-'use client';
-
-import { useParams } from 'next/navigation';
 import ComponentCard from '@/components/common/ComponentCard';
 
-export default function SectionEditPage() {
+import SectionEditComponent from './components/SectionEditComponent';
+import GeneralService from '../../../../../../../services/GeneralService';
+
+export default async function page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const response = await GeneralService.getSectionById(id);
+
+  console.log(response)
   return (
-    <ComponentCard title="Secciones">
-      <div className="p-4">
-        <p>Aquí irá el formulario para editar la sección</p>
-      </div>
-    </ComponentCard>
+    <div className="mx-auto max-w-(--breakpoint-2xl) p-4 md:p-6">
+      <ComponentCard>
+        {response === null ? (
+          <div>No se encontró el registro</div>
+        ) : (
+          <SectionEditComponent data={response} />
+        )}
+      </ComponentCard>
+    </div>
   );
 }
