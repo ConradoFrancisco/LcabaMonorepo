@@ -21,8 +21,8 @@ import Header from "./header/Header";
 interface BootstrapComponentsProps {}
 
 // Type the dynamic import
-const BootstrapComponents = dynamic<BootstrapComponentsProps>(
-    () => import("../../util/useBootstrap"),
+const BootstrapComponents = dynamic(
+    () => import("../../util/useBootstrap").then((m) => ({ default: m.default as any })),
     { ssr: false } // Disable SSR since this is client-side only
 ) as FC<BootstrapComponentsProps>;
 

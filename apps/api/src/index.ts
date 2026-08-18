@@ -11,6 +11,7 @@ import { contratacionRouter } from './routes/front-get/ContratacionRouter';
 import { culturaRouter } from './routes/front-get/culturaRouter';
 import { dgpcRouter } from './routes/front-get/dgpcRouter';
 import { cmMenuRouter } from './routes/front-get/cmMenuRouter';
+import { navMenuRouter } from './routes/front-get/navMenuRouter';
 import { authRouter } from './routes/authRouter';
 import { magazineRouter } from './routes/back-post/MagazineRouter';
 import { culturaRouterb } from './routes/back-post/CulturaRouter';
@@ -52,6 +53,7 @@ app.get('/', (_req: Request, res: Response): void => {
 app.use('/auth', authRouter);
 app.use('/menu', menuRouter);
 app.use('/cmMenu', cmMenuRouter);
+app.use('/nav-menu', navMenuRouter);
 app.use('/area', areaRouter);
 app.use('/banner', bannerRouter);
 app.use('/contratacion', contratacionRouter);

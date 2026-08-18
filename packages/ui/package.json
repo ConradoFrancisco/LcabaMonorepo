@@ -5,7 +5,11 @@
   "exports": {
     "./*": "./src/*.tsx",
     "./astrax/*": "./src/astrax/*.tsx",
-    "./astrax/components/*": "./src/astrax/components/*.tsx"
+    "./astrax/components/*": "./src/astrax/components/*.tsx",
+    "./astrax-charity/*": "./src/astrax-charity/*.tsx",
+    "./astrax-charity/components/*": "./src/astrax-charity/components/*.tsx",
+    "./astrax-elearning/*": "./src/astrax-elearning/*.tsx",
+    "./astrax-elearning/components/*": "./src/astrax-elearning/components/*.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
