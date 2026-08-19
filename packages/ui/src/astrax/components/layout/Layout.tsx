@@ -32,9 +32,10 @@ interface LayoutProps {
     children?: React.ReactNode;
     breadcrumbTitle?: string;
     menuItems?: any[];
+    socials?: any[];
 }
 
-export default function Layout({ headerStyle, footerStyle, breadcrumbTitle, menuItems = [], children }: LayoutProps) {
+export default function Layout({ headerStyle, footerStyle, breadcrumbTitle, menuItems = [], socials = [], children }: LayoutProps) {
     const [scroll, setScroll] = useState<boolean>(false);
     // Mobile Menu
     const [isMobileMenu, setMobileMenu] = useState<boolean>(false);
@@ -80,13 +81,11 @@ export default function Layout({ headerStyle, footerStyle, breadcrumbTitle, menu
             <BootstrapComponents />
             <Header scroll={scroll} isMobileMenu={isMobileMenu} handleMobileMenu={handleMobileMenu} menuItems={menuItems} />
 
-            <main className="business">
+            <main className="business" style={{ minHeight: "50vh" }}>
                 {breadcrumbTitle && <Breadcrumb breadcrumbTitle={breadcrumbTitle} />}
                 {children}
             </main>
-
-            <Footer />
-
+            <Footer menuItems={menuItems} socials={socials} />
             <BackToTop />
         </>
     );

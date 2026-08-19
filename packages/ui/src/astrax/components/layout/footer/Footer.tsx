@@ -1,101 +1,54 @@
 import Link from "next/link";
 
-export default function Footer() {
+export default function Footer({ menuItems = [], socials = [] }: any) {
+    const formatUrl = (url: string | null) => {
+        if (!url || url === "#") return "#";
+        if (url.startsWith("http")) return url;
+        return url.startsWith("/") ? url : `/${url}`;
+    };
+
     return (
-        <>
-            {/* Footer */}
-            <footer>
-                <div className="section-footer position-relative overflow-hidden">
-                    <div className="container-fluid">
-                        <div className="container position-relative z-2">
-                            <div className="row py-90">
-                                <div className="col-lg-5 pe-3">
-                                    <h2 className="text-anime-style-3">Astrax embarks on a journey of learning and skill-building today.</h2>
-                                </div>
-                                <div className="col-lg-7">
-                                    <div className="row mt-lg-0 mt-8">
-                                        <div className="col-lg-3 offset-lg-1 col-md-4 col-6">
-                                            <h6 className="text-dark pb-5 btn-text">COMPANY</h6>
-                                            <div className="d-flex flex-column align-items-start">
-                                                <Link href="#">
-                                                    <p className="hover-effect-1">About</p>
-                                                </Link>
-                                                <Link href="#">
-                                                    <p className="hover-effect-1">Features</p>
-                                                </Link>
-                                                <Link href="#">
-                                                    <p className="hover-effect-1">Works</p>
-                                                </Link>
-                                                <Link href="#">
-                                                    <p className="hover-effect-1">Career</p>
-                                                </Link>
-                                            </div>
-                                        </div>
-                                        <div className="col-lg-3 col-md-4 col-6">
-                                            <h6 className="text-dark pb-5 btn-text">Help</h6>
-                                            <div className="d-flex flex-column align-items-start">
-                                                <Link href="#">
-                                                    <p className="hover-effect-1">Customer Support</p>
-                                                </Link>
-                                                <Link href="#">
-                                                    <p className="hover-effect-1">Delivery Details</p>
-                                                </Link>
-                                                <Link href="#">
-                                                    <p className="hover-effect-1">Terms &amp; Conditions</p>
-                                                </Link>
-                                                <Link href="#">
-                                                    <p className="hover-effect-1">Privacy Policy</p>
-                                                </Link>
-                                            </div>
-                                        </div>
-                                        <div className="col-lg-4 offset-lg-1 col-md-4 col-6 mt-md-0 mt-5">
-                                            <h6 className="text-dark pb-5 btn-text">services</h6>
-                                            <div className="d-flex flex-column align-items-start">
-                                                <Link href="#">
-                                                    <p className="hover-effect-1">Website Design</p>
-                                                </Link>
-                                                <Link href="#">
-                                                    <p className="hover-effect-1">Business Consultancy</p>
-                                                </Link>
-                                                <Link href="#">
-                                                    <p className="hover-effect-1">Tax &amp; Finance</p>
-                                                </Link>
-                                                <Link href="#">
-                                                    <p className="hover-effect-1">ROI Business Growth</p>
-                                                </Link>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+        <footer>
+            <div className="section-footer py-5" style={{ backgroundColor: "#1f1f1f" }}>
+                <div className="container-fluid px-5">
+                    <div className="d-flex flex-column flex-lg-row align-items-center justify-content-between">
+                        {/* Left: Logo */}
+                        <div className="mb-4 mb-lg-0">
+                            <Link href="/">
+                                <img src="http://web.lcaba.test/_pagedata/page/images/jl58gsopll_1595522903.3196.png" height={60} alt="Legislatura Logo" />
+                            </Link>
+                        </div>
+
+                        {/* Right: Menu, Socials, Copyright */}
+                        <div className="d-flex flex-column align-items-lg-end align-items-center">
+                            {/* Menu */}
+                            <ul className="list-inline mb-3">
+                                {menuItems.map((item: any) => (
+                                    <li className="list-inline-item px-2" key={item.id}>
+                                        <Link href={formatUrl(item.url)} className="text-secondary hover-effect-1 text-decoration-none text-capitalize">
+                                            {item.title}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+
+                            {/* Socials */}
+                            <div className="d-flex gap-4 mb-3">
+                                {socials.map((social: any) => (
+                                    <Link key={social.id} href={social.url} target="_blank" rel="noopener noreferrer" className="text-secondary">
+                                        <i className={`fa-brands ${social.icon}`}></i>
+                                    </Link>
+                                ))}
                             </div>
-                            <div className="d-flex flex-column flex-lg-row gap-3 align-items-center py-4 border-top justify-content-between">
-                                <div className="d-flex align-items-center justify-content-center flex-wrap gap-md-5 gap-3">
-                                    <Link href="#">
-                                        <span className="btn-text">About</span>
-                                    </Link>
-                                    <Link href="#">
-                                        <span className="btn-text">Solutions</span>
-                                    </Link>
-                                    <Link href="#">
-                                        <span className="btn-text">Pricing</span>
-                                    </Link>
-                                    <Link href="#">
-                                        <span className="btn-text">Resources</span>
-                                    </Link>
-                                </div>
-                                <p className="m-0 text-center">
-                                    Copyright &amp; design by
-                                    <Link href="#" className="text-dark fw-medium">
-                                        <span>©Alithemes</span>
-                                    </Link>
-                                    2025, All Rights Reserved
-                                </p>
-                            </div>
+
+                            {/* Copyright */}
+                            <p className="text-secondary m-0 text-center text-lg-end" style={{ fontSize: "0.85rem" }}>
+                                © 2026 Micro Sitio Dirección General de Asuntos Culturales y Patrimoniales - Legislatura de la Ciudad Autónoma de Buenos Aires +549 11 43384059 <Link href="/contacto" className="text-primary text-decoration-none"><i className="fa-solid fa-envelope"></i> CONTACTO</Link>
+                            </p>
                         </div>
                     </div>
-                    <div className="bg-light-2 position-absolute top-0 start-0 w-100 h-100" />
                 </div>
-            </footer>
-        </>
+            </div>
+        </footer>
     );
 }

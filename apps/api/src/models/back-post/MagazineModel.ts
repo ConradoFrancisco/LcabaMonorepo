@@ -11,7 +11,10 @@ export interface IsearchParams {
   order?: string;
   table?: string;
   filtros?: any;
+  slider?: number | boolean;
   pageId?: number;
+  status?: number | boolean;
+  withImages?: boolean;
 }
 export interface ICreatePostData {
   title: string;
@@ -39,7 +42,7 @@ export type EditParams = {
     url_ext: string;
     description: string;
   };
-  seteos: { id: number; [key: string]: any };
+  seteos: { id: number;[key: string]: any };
   nuevasImagenes: File[];
   nuevosArchivos: File[];
   newVideos: VideoItem[];

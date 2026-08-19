@@ -21,6 +21,8 @@ class PostModel {
     let search = '';
     let order = ' ORDER BY a.id DESC';
     let limit = '';
+    let slider = ''
+    let status = ''
     const arrayParamsCount: any[] = [];
     const arrayParamsData: any[] = [];
     if (params.search) {
@@ -29,8 +31,15 @@ class PostModel {
       arrayParamsData.push(`%${params.search}%`);
     }
 
+    if (params.status) {
+      status += ` AND a.status = 1 `;
+    }
     if (params.order) {
       order = ` ORDER BY ${params.order}`;
+    }
+
+    if (params.slider) {
+      slider += ` AND a.slider = 1 `;
     }
 
     if (params.filtros?.tipo) {
@@ -128,12 +137,11 @@ class PostModel {
         ${catQuery}
        
         JOIN cm_users_ad d ON d.id_user = a.iduser_upd
-        WHERE 1 = 1 ${search} ${order} ${limit} 
+        WHERE 1 = 1 ${search}${status}  ${slider} ${order} ${limit} 
         ;
       `;
-
+      console.log(dataQuery)
       const [countRows] = (await pool.query(countQuery, arrayParamsCount)) as [any[], any];
-
       const total = countRows[0]?.total ?? 0;
       const [data] = (await pool.query(dataQuery, arrayParamsData)) as [any[], any];
       let finalData = data;
@@ -141,6 +149,16 @@ class PostModel {
       if (params.table !== '') {
         finalData = createFinalData(data, params);
       }
+
+      if (params.withImages && finalData.length > 0) {
+        finalData = await Promise.all(
+          finalData.map(async (post: any) => {
+            const images = await this.getImages({ postId: post.id, table: params.table ?? '' });
+            return { ...post, images };
+          })
+        );
+      }
+
       return {
         data: finalData as any[],
         total: Number(total),

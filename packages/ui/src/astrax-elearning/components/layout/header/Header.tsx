@@ -7,7 +7,7 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu, menuIte
 			<header>
 				<div className="position-absolute top-0 start-0 w-100 header-11 ">
 					{/* TOP-BAR 5 */}
-					<div className="top-bar bg-primary @@display position-relative z-2">
+					{/* <div className="top-bar bg-primary @@display position-relative z-2">
 						<div className="container d-flex flex-wrap gap-2 justify-content-md-between justify-content-center align-items-center">
 							<div className="d-flex justify-content-center gap-3 align-self-stretch">
 								<Link href="/#" className="fs-7 d-flex align-items-center border-start border-end border-opacity-10 border-white px-3">
@@ -42,9 +42,9 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu, menuIte
 								</Link>
 							</div>
 						</div>
-					</div>
+					</div> */}
 					<nav className={`navbar navbar-expand-lg navbar-transparent border-bottom border-top border-white border-opacity-10 p-0 shadow-none ${scroll ? 'navbar-stick top-0 position-fixed' : ''}`}>
-						<div className="container">
+						<div className="container" style={{ borderBottom: '1px solid red' }}>
 							<Link className="navbar-brand py-5" href="/">
 								<img height={100} src="http://web.lcaba.test/_pagedata/page/images/jl58gsopll_1595522903.3196.png" alt="" />
 							</Link>
@@ -120,23 +120,7 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu, menuIte
 						</div>
 						<div className="offCanvas__logo mb-30">
 							<Link className="d-flex align-items-center gap-2" href="/">
-								<svg xmlns="http://www.w3.org/2000/svg" width={40} height={40} viewBox="0 0 40 40" fill="none">
-									<g>
-										<path className="fill-green-3" d="M24.5043 9.79724L22.7082 18.3981L35.2929 17.1948L37.1117 7.00605L24.5043 9.79724Z">
-										</path>
-										<path className="fill-green-3" d="M31.9171 17.6837L23.2697 20.6189L30.6333 30.3865L40.723 26.6545L31.9171 17.6837Z">
-										</path>
-										<path className="fill-green-3" d="M28.4204 27.86L21.4605 22.2312L16.332 33.3249L24.7296 39.7347L28.4204 27.86Z">
-										</path>
-										<path className="fill-green-3" d="M17.5913 29.998L19.1912 21.3633L6.63465 22.8288L5.04812 33.0511L17.5913 29.998Z">
-										</path>
-										<path className="fill-green-3" d="M10.2917 22.1777L18.8717 19.0632L11.2859 9.45346L1.28177 13.3945L10.2917 22.1777Z">
-										</path>
-										<path className="fill-green-3" d="M13.7243 12.2243L20.8121 17.7054L25.6875 6.50938L17.1442 0.277556L13.7243 12.2243Z">
-										</path>
-									</g>
-								</svg>
-								<h5 className="mb-0 text-dark">Astrax</h5>
+
 							</Link>
 						</div>
 						<div className="offCanvas__side-info mb-30">

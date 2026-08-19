@@ -10,6 +10,9 @@ class PostController {
         limit: parseInt(req.query.limit as string),
         offset: parseInt(req.query.offset as string),
         table: req.query.table as string,
+        slider: req.query.slider as any,
+        status: req.query.status as any,
+        withImages: req.query.withImages === 'true',
         filtros: req.query.filtros as [],
       });
       res.status(200);

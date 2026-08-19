@@ -1,17 +1,11 @@
 import Layout from "@lcaba/ui/astrax/components/layout/Layout";
-import Section1 from "@lcaba/ui/astrax/components/sections/home/Section1";
-import Section2 from "@lcaba/ui/astrax/components/sections/home/Section2";
-import Section3 from "@lcaba/ui/astrax/components/sections/home/Section3";
-import Section4 from "@lcaba/ui/astrax/components/sections/home/Section4";
-import Section5 from "@lcaba/ui/astrax/components/sections/home/Section5";
-import Section6 from "@lcaba/ui/astrax/components/sections/home/Section6";
-import Section7 from "@lcaba/ui/astrax/components/sections/home/Section7";
-import Section8 from "@lcaba/ui/astrax/components/sections/home/Section8";
-import Section9 from "@lcaba/ui/astrax/components/sections/home/Section9";
+import HeroSlider from "@lcaba/ui/astrax/components/sections/home/HeroSlider";
+import MenuButtons from "@lcaba/ui/astrax/components/sections/home/MenuButtons";
+import NewsSection from "@lcaba/ui/astrax/components/sections/home/NewsSection";
 
 async function getNavMenu() {
     try {
-        const res = await fetch("http://localhost:3000/nav-menu/tree?pageId=3", { next: { revalidate: 60 } });
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API}/nav-menu/tree?pageId=3`, { next: { revalidate: 60 } });
         const data = await res.json();
         const menuArray = Array.isArray(data) ? data : (data.data || []);
         return menuArray.length > 2 ? menuArray.slice(1, -1) : menuArray;
@@ -21,20 +15,59 @@ async function getNavMenu() {
     }
 }
 
+async function getPostsSlider() {
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API}/posts?slider=true&table=cultura_&limit=2&status=true&withImages=true`, {
+            next: { revalidate: 60 }
+        });
+        const data = await res.json();
+        const postArray = Array.isArray(data) ? data : (data.data || []);
+        return postArray;
+    } catch (e) {
+        console.error("Failed to fetch posts slider:", e);
+        return [];
+    }
+}
+
+async function getPosts() {
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API}/posts?table=cultura_&limit=8&status=true&withImages=true`, {
+            next: { revalidate: 60 }
+        });
+        const data = await res.json();
+        const postArray = Array.isArray(data) ? data : (data.data || []);
+        return postArray;
+    } catch (e) {
+        console.error("Failed to fetch posts:", e);
+        return [];
+    }
+}
+
+async function getSocials() {
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API}/general/pages/3/socials`, { next: { revalidate: 60 } });
+        const data = await res.json();
+        // endpoint returns { value: [...], Count: N }
+        if (Array.isArray(data)) return data;
+        if (data.value && Array.isArray(data.value)) return data.value;
+        return [];
+    } catch (e) {
+        console.error("Failed to fetch socials:", e);
+        return [];
+    }
+}
+
 export default async function Home() {
     const menuItems = await getNavMenu();
+    const socials = await getSocials();
+    const postSlider = await getPostsSlider();
+    const posts = await getPosts();
     return (
         <>
-            <Layout menuItems={menuItems}>
-                {/* <Section1 />
-                <Section2 /> */}
-                {/* <Section3 />
-                <Section4 />
-                <Section5 />
-                <Section6 />
-                <Section7 />
-                <Section8 /> */}
-                {/* <Section9 /> */}
+            <Layout menuItems={menuItems} socials={socials}>
+                <HeroSlider posts={postSlider} />
+                <MenuButtons />
+                <NewsSection posts={posts} title="Últimas Noticias" />
             </Layout>
         </>
     );

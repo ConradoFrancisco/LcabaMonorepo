@@ -83,6 +83,17 @@ class GeneralController {
       res.status(500).json({ error: 'Error al obtener la página' });
     }
   }
+  public async getSocials(req: Request, res: Response): Promise<void> {
+    try {
+      const pageId = req.params.id as string;
+      const response = await GeneralModel.getSocials({ pageId });
+      res.status(200);
+      res.json(response);
+    } catch (error) {
+      console.error('Error en getSocials:', error);
+      res.status(500).json({ error: 'Error al obtener los socials' });
+    }
+  }
   public async editPage(req: Request, res: Response): Promise<void> {
     try {
       const params = req.body as IEditPageParams;

@@ -254,9 +254,20 @@ class GeneralModel {
     }
   }
 
+  public async getSocials({ pageId }: { pageId?: string }) {
+    const query = 'SELECT * FROM page_socialnet WHERE fk_id = ?';
+    console.log(pageId)
+    try {
+      const [rows] = (await pool.query(query, [pageId])) as [any[], any];
+      return rows;
+    } catch (error) {
+      console.error('Error en getSocials:', error);
+      throw new Error('Error al obtener los socials');
+    }
+  }
+
   public async getPageById({ id }: { id: string }) {
-    const queryRedes = `select * from page_socialnet where fk_id = ?`;
-    const [redes] = (await pool.query(queryRedes, [id])) as [any[], any];
+    const redes = await this.getSocials({ pageId: id });
     const files = await this.getPageFiles({ pageId: id });
     const images = await this.getPageImages({ pageId: id });
     const query = 'SELECT * FROM page_vw WHERE id = ?';
