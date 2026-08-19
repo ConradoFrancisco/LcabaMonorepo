@@ -1,13 +1,13 @@
-import Layout from "@lcaba/ui/astrax-elearning/components/layout/Layout";
-import Section1 from "@lcaba/ui/astrax-elearning/components/sections/home1/Section1";
-import Section2 from "@lcaba/ui/astrax-elearning/components/sections/home1/Section2";
-import Section3 from "@lcaba/ui/astrax-elearning/components/sections/home1/Section3";
-import Section4 from "@lcaba/ui/astrax-elearning/components/sections/home1/Section4";
-import Section5 from "@lcaba/ui/astrax-elearning/components/sections/home1/Section5";
-import Section6 from "@lcaba/ui/astrax-elearning/components/sections/home1/Section6";
-import Section7 from "@lcaba/ui/astrax-elearning/components/sections/home1/Section7";
-import Section8 from "@lcaba/ui/astrax-elearning/components/sections/home1/Section8";
-import Section9 from "@lcaba/ui/astrax-elearning/components/sections/home1/Section9";
+import Layout from "@lcaba/ui/astrax/components/layout/Layout";
+import Section1 from "@lcaba/ui/astrax/components/sections/home/Section1";
+import Section2 from "@lcaba/ui/astrax/components/sections/home/Section2";
+import Section3 from "@lcaba/ui/astrax/components/sections/home/Section3";
+import Section4 from "@lcaba/ui/astrax/components/sections/home/Section4";
+import Section5 from "@lcaba/ui/astrax/components/sections/home/Section5";
+import Section6 from "@lcaba/ui/astrax/components/sections/home/Section6";
+import Section7 from "@lcaba/ui/astrax/components/sections/home/Section7";
+import Section8 from "@lcaba/ui/astrax/components/sections/home/Section8";
+import Section9 from "@lcaba/ui/astrax/components/sections/home/Section9";
 
 async function getNavMenu() {
     try {
@@ -20,20 +20,21 @@ async function getNavMenu() {
         return [];
     }
 }
+
 export default async function Home() {
     const menuItems = await getNavMenu();
     return (
         <>
             <Layout menuItems={menuItems}>
-                <Section1 />
-                <Section2 />
-                <Section3 />
+                {/* <Section1 />
+                <Section2 /> */}
+                {/* <Section3 />
                 <Section4 />
                 <Section5 />
                 <Section6 />
                 <Section7 />
-                <Section8 />
-                <Section9 />
+                <Section8 /> */}
+                {/* <Section9 /> */}
             </Layout>
         </>
     );

@@ -2,15 +2,20 @@ import Link from "next/link";
 import MobileMenu from "../MobileMenu";
 import MainMenu from "../MainMenu";
 
-export default function Header({ scroll, isMobileMenu, handleMobileMenu }: any) {
+export default function Header({ scroll, isMobileMenu, handleMobileMenu, menuItems = [] }: any) {
+    const formatUrl = (url: string | null) => {
+        if (!url || url === "#") return "#";
+        if (url.startsWith("http")) return url;
+        return url.startsWith("/") ? url : `/${url}`;
+    };
     return (
         <>
             <header>
                 <div className="position-absolute top-0 start-0 w-100 header-11">
                     {/* TOP-BAR 1 */}
-                    <div className="bg-primary top-bar text-center position-relative z-3">
+                    {/* <div className="bg-primary top-bar text-center position-relative z-3">
                         <span className="text-white btn-text align-middle text-center">welcome to our astrax website</span>
-                    </div>
+                    </div> */}
 
                     <nav className={`navbar navbar-expand-lg z-5 ${scroll ? "navbar-stick top-0 position-fixed w-100" : ""}`}>
                         <div className="container mt-2 mb-2">
@@ -29,7 +34,39 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu }: any) 
                                 <h5 className="mb-0">Astrax</h5>
                             </Link>
                             <div className="d-none d-lg-flex">
-                                <MainMenu />
+                                <ul className="navbar-nav mx-auto gap-4 align-items-lg-center">
+                                    {menuItems.map((item: any) => {
+                                        const hasSubItems = item.subItems && item.subItems.length > 0;
+                                        const itemUrl = formatUrl(item.url);
+                                        if (hasSubItems) {
+                                            return (
+                                                <li className="nav-item dropdown menu-item-has-children" key={item.id}>
+                                                    <Link className="nav-link text-uppercase" href={itemUrl} role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        {item.title}
+                                                    </Link>
+                                                    <ul className="dropdown-menu px-5">
+                                                        {item.subItems.map((subItem: any) => (
+                                                            <li key={subItem.id}>
+                                                                <Link className="dropdown-item text-capitalize gap-5 py-3 px-0 border-bottom justify-content-between" href={formatUrl(subItem.url)}>
+                                                                    {subItem.title}
+                                                                    <i className="fa-solid fa-arrow-right" />
+                                                                </Link>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </li>
+                                            );
+                                        } else {
+                                            return (
+                                                <li className="nav-item" key={item.id}>
+                                                    <Link className="nav-link text-uppercase" href={itemUrl}>
+                                                        {item.title}
+                                                    </Link>
+                                                </li>
+                                            );
+                                        }
+                                    })}
+                                </ul>
                             </div>
                             <div className="d-flex align-items-center gap-4">
                                 <Link href="#" className="btn-text d-none d-md-block">

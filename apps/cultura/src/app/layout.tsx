@@ -11,20 +11,19 @@ import "../../public/assets/fonts/fontawesome/fontawesome.min.css";
 import "../../public/assets/fonts/fontawesome/solid.min.css";
 import "../../public/assets/fonts/fontawesome/regular.min.css";
 import "../../public/assets/css/main.css";
-import "../../public/assets/css/elearning.css";
 import "../../public/assets/css/style.css";
 import type { Metadata } from "next";
-import { Space_Grotesk, Rubik } from "next/font/google";
+import { Libre_Franklin, Rubik } from "next/font/google";
 
-const groteskHeading = Space_Grotesk({
+const libreFranklinHeading = Libre_Franklin({
     weight: "700",
     subsets: ["latin"],
     variable: "--tc-heading-font-family",
     display: "swap",
 });
 
-const groteskBody = Space_Grotesk({
-    weight: "400",
+const libreFranklinBtn = Libre_Franklin({
+    weight: "600",
     subsets: ["latin"],
     variable: "--tc-btn-font-family",
     display: "swap",
@@ -49,7 +48,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="es">
-            <body className={`${groteskHeading.variable} ${groteskBody.variable} ${rubik.variable}`}>{children}</body>
+            <body className={`${libreFranklinHeading.variable} ${libreFranklinBtn.variable} ${rubik.variable}`}>{children}</body>
         </html>
     );
 }

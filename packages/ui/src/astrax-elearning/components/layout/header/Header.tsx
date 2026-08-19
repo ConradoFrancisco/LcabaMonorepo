@@ -7,7 +7,7 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu, menuIte
 			<header>
 				<div className="position-absolute top-0 start-0 w-100 header-11 ">
 					{/* TOP-BAR 5 */}
-					<div className="top-bar bg-primary @@display position-relative z-2 text-primary">
+					<div className="top-bar bg-primary @@display position-relative z-2">
 						<div className="container d-flex flex-wrap gap-2 justify-content-md-between justify-content-center align-items-center">
 							<div className="d-flex justify-content-center gap-3 align-self-stretch">
 								<Link href="/#" className="fs-7 d-flex align-items-center border-start border-end border-opacity-10 border-white px-3">
@@ -61,7 +61,7 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu, menuIte
 										if (hasSubItems) {
 											return (
 												<li className="nav-item dropdown menu-item-has-children" key={item.id}>
-													<Link className="nav-link text-uppercase text-primary" href={itemUrl} role="button" data-bs-toggle="dropdown" aria-expanded="false"> {item.title} </Link>
+													<Link className="nav-link text-uppercase" href={itemUrl} role="button" data-bs-toggle="dropdown" aria-expanded="false"> {item.title} </Link>
 													<ul className="dropdown-menu">
 														{item.subItems.map((subItem: any) => {
 															const subItemUrl = formatUrl(subItem.url);
@@ -77,7 +77,7 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu, menuIte
 										} else {
 											return (
 												<li className="nav-item" key={item.id}>
-													<Link className="nav-link text-uppercase text-primary" href={itemUrl}> {item.title} </Link>
+													<Link className="nav-link text-uppercase" href={itemUrl}> {item.title} </Link>
 												</li>
 											);
 										}
@@ -86,8 +86,8 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu, menuIte
 							</div>
 							<div className="d-flex align-items-center gap-4 align-self-stretch">
 								<form className="input-group position-relative d-none d-md-flex w-auto">
-									<input type="text" className="form-control rounded-start-4 text-dark bg-light border-0" name="search" placeholder="Search here..." />
-									<div className="border-0 rounded-end-4 bg-light ms-0">
+									<input type="text" className="form-control rounded-start-4 text-white bg-white bg-opacity-25 border-0" name="search" placeholder="Search here..." />
+									<div className="border-0 rounded-end-4 bg-white bg-opacity-25 ms-0">
 										<button className="btn btn-yellow px-4 bg-transparent h-100 rounded-4 aos-init aos-animate" type="submit" id="button-search" aria-label="search">
 											<i className="ri-search-line text-green-3" />
 										</button>
@@ -105,7 +105,7 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu, menuIte
 										<rect x={16} y={8} width={3} height={3} fill="#D5D52B" />
 									</svg>
 								</a>
-								<div className="burger-icon border border-dark rounded-3 top-0 end-0" onClick={handleMobileMenu}>
+								<div className="burger-icon burger-icon-white border rounded-3 top-0 end-0" onClick={handleMobileMenu}>
 									<span className="burger-icon-top" />
 									<span className="burger-icon-mid" />
 									<span className="burger-icon-bottom" />

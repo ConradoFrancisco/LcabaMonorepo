@@ -3,8 +3,7 @@ import Link from 'next/link'
 export default function Section1() {
 	return (
 		<>
-
-			<section className="elearning-home-section-1 position-relative pt-300 pb-200 bg-white rounded-bottom-4">
+			<section className="elearning-home-section-1 position-relative pt-300 pb-200 bg-primary rounded-bottom-4">
 				<div className="banner-line">
 					<div className="vertical-effect border-opacity-10 border-end border-white" />
 					<div className="vertical-effect border-opacity-10 border-end border-white" />
@@ -19,11 +18,11 @@ export default function Section1() {
 				<div className="container position-relative pt-lg-10 text-lg-start text-center">
 					<div className="row align-items-center">
 						<div className="col-lg-6 col-md-12 px-md-0 ">
-							<span className="content-top btn-text fw-bold text-primary">
+							<span className="content-top btn-text fw-bold text-white">
 								<i className="ri-git-repository-line text-green-3" />
 								&nbsp; #01 learning platform
 							</span>
-							<h1 className="text-primary ds-1 lh-sm mb-5 text-anime-style-3">
+							<h1 className="text-white ds-1 lh-sm mb-5 text-anime-style-3">
 								Learning wherever <br /> &amp;
 								<span className="text-green-3 position-relative   ps-3">
 									whenever
