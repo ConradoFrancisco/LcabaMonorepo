@@ -39,9 +39,7 @@ function NewsCard({ post, delay }: { post: NewsPost; delay: string }) {
     const title = post.title || post.titulo || "";
     const desc = post.shortdesc || post.copete || "";
     const imgUrl = buildImageUrl(post.images || []);
-    const url = post.url
-        ? post.url.startsWith("/") ? post.url : `/${post.url}`
-        : "#";
+    const url = `/publicaciones/${post.id}`;
     const date = formatDate(post.date_ins);
 
     return (
