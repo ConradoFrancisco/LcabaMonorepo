@@ -1,0 +1,34 @@
+:root {
+  --bs-primary: #f6bd43 !important;
+  --bs-primary-rgb: 246, 189, 67 !important;
+  --tc-primary-color: #f6bd43 !important;
+  --bs-link-color: #f6bd43 !important;
+  --bs-link-hover-color: #e5a522 !important;
+}
+
+.bg-primary {
+  background-color: var(--bs-primary) !important;
+}
+
+.text-primary {
+  color: var(--bs-primary) !important;
+}
+
+.btn-primary {
+  background-color: var(--bs-primary) !important;
+  border-color: var(--bs-primary) !important;
+  color: #fff !important; /* Ensure text is visible on yellow */
+}
+.btn-primary:hover {
+  background-color: #e5a522 !important;
+  border-color: #e5a522 !important;
+  color: #fff !important;
+}
+
+/* Specific elements using primary color */
+.business-section-9 .bg-primary {
+  background-color: var(--bs-primary) !important;
+}
+.badge {
+  background-color: var(--bs-primary) !important;
+}
