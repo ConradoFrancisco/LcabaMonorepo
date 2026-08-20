@@ -37,7 +37,7 @@ const rubik = Rubik({
 });
 
 export const metadata: Metadata = {
-    title: "Cultura - LCABA",
+    title: "Asuntos Culturales",
     description: "Micrositio de Cultura - Legislatura de la Ciudad Autónoma de Buenos Aires",
 };
 

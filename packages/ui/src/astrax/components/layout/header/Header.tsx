@@ -1,13 +1,10 @@
 import Link from "next/link";
 import MobileMenu from "../MobileMenu";
 import MainMenu from "../MainMenu";
+import { formatNavUrl } from "../../../util/navLinks";
 
 export default function Header({ scroll, isMobileMenu, handleMobileMenu, menuItems = [] }: any) {
-    const formatUrl = (url: string | null) => {
-        if (!url || url === "#") return "#";
-        if (url.startsWith("http")) return url;
-        return url.startsWith("/") ? url : `/${url}`;
-    };
+    const formatUrl = formatNavUrl;
     return (
         <>
             <header>
@@ -26,7 +23,7 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu, menuIte
                                 <ul className="navbar-nav mx-auto gap-4 align-items-lg-center">
                                     {menuItems.map((item: any) => {
                                         const hasSubItems = item.subItems && item.subItems.length > 0;
-                                        const itemUrl = formatUrl(item.url);
+                                        const itemUrl = formatUrl(item);
                                         if (hasSubItems) {
                                             return (
                                                 <li className="nav-item dropdown menu-item-has-children" key={item.id}>
@@ -36,7 +33,7 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu, menuIte
                                                     <ul className="dropdown-menu px-5">
                                                         {item.subItems.map((subItem: any) => (
                                                             <li key={subItem.id}>
-                                                                <Link className="dropdown-item text-capitalize gap-5 py-3 px-0 border-bottom justify-content-between" href={formatUrl(subItem.url)}>
+                                                                <Link className="dropdown-item text-capitalize gap-5 py-3 px-0 border-bottom justify-content-between" href={formatUrl(subItem, item)}>
                                                                     {subItem.title}
                                                                     <i className="fa-solid fa-arrow-right" />
                                                                 </Link>
@@ -77,17 +74,7 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu, menuIte
                         </div>
                         <div className="offCanvas__logo mb-30">
                             <Link className="d-flex align-items-center gap-2" href="/">
-                                <svg xmlns="http://www.w3.org/2000/svg" width={40} height={40} viewBox="0 0 40 40" fill="none">
-                                    <g>
-                                        <path className="fill-green-3" d="M24.5043 9.79724L22.7082 18.3981L35.2929 17.1948L37.1117 7.00605L24.5043 9.79724Z"></path>
-                                        <path className="fill-green-3" d="M31.9171 17.6837L23.2697 20.6189L30.6333 30.3865L40.723 26.6545L31.9171 17.6837Z"></path>
-                                        <path className="fill-green-3" d="M28.4204 27.86L21.4605 22.2312L16.332 33.3249L24.7296 39.7347L28.4204 27.86Z"></path>
-                                        <path className="fill-green-3" d="M17.5913 29.998L19.1912 21.3633L6.63465 22.8288L5.04812 33.0511L17.5913 29.998Z"></path>
-                                        <path className="fill-green-3" d="M10.2917 22.1777L18.8717 19.0632L11.2859 9.45346L1.28177 13.3945L10.2917 22.1777Z"></path>
-                                        <path className="fill-green-3" d="M13.7243 12.2243L20.8121 17.7054L25.6875 6.50938L17.1442 0.277556L13.7243 12.2243Z"></path>
-                                    </g>
-                                </svg>
-                                <h5 className="mb-0 text-dark">Astrax</h5>
+                                <img src="/logoCultura.png" alt="Cultura - Legislatura CABA" height={40} />
                             </Link>
                         </div>
                         <div className="offCanvas__side-info mb-30">
@@ -149,7 +136,7 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu, menuIte
                         </div>
                     </div>
                     {/* Offcanvas search */}
-                    <MobileMenu isMobileMenu={isMobileMenu} handleMobileMenu={handleMobileMenu} />
+                    <MobileMenu isMobileMenu={isMobileMenu} handleMobileMenu={handleMobileMenu} menuItems={menuItems} />
                 </div>
             </header>
         </>

@@ -2,18 +2,7 @@ import Layout from "@lcaba/ui/astrax/components/layout/Layout";
 import HeroSlider from "@lcaba/ui/astrax/components/sections/home/HeroSlider";
 import MenuButtons from "@lcaba/ui/astrax/components/sections/home/MenuButtons";
 import NewsSection from "@lcaba/ui/astrax/components/sections/home/NewsSection";
-
-async function getNavMenu() {
-    try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API}/nav-menu/tree?pageId=3`, { next: { revalidate: 60 } });
-        const data = await res.json();
-        const menuArray = Array.isArray(data) ? data : (data.data || []);
-        return menuArray.length > 2 ? menuArray.slice(1, -1) : menuArray;
-    } catch (e) {
-        console.error("Failed to fetch nav menu:", e);
-        return [];
-    }
-}
+import { getNavMenu } from "@/lib/navMenu";
 
 async function getPostsSlider() {
     try {

@@ -3,13 +3,15 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { formatNavUrl } from "../../util/navLinks";
 
 interface MobileMenuProps {
     isMobileMenu: boolean;
     handleMobileMenu: () => void;
+    menuItems?: any[];
 }
 
-export default function MobileMenu({ isMobileMenu, handleMobileMenu }: MobileMenuProps) {
+export default function MobileMenu({ isMobileMenu, handleMobileMenu, menuItems = [] }: MobileMenuProps) {
     const [isAccordion, setIsAccordion] = useState<number | null>(null);
     const pathname = usePathname();
 
@@ -31,12 +33,7 @@ export default function MobileMenu({ isMobileMenu, handleMobileMenu }: MobileMen
                 <div className="mobile-header-wrapper-inner">
                     <div className="mobile-header-logo">
                         <Link className="d-flex align-items-center gap-2" href="/">
-                            <svg className="fill-primary" xmlns="http://www.w3.org/2000/svg" width={35} height={40} viewBox="0 0 35 40" fill="none">
-                                <g clipPath="url(#clip0_349_1513)">
-                                    <path d="M3.3335 31.9045V11.9335L17.4985 3.8395L31.667 11.9335V28.065L17.4985 36.1605L10 31.875V15.802L17.4985 11.517L25 15.802V24.196L17.4985 28.4815L16.667 28.0065V19.6715L20.858 17.2755L17.4985 15.3565L13.3335 17.738V29.94L17.4985 32.321L28.3335 26.1295V13.8685L17.4985 7.679L6.667 13.8685V33.8085L17.4985 40L35 30V10L17.4985 0L0 10V30L3.3335 31.9045Z" fill="#794AFF" />
-                                </g>
-                            </svg>
-                            <h5 className="mb-0">Astrax</h5>
+                            <img src="/logoCultura.png" alt="Cultura - Legislatura CABA" height={40} />
                         </Link>
                         <div className={`burger-icon burger-icon-white border rounded-circle ${isMobileMenu ? "burger-close" : ""}`} onClick={handleMobileMenu}>
                             <span className="burger-icon-top" />
@@ -49,60 +46,31 @@ export default function MobileMenu({ isMobileMenu, handleMobileMenu }: MobileMen
                             <div className="mobile-menu-wrap mobile-header-border">
                                 <nav>
                                     <ul className="mobile-menu ps-0">
-                                        <li>
-                                            <Link href="/">Homepages</Link>
-                                        </li>
-                                        <li>
-                                            <Link href="/about">About Us</Link>
-                                        </li>
-                                        <li className="has-children">
-                                            <span className="menu-expand" onClick={() => handleAccordion(1)}>
-                                                <i className="arrow-small-down" />
-                                            </span>
-                                            <Link href="#">Services</Link>
-                                            <ul className="sub-menu" style={{ display: `${isAccordion == 1 ? "block" : "none"}` }}>
-                                                <li>
-                                                    <Link href="/services">Services</Link>
+                                        {menuItems.map((item: any) => {
+                                            const hasSubItems = item.subItems && item.subItems.length > 0;
+                                            if (!hasSubItems) {
+                                                return (
+                                                    <li key={item.id}>
+                                                        <Link href={formatNavUrl(item)}>{item.title}</Link>
+                                                    </li>
+                                                );
+                                            }
+                                            return (
+                                                <li className="has-children" key={item.id}>
+                                                    <Link href={formatNavUrl(item)}>{item.title}</Link>
+                                                    <span className="menu-expand" onClick={() => handleAccordion(item.id)}>
+                                                        <i className="arrow-small-down" />
+                                                    </span>
+                                                    <ul className="sub-menu" style={{ display: `${isAccordion === item.id ? "block" : "none"}` }}>
+                                                        {item.subItems.map((subItem: any) => (
+                                                            <li key={subItem.id}>
+                                                                <Link href={formatNavUrl(subItem, item)}>{subItem.title}</Link>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
                                                 </li>
-                                                <li>
-                                                    <Link href="/services-details">Services Details</Link>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li className="has-children">
-                                            <Link href="#">Blog</Link>
-                                            <span className="menu-expand" onClick={() => handleAccordion(2)}>
-                                                <i className="arrow-small-down" />
-                                            </span>
-                                            <ul className="sub-menu" style={{ display: `${isAccordion == 2 ? "block" : "none"}` }}>
-                                                <li>
-                                                    <Link href="/blog">Blog</Link>
-                                                </li>
-                                                <li>
-                                                    <Link href="/blog-details">Blog Details</Link>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li className="has-children">
-                                            <Link href="#">Pages</Link>
-                                            <span className="menu-expand" onClick={() => handleAccordion(2)}>
-                                                <i className="arrow-small-down" />
-                                            </span>
-                                            <ul className="sub-menu" style={{ display: `${isAccordion == 2 ? "block" : "none"}` }}>
-                                                <li>
-                                                    <Link href="/team">Team</Link>
-                                                </li>
-                                                <li>
-                                                    <Link href="/testimonials">Testimonials</Link>
-                                                </li>
-                                                <li>
-                                                    <Link href="/pricing">Pricing</Link>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <Link href="/contact">Contact</Link>
-                                        </li>
+                                            );
+                                        })}
                                     </ul>
                                 </nav>
                             </div>
