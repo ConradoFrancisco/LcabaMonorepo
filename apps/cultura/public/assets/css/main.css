@@ -1499,7 +1499,7 @@ img {
   color: var(--tc-system-black);
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 992px) {
   .navbar .dropdown-menu.show {
     display: none;
   }
