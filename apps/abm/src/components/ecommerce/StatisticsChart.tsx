@@ -111,21 +111,23 @@ export default function StatisticsChart() {
 
   const series = [
     {
-      name: 'Sales',
-      data: [180, 190, 170, 160, 175, 165, 170, 205, 230, 210, 240, 235],
+      name: 'Publicaciones',
+      data: [18, 22, 19, 25, 28, 24, 31, 35, 39, 36, 42, 45],
     },
     {
-      name: 'Revenue',
-      data: [40, 30, 50, 40, 55, 40, 70, 100, 110, 120, 150, 140],
+      name: 'Usuarios',
+      data: [8, 12, 10, 15, 18, 16, 22, 24, 29, 27, 32, 35],
     },
   ];
   return (
     <div className="rounded-2xl border border-gray-200 bg-white px-5 pt-5 pb-5 sm:px-6 sm:pt-6 dark:border-gray-800 dark:bg-white/[0.03]">
       <div className="mb-6 flex flex-col gap-5 sm:flex-row sm:justify-between">
         <div className="w-full">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">Statistics</h3>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
+            Actividad de contenidos
+          </h3>
           <p className="text-theme-sm mt-1 text-gray-500 dark:text-gray-400">
-            Target you’ve set for each month
+            Evolución mensual de publicaciones y usuarios
           </p>
         </div>
         <div className="flex w-full items-start gap-3 sm:justify-end">

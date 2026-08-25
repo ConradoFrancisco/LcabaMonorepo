@@ -169,11 +169,11 @@ class NavMenuModel {
 
         if (childIds.length === 0) continue;
 
-        // Consulta genérica — todas las vistas comparten id, title, url, orderby
+        // Las vistas de navegación comparten estos campos descriptivos y de enlace.
         // Se usa FIELD() para respetar el orden definido en filter
         const idPlaceholders = childIds.map(() => '?').join(',');
         const subQuery = `
-          SELECT id, title, url, orderby
+          SELECT id, title, description, url, orderby
           FROM \`${rel.table}\`
           WHERE id IN (${idPlaceholders})
           ORDER BY FIELD(id, ${childIds.join(',')})

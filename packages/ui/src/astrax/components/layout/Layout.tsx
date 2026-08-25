@@ -31,11 +31,12 @@ interface LayoutProps {
     footerStyle?: Number;
     children?: React.ReactNode;
     breadcrumbTitle?: string;
+    breadcrumbCategory?: string;
     menuItems?: any[];
     socials?: any[];
 }
 
-export default function Layout({ headerStyle, footerStyle, breadcrumbTitle, menuItems = [], socials = [], children }: LayoutProps) {
+export default function Layout({ headerStyle, footerStyle, breadcrumbTitle, breadcrumbCategory, menuItems = [], socials = [], children }: LayoutProps) {
     const [scroll, setScroll] = useState<boolean>(false);
     // Mobile Menu
     const [isMobileMenu, setMobileMenu] = useState<boolean>(false);
@@ -82,7 +83,7 @@ export default function Layout({ headerStyle, footerStyle, breadcrumbTitle, menu
             <Header scroll={scroll} isMobileMenu={isMobileMenu} handleMobileMenu={handleMobileMenu} menuItems={menuItems} />
 
             <main className="business" style={{ minHeight: "50vh" }}>
-                {breadcrumbTitle && <Breadcrumb breadcrumbTitle={breadcrumbTitle} />}
+                {breadcrumbTitle && <Breadcrumb breadcrumbTitle={breadcrumbTitle} breadcrumbCategory={breadcrumbCategory} />}
                 {children}
             </main>
             <Footer menuItems={menuItems} socials={socials} />
