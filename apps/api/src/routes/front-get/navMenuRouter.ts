@@ -25,6 +25,16 @@ navMenuRouter.get('/tree', NavMenuController.getNavTree);
 navMenuRouter.get('/flat', NavMenuController.getNavFlat);
 
 /**
+ * GET /nav-menu/by-url
+ * Busca una sección de menú por su URL — usado por el catch-all route de Next.js.
+ * Query params:
+ *   - url    (requerido): URL de la sección, ej: ?url=/institucional
+ *   - pageId (opcional): filtra por micrositio. Ej: &pageId=3
+ *   - lang   (opcional): idioma (default 2). Ej: &lang=2
+ */
+navMenuRouter.get('/by-url', NavMenuController.getSectionByUrl);
+
+/**
  * GET /nav-menu/debug
  * Solo desarrollo: muestra datos crudos de menu_tables_rel.
  * Query params: pageId (opcional)

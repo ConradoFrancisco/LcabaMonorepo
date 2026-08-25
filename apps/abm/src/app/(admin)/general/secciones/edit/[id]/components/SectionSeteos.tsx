@@ -219,6 +219,23 @@ export default function SectionSeteos({
         />
       </FormRow>
 
+      {/* Template Next.js */}
+      <FormRow
+        label="Template:"
+        note="Define cómo se renderiza esta sección en Next.js al navegar a su URL."
+      >
+        <select
+          name="template"
+          value={seteos?.template ?? ''}
+          onChange={handleChange}
+          className="form-input w-full rounded-md border px-4 py-2 text-sm"
+        >
+          <option value="">-- Predeterminado (página estática) --</option>
+          <option value="static-page">Página estática (título, texto, imágenes)</option>
+          <option value="posts-list">Lista de publicaciones (filtrada por categoría)</option>
+        </select>
+      </FormRow>
+
       {/* Contenido Extra */}
       <FormRow
         label="Contenido Extra:"

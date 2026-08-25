@@ -82,7 +82,7 @@ export default function Layout({ headerStyle, footerStyle, breadcrumbTitle, brea
             <BootstrapComponents />
             <Header scroll={scroll} isMobileMenu={isMobileMenu} handleMobileMenu={handleMobileMenu} menuItems={menuItems} />
 
-            <main className="business" style={{ minHeight: "50vh" }}>
+            <main className="business" style={{ minHeight: "50vh"}}>
                 {breadcrumbTitle && <Breadcrumb breadcrumbTitle={breadcrumbTitle} breadcrumbCategory={breadcrumbCategory} />}
                 {children}
             </main>

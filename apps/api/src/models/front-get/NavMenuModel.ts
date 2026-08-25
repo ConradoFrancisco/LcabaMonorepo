@@ -98,7 +98,7 @@ class NavMenuModel {
           m.bgcolor,
           m.textcolor,
           m.newwin,
-          m.url,
+          REPLACE(REPLACE(m.url, '.html', ''), '.htm', '') AS url,
           m.tags,
           m.applies_to,
           m.status,
@@ -216,6 +216,204 @@ class NavMenuModel {
     } catch (error) {
       console.error('Error en getNavTree:', error);
       throw new Error('Error al obtener el árbol de menú de navegación');
+    }
+  }
+
+  /**
+   * Busca una sección de menú por su URL (para el catch-all route de Next.js).
+   * Normaliza la URL: elimina .html/.htm y asegura que empiece con /.
+   *
+   * @param url     URL a buscar, ej: "/institucional" o "institucional"
+   * @param pageId  ID del micrositio (fk_pageid) para limitar la búsqueda
+   * @param lang    ID de idioma (default 2 = español)
+   */
+  /**
+   * Busca una sección de menú por su URL o slug de título.
+   * Busca primero en la tabla `menu` y luego en las vistas de categorías (`cultura_categorias_vw`, etc.).
+   */
+  public async getSectionByUrl({
+    url,
+    pageId,
+    lang = 2,
+  }: {
+    url: string;
+    pageId?: number;
+    lang?: number;
+  }): Promise<any | null> {
+    const slugify = (text: string): string => {
+      if (!text) return '';
+      return text
+        .normalize('NFD')
+        .replace(/\p{Diacritic}/gu, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+    };
+
+    try {
+      const cleanPath = url.toLowerCase().replace(/^\//, '').replace(/\.html?$/, '');
+      const lastSeg = cleanPath.includes('/') ? cleanPath.split('/').pop()! : cleanPath;
+
+      // 1. Buscar en la tabla `menu` (secciones principales)
+      const menuParams: (number | string)[] = [lang, lang];
+      let pageFilter = '';
+      if (pageId !== undefined) {
+        pageFilter = ' AND m.fk_pageid = ?';
+        menuParams.push(pageId);
+      }
+
+      const menuQuery = `
+        SELECT
+          m.id,
+          m.clientid,
+          m.fk_pageid,
+          m.parentid,
+          m.orderby,
+          m.section,
+          m.bgimg,
+          m.bgcolor,
+          m.textcolor,
+          m.newwin,
+          REPLACE(REPLACE(m.url, '.html', ''), '.htm', '') AS url,
+          m.tags,
+          m.applies_to,
+          m.status,
+          m.contact_form,
+          m.show_top,
+          m.show_bottom,
+          m.loadcontent,
+          m.megamenu,
+          m.slidemenu,
+          m.showrightcol,
+          m.showinside,
+          m.externallink,
+          m.showbanner,
+          m.fk_menuid,
+          m.specialsection,
+          m.icon_class,
+          m.template,
+          mt.title,
+          mt.subtitle,
+          mt.description,
+          mt.shortdesc,
+          mt.keywords,
+          mt.additional_text,
+          mt.lang
+        FROM menu m
+        LEFT JOIN menu_translations mt
+          ON mt.fk_id = m.id AND mt.lang = ?
+        WHERE m.status = 1
+          AND (mt.lang = ? OR mt.lang IS NULL)
+          ${pageFilter}
+      `;
+
+      const [menuRows] = (await pool.query(menuQuery, menuParams)) as [any[], any];
+
+      if (menuRows && menuRows.length > 0) {
+        for (const row of menuRows) {
+          const rowSlug = slugify(row.title || '');
+          const rowUrlClean = (row.url || '').toLowerCase().replace(/^seccion\//, '').replace(/\.html?$/, '').replace(/^\//, '');
+
+          if (
+            rowSlug === lastSeg ||
+            rowSlug === cleanPath ||
+            rowUrlClean === lastSeg ||
+            rowUrlClean === cleanPath ||
+            (row.url && row.url.toLowerCase().includes(lastSeg))
+          ) {
+            const images = await this.getSectionImages({ id: row.id, isCat: false });
+            const archivos = await this.getSectionFiles({ id: row.id, isCat: false });
+            return { ...row, images, archivos, subItems: [] };
+          }
+        }
+      }
+
+      // 2. Buscar en la vista `cultura_categorias_vw` (categorías/subsecciones)
+      const catParams: (number | string)[] = [];
+      let catWhere = 'WHERE status = 1';
+      if (pageId !== undefined) {
+        catWhere += ' AND fk_pageid = ?';
+        catParams.push(pageId);
+      }
+
+      const catQuery = `
+        SELECT
+          id,
+          title,
+          description,
+          shortdesc,
+          url,
+          section,
+          fk_menuid,
+          fk_pageid
+        FROM cultura_categorias_vw
+        ${catWhere}
+      `;
+
+      const [catRows] = (await pool.query(catQuery, catParams)) as [any[], any];
+
+      if (catRows && catRows.length > 0) {
+        for (const row of catRows) {
+          const rowSlug = slugify(row.title || '');
+          const rowUrlClean = (row.url || '').toLowerCase().replace(/^seccion\//, '').replace(/\.html?$/, '').replace(/^\//, '');
+
+          if (
+            rowSlug === lastSeg ||
+            rowSlug === cleanPath ||
+            rowUrlClean === lastSeg ||
+            rowUrlClean === cleanPath ||
+            (row.url && row.url.toLowerCase().includes(lastSeg))
+          ) {
+            const images = await this.getSectionImages({ id: row.id, isCat: true });
+            const archivos = await this.getSectionFiles({ id: row.id, isCat: true });
+            return {
+              ...row,
+              fk_idcat: row.id,
+              section: 'cat',
+              images,
+              archivos,
+              subItems: [],
+            };
+          }
+        }
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Error en getSectionByUrl:', error);
+      throw new Error('Error al buscar sección por URL');
+    }
+  }
+
+  private async getSectionImages({ id, isCat }: { id: number; isCat: boolean }) {
+    const table = isCat ? 'cultura_categorias_docs' : 'menu_docs';
+    const query = `
+      SELECT d.*, m.image_type
+      FROM \`${table}\` m
+      INNER JOIN docs d ON m.fk_iddoc = d.id
+      WHERE m.fk_id = ?
+    `;
+    try {
+      const [rows] = await pool.query(query, [id]);
+      return rows;
+    } catch {
+      return [];
+    }
+  }
+
+  private async getSectionFiles({ id, isCat }: { id: number; isCat: boolean }) {
+    const table = isCat ? 'cultura_categorias_files' : 'menu_files';
+    const query = `
+      SELECT d.*
+      FROM \`${table}\` m
+      INNER JOIN docs d ON m.fk_iddoc = d.id
+      WHERE m.fk_id = ?
+    `;
+    try {
+      const [rows] = await pool.query(query, [id]);
+      return rows;
+    } catch {
+      return [];
     }
   }
 

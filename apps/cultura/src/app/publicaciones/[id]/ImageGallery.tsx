@@ -48,15 +48,15 @@ export default function ImageGallery({ images = [], title = "" }: { images: stri
                     {images.map((url, i) => (
                         <SwiperSlide key={i}>
                             <div 
-                                className="d-flex align-items-center justify-content-center cursor-pointer"
-                                style={{ height: "450px", cursor: "zoom-in" }}
+                                className="d-flex align-items-center justify-content-center cursor-pointer p-4"
+                                style={{ minHeight: "240px", maxHeight: "420px", cursor: "zoom-in" }}
                                 onClick={() => openModal(url)}
                             >
                                 <img
                                     src={url}
                                     alt={`${title} - ${i + 1}`}
-                                    className="w-100 h-100"
-                                    style={{ objectFit: "contain", maxWeight: "100%", maxHeight: "450px" }}
+                                    className="img-fluid rounded"
+                                    style={{ maxWidth: "100%", maxHeight: "380px", width: "auto", height: "auto", objectFit: "contain" }}
                                 />
                             </div>
                         </SwiperSlide>

@@ -2,6 +2,7 @@ import Layout from "@lcaba/ui/astrax/components/layout/Layout";
 import ImageGallery from "./ImageGallery";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getNavMenu } from "@/lib/navMenu";
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -40,20 +41,6 @@ async function getPost(id: string) {
     }
 }
 
-async function getNavMenu() {
-    try {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API}/nav-menu/tree?pageId=3`,
-            { next: { revalidate: 60 } }
-        );
-        const data = await res.json();
-        const menuArray = Array.isArray(data) ? data : data.data || [];
-        return menuArray.length > 2 ? menuArray.slice(1, -1) : menuArray;
-    } catch {
-        return [];
-    }
-}
-
 async function getSocials() {
     try {
         const res = await fetch(
@@ -85,7 +72,6 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
     const title = textos?.title || "";
     const description = textos?.description || "";
     const shortdesc = textos?.shortdesc || "";
-    const subtitle = textos?.subtitle || "";
     const date = formatDate(seteos?.date_ins || seteos?.date);
     const category = seteos?.cat_name || seteos?.categoria || "";
 
@@ -95,31 +81,12 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
         .filter(Boolean) as string[];
 
     return (
-        <Layout menuItems={menuItems} socials={socials}>
-            {/* ── Hero Banner ───────────────────────────────────────────── */}
-            <section
-                className="position-relative overflow-hidden"
-                style={{ marginTop: "90px", paddingTop: "60px", paddingBottom: "60px", background: "linear-gradient(135deg, #c8577e 0%, #f7c45f 100%)" }}
-            >
-                <div className="container position-relative z-1 text-center">
-                    <h1 className="text-white  fw-bold mb-2 text-uppercase" style={{ WebkitTextStroke: "1px #000", fontSize: "clamp(1.6rem, 3.5vw, 2.8rem)", textShadow: "0 2px 4px rgba(0,0,0,0.15)" }}>
-                        {title}
-                    </h1>
-                    {category && (
-                        <div className="mb-2">
-                            <Link
-                                href={`/publicaciones?categoria=${seteos?.fk_idcat || ""}`}
-                                className="text-white text-decoration-underline fw-semibold"
-                                style={{ fontSize: "1.15rem" }}
-                            >
-                                {category}
-                            </Link>
-                        </div>
-                    )}
-                    {subtitle && <p className="text-white opacity-75 mt-2">{subtitle}</p>}
-                    {date && <small className="text-white opacity-50">{date}</small>}
-                </div>
-            </section>
+        <Layout
+            menuItems={menuItems}
+            socials={socials}
+            breadcrumbTitle={title}
+            breadcrumbCategory={category}
+        >
 
             {/* ── Main Content ─────────────────────────────────────────── */}
             <section className="py-80">

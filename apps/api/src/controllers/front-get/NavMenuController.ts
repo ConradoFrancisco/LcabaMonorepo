@@ -110,6 +110,48 @@ class NavMenuController {
       res.status(500).json({ error: 'Error en diagnóstico' });
     }
   }
+  /**
+   * GET /nav-menu/by-url
+   * Busca una sección de menú por su URL (para el catch-all route de Next.js).
+   * Query params:
+   *   - url    (requerido): URL de la sección, ej: /institucional
+   *   - pageId (opcional): filtra por micrositio
+   *   - lang   (opcional): ID de idioma (default 2)
+   */
+  public async getSectionByUrl(req: Request, res: Response): Promise<void> {
+    try {
+      const { url, pageId, lang } = req.query;
+
+      if (!url || typeof url !== 'string') {
+        res.status(400).json({ error: 'El parámetro url es requerido' });
+        return;
+      }
+
+      const params: { url: string; pageId?: number; lang?: number } = { url };
+
+      if (pageId !== undefined) {
+        const parsed = parseInt(pageId as string, 10);
+        if (!isNaN(parsed) && parsed > 0) params.pageId = parsed;
+      }
+
+      if (lang !== undefined) {
+        const parsedLang = parseInt(lang as string, 10);
+        if (!isNaN(parsedLang) && parsedLang > 0) params.lang = parsedLang;
+      }
+
+      const section = await NavMenuModel.getSectionByUrl(params);
+
+      if (!section) {
+        res.status(404).json({ message: 'Sección no encontrada para la URL indicada' });
+        return;
+      }
+
+      res.status(200).json(section);
+    } catch (error) {
+      console.error('Error en getSectionByUrl:', error);
+      res.status(500).json({ error: 'Error al buscar la sección por URL' });
+    }
+  }
 }
 
 export default new NavMenuController();
