@@ -34,7 +34,7 @@ class CategoriesModel {
                 import('mysql2').ResultSetHeader,
                 any,
             ];
-            return resultTranslation.insertId;
+            return { id: result.insertId };
         } catch (error) {
             console.error('Error en createCategory:', error);
             throw new Error('Error al crear la categoría');
