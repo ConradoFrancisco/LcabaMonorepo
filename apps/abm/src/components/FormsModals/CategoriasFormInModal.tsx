@@ -27,24 +27,11 @@ export default function CategoriaFormInModal({
   setFlag: React.Dispatch<React.SetStateAction<boolean>>;
   flag: boolean;
 }) {
-  const [issues, setIssues] = useState<{ id: number; titulo: string }[]>([]);
   const navigation = useRouter();
   const { auth } = useAuth();
   const closeModal = () => {
     setOpen(false);
   };
-
-  const getIssues = async () => {
-    const response = await MagazineService.getAllIssues({
-      limit: 10,
-      offset: 0,
-    });
-    setIssues(response.data);
-  };
-
-  useEffect(() => {
-    getIssues();
-  }, []);
 
   return (
     <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[584px] p-5 lg:p-10">

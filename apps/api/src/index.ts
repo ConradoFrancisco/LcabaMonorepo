@@ -25,13 +25,12 @@ import { DgpcRouter } from './routes/back-post/DgpcRouter';
 import GeneralRouter from './routes/back-post/GeneralRouter';
 import { docsRouter } from './routes/back-post/DocsRouter';
 import GacetillaRouter from './routes/back-post/GacetillaRouter';
-import DocsController from './controllers/back-post/DocsController';
-import { fileURLToPath } from 'node:url';
 import path from 'path';
 import { LaborservicesRouter } from './routes/back-post/LaborservicesRouter';
 import { postRouter } from './routes/back-post/PostRouter';
 import PagesRouter from './routes/back-post/general/PagesRouter';
 import CategoriesRouter from './routes/back-post/CategoriesRouter';
+import IssueRouter from './routes/back-post/IssueRouter';
 
 const app = express();
 const PORT = Number(process.env.PORT || 3001);
@@ -76,6 +75,7 @@ app.use('/posts', postRouter);
 app.use('/fileserver', fileServerRouter);
 app.use('/pages', PagesRouter);
 app.use('/categories', CategoriesRouter);
+app.use('/issue', IssueRouter)
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
