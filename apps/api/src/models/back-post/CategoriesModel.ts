@@ -48,7 +48,17 @@ class CategoriesModel {
         SET title = ?,shortdesc = ?,description = ?,fk_pageid = ?,bgcolor = ?,fgcolor = ?,keywords = ?,status = ?
         WHERE id = ?
       `;
-            const [result] = (await pool.query(query, [data.title, data.shortdesc, data.description, data.fk_pageid, data.bgcolor, data.fgcolor, data.keywords, data.status, data.id])) as [any[], any];
+            const [result] = (await pool.query(query, [
+                data.title,
+                data.shortdesc,
+                data.description,
+                data.fk_pageid,
+                data.bgcolor,
+                data.fgcolor,
+                data.keywords,
+                data.status,
+                data.id,
+            ])) as [any[], any];
             return result;
         } catch (error) {
             console.error('Error en editCategory:', error);
