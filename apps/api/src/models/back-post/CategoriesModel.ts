@@ -27,10 +27,10 @@ class CategoriesModel {
                 any,
             ];
             const queryTranslation = `
-                INSERT INTO ${table}_translations (fk_id, title)
-            VALUES (?,?)
+                INSERT INTO ${table}_translations (fk_id, title,description)
+            VALUES (?,?,?)
       `;
-            const [resultTranslation] = (await pool.query(queryTranslation, [result.insertId, title])) as [
+            const [resultTranslation] = (await pool.query(queryTranslation, [result.insertId, title, 'desc'])) as [
                 import('mysql2').ResultSetHeader,
                 any,
             ];
