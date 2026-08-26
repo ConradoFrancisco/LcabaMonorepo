@@ -20,7 +20,7 @@ class CategoriesModel {
 
             const query = `
         INSERT INTO ${table} (iduser_ins,iduser_upd,section)
-        VALUES (?,?)
+        VALUES (?,?,?)
       `
             const [result] = (await pool.query(query, [id_user, id_user, 'cat'])) as [
                 import('mysql2').ResultSetHeader,
@@ -34,7 +34,7 @@ class CategoriesModel {
                 import('mysql2').ResultSetHeader,
                 any,
             ];
-            return resultTranslation;
+            return resultTranslation.insertId;
         } catch (error) {
             console.error('Error en createCategory:', error);
             throw new Error('Error al crear la categoría');
