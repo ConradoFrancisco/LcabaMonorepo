@@ -8,22 +8,24 @@ import ComponentCard from '@/components/common/ComponentCard';
 import Search from '@/components/my-components/Search';
 import TableComponent from '@/components/common/TableComponent';
 import FormInModal from '@/components/FormsModals/CategoriasFormInModal';
+import CategoriesServices from '../../../../../services/CategoriesServices';
 
 export default function CategoriasPage() {
   const [search, setSearch] = useState<string>('');
   const { debounceValue, loading, setLoading } = useDebounce(search, 1000);
   const [abierto, setAbierto] = useState(false);
   const { data, offset, limit, setOffset, total, setFlag, flag } = useData({
-    getAll: MagazineService.getAllCategories,
+    getAll: CategoriesServices.getAllCategories,
     loading,
     setLoading,
     search: debounceValue,
+    table: 'magazine_categorias',
   });
   const [claves, setClaves] = useState<string[]>([]);
 
   useEffect(() => {
     if (data?.length > 0) {
-      setClaves(Object.keys(data[0]));
+      setClaves(Object.keys(data[0] as object));
     }
   }, [data]);
 
