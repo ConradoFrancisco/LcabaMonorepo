@@ -2,13 +2,13 @@
 import React, { useEffect, useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Modal } from '../../ui/modal';
-import Label from '../../form/Label';
-import Input from '../../form/input/InputField';
-import MagazineService from '../../../../services/MagazineService';
+import { Modal } from '../ui/modal';
+import Label from '../form/Label';
+import Input from '../form/input/InputField';
+import MagazineService from '../../../services/MagazineService';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import PostService from '../../../../services/PostService';
+import PostService from '../../../services/PostService';
 // Definimos el esquema de validación con Yup
 const validationSchema = Yup.object({
   titulo: Yup.string()

@@ -7,7 +7,7 @@ import { ChevronDown } from 'lucide-react';
 import { useExportar } from '@/hooks/useExport';
 import ComponentCard from '@/components/common/ComponentCard';
 import TableComponent from '@/components/common/TableComponent';
-import FormInModal from '@/components/example/ModalExample/RevistaFormInModal';
+import FormInModal from '@/components/FormsModals/RevistaFormInModal';
 import PostService from '../../../../../services/PostService';
 import FiltrosTablaRevista, { FiltrosState } from '@/components/form/FiltrosTablaRevista';
 

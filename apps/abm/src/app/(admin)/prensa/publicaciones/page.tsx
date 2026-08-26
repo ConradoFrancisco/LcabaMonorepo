@@ -8,7 +8,7 @@ import TableComponent from '@/components/common/TableComponent';
 import { FiltrosState } from '@/components/form/FiltrosTablaPrensa';
 import FiltrosTablaPrensa from '@/components/form/FiltrosTablaPrensa';
 import PostService from '../../../../../services/PostService';
-import PrensaFormInModal from '@/components/example/ModalExample/PrensaFormInModal';
+import PrensaFormInModal from '@/components/FormsModals/PrensaFormInModal';
 import Image from 'next/image';
 import { ChevronDown } from 'lucide-react';
 import { useExportar } from '@/hooks/useExport';

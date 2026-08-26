@@ -2,12 +2,12 @@
 import React, { useEffect, useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Modal } from '../../ui/modal';
-import Label from '../../form/Label';
-import Input from '../../form/input/InputField';
+import { Modal } from '../ui/modal';
+import Label from '../form/Label';
+import Input from '../form/input/InputField';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import CulturaService from '../../../../services/CulturaService';
+import CulturaService from '../../../services/CulturaService';
 // Definimos el esquema de validación con Yup
 const validationSchema = Yup.object({
   titulo: Yup.string()

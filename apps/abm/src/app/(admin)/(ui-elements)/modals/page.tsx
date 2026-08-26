@@ -1,9 +1,9 @@
 import PageBreadcrumb from '@/components/common/PageBreadCrumb';
-import DefaultModal from '@/components/example/ModalExample/DefaultModal';
+import DefaultModal from '@/components/FormsModals/DefaultModal';
 
-import FullScreenModal from '@/components/example/ModalExample/FullScreenModal';
-import ModalBasedAlerts from '@/components/example/ModalExample/ModalBasedAlerts';
-import VerticallyCenteredModal from '@/components/example/ModalExample/VerticallyCenteredModal';
+import FullScreenModal from '@/components/FormsModals/FullScreenModal';
+import ModalBasedAlerts from '@/components/FormsModals/ModalBasedAlerts';
+import VerticallyCenteredModal from '@/components/FormsModals/VerticallyCenteredModal';
 import { Metadata } from 'next';
 import React from 'react';
 

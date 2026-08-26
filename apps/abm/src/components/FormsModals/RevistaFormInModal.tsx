@@ -2,21 +2,23 @@
 import React, { useEffect, useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Modal } from '../../ui/modal';
-import Label from '../../form/Label';
-import Input from '../../form/input/InputField';
-import MagazineService from '../../../../services/MagazineService';
+import { Modal } from '../ui/modal';
+import Label from '../form/Label';
+import Input from '../form/input/InputField';
+import MagazineService from '../../../services/MagazineService';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import GeneralService from '../../../../services/GeneralService';
 // Definimos el esquema de validación con Yup
 const validationSchema = Yup.object({
   titulo: Yup.string()
     .required('El título es obligatorio')
     .min(3, 'El título debe tener al menos 3 caracteres'),
+  issueId: Yup.number()
+    .required('Debes seleccionar una revista')
+    .typeError('Selecciona una revista válida'),
 });
 
-export default function PageFormModal({
+export default function RevistaFormInModal({
   isOpen,
   setOpen,
   setFlag,
@@ -27,28 +29,43 @@ export default function PageFormModal({
   setFlag: React.Dispatch<React.SetStateAction<boolean>>;
   flag: boolean;
 }) {
+  const [issues, setIssues] = useState<{ id: number; titulo: string }[]>([]);
   const navigation = useRouter();
   const { auth } = useAuth();
   const closeModal = () => {
     setOpen(false);
   };
 
+  const getIssues = async () => {
+    const response = await MagazineService.getAllIssues({
+      limit: 10,
+      offset: 0,
+    });
+    setIssues(response.data);
+  };
+
+  useEffect(() => {
+    getIssues();
+  }, []);
+
   return (
     <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[584px] p-5 lg:p-10">
       <Formik
         initialValues={{
           titulo: '',
+          issueId: '',
         }}
         validationSchema={validationSchema}
         onSubmit={async (values, { setSubmitting }) => {
           try {
             // Simulamos un guardado en backend
-            const response = await GeneralService.createPage({
+            const response = await MagazineService.create({
+              issueId: values.issueId,
               title: values.titulo,
               id_user: auth.user?.id_user || 0,
             });
-            navigation.push(`/general/paginas/edit/${(response as { id: number }).id}`);
-            console.log('response', response);
+            navigation.push(`/revista/publicaciones/edit/${(response as { id: number }).id}`);
+
             // si salió bien => cerrar modal
             closeModal();
           } catch (error) {
@@ -62,14 +79,32 @@ export default function PageFormModal({
         {({ isSubmitting }) => (
           <Form>
             <h4 className="mb-6 text-lg font-medium text-gray-800 dark:text-white/90">
-              Crear nueva Página
+              Crear nueva publicación
             </h4>
 
             {/* Campo Título */}
             <div className="col-span-2">
-              <Label>Titulo</Label>
-              <Field as={Input} type="text" name="titulo" placeholder="Titulo de la página" />
+              <Label>Título</Label>
+              <Field as={Input} type="text" name="titulo" placeholder="Título de la publicación" />
               <ErrorMessage name="titulo" component="div" className="mt-1 text-sm text-red-500" />
+            </div>
+
+            {/* Campo N° de revista */}
+            <div className="col-span-2 mt-4">
+              <Label>N° de Revista</Label>
+              <Field
+                as="select"
+                name="issueId"
+                className="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-11 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30"
+              >
+                <option value="">Selecciona una revista</option>
+                {issues?.map((issue) => (
+                  <option key={issue.id} value={issue.id}>
+                    {issue.titulo}
+                  </option>
+                ))}
+              </Field>
+              <ErrorMessage name="issueId" component="div" className="mt-1 text-sm text-red-500" />
             </div>
 
             {/* Botón guardar */}

@@ -10,7 +10,7 @@ import ComponentCard from '@/components/common/ComponentCard';
 import TableComponent from '@/components/common/TableComponent';
 import PostService from '../../../../../services/PostService';
 import FiltrosTablaCultura, { FiltrosState } from '@/components/form/FiltrosTablaCultura';
-import CulturaFormInModal from '@/components/example/ModalExample/CulturaFormInModal';
+import CulturaFormInModal from '@/components/FormsModals/CulturaFormInModal';
 
 export default function CategoriasPage() {
   const [filtros, setFiltros] = useState<FiltrosState>({

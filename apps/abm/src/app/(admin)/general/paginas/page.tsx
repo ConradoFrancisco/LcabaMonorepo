@@ -7,7 +7,7 @@ import ComponentCard from '@/components/common/ComponentCard';
 import Search from '@/components/my-components/Search';
 import TableComponent from '@/components/common/TableComponent';
 import GeneralService from '../../../../../services/GeneralService';
-import PageFormModal from '@/components/example/ModalExample/PageFormModal';
+import PageFormModal from '@/components/FormsModals/PageFormModal';
 
 export default function PaginasPage() {
   const [search, setSearch] = useState<string>('');
