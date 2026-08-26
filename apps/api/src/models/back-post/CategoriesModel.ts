@@ -17,21 +17,20 @@ interface FormDataCategory {
 class CategoriesModel {
     public async createCategory({ title, table, id_user }: { title: string, table: string, id_user: number }) {
         try {
-            const queryTranslation = `
-                INSERT INTO ${table}_translations (title)
-            VALUES (?)
-      `;
-            const [result] = (await pool.query(queryTranslation, [title])) as [
+
+            const query = `
+        INSERT INTO ${table} (id_user)
+        VALUES (?)
+      `
+            const [result] = (await pool.query(query, id_user)) as [
                 import('mysql2').ResultSetHeader,
                 any,
             ];
-
-            const query = `
-        INSERT INTO ${table} (fk_id, id_user)
-        VALUES (?,?)
-      `
-
-            const resultTranslation = (await pool.query(query, [result.insertId, id_user])) as [
+            const queryTranslation = `
+                INSERT INTO ${table}_translations (fk_id, title)
+            VALUES (?,?)
+      `;
+            const [resultTranslation] = (await pool.query(queryTranslation, [result.insertId, title])) as [
                 import('mysql2').ResultSetHeader,
                 any,
             ];
