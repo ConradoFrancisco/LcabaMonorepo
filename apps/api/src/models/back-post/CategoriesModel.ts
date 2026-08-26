@@ -1,60 +1,78 @@
 import pool from '../../db/dbConfig';
 
 interface FormDataCategory {
-    id: number;
-    title: string;
-    shortdesc: string;
-    description: string;
-    fk_pageid: number;
-    bgcolor: string;
-    fgcolor: string;
-    keywords: string[];
-    status: number;
-    table: string;
-    orderby: number;
+  id: number;
+  title: string;
+  shortdesc: string;
+  description: string;
+  fk_pageid: number;
+  bgcolor: string;
+  fgcolor: string;
+  keywords: string[];
+  status: number;
+  table: string;
+  orderby: number;
 }
 
 class CategoriesModel {
-    public async createCategory({ title, table, id_user }: { title: string, table: string, id_user: number }) {
-        try {
-            const queryTranslation = `
+  public async createCategory({
+    title,
+    table,
+    id_user,
+  }: {
+    title: string;
+    table: string;
+    id_user: number;
+  }) {
+    try {
+      const queryTranslation = `
                 INSERT INTO ${table}_translations (title)
             VALUES (?)
       `;
-            const [result] = (await pool.query(queryTranslation, [title])) as [
-                import('mysql2').ResultSetHeader,
-                any,
-            ];
-
-            const query = `
+      const [result] = (await pool.query(queryTranslation, [title])) as [
+        import('mysql2').ResultSetHeader,
+        any,
+      ];
+      console.log(result.insertId);
+      const query = `
         INSERT INTO ${table} (fk_id, id_user)
         VALUES (?,?)
-      `
+      `;
 
-            const resultTranslation = (await pool.query(query, [result.insertId, id_user])) as [
-                import('mysql2').ResultSetHeader,
-                any,
-            ];
-            return resultTranslation;
-        } catch (error) {
-            console.error('Error en createCategory:', error);
-            throw new Error('Error al crear la categoría');
-        }
+      const resultTranslation = (await pool.query(query, [result.insertId, id_user])) as [
+        import('mysql2').ResultSetHeader,
+        any,
+      ];
+      return resultTranslation;
+    } catch (error) {
+      console.error('Error en createCategory:', error);
+      throw new Error('Error al crear la categoría');
     }
+  }
 
-    public async editCategory(data: FormDataCategory) {
-        try {
-            const query = `
+  public async editCategory(data: FormDataCategory) {
+    try {
+      const query = `
         UPDATE ${data.table}
         SET title = ?,shortdesc = ?,description = ?,fk_pageid = ?,bgcolor = ?,fgcolor = ?,keywords = ?,status = ?
         WHERE id = ?
       `;
-            const [result] = (await pool.query(query, [data.title, data.shortdesc, data.description, data.fk_pageid, data.bgcolor, data.fgcolor, data.keywords, data.status, data.id])) as [any[], any];
-            return result;
-        } catch (error) {
-            console.error('Error en editCategory:', error);
-            throw new Error('Error al editar la categoría');
-        }
+      const [result] = (await pool.query(query, [
+        data.title,
+        data.shortdesc,
+        data.description,
+        data.fk_pageid,
+        data.bgcolor,
+        data.fgcolor,
+        data.keywords,
+        data.status,
+        data.id,
+      ])) as [any[], any];
+      return result;
+    } catch (error) {
+      console.error('Error en editCategory:', error);
+      throw new Error('Error al editar la categoría');
     }
+  }
 }
 export default new CategoriesModel();

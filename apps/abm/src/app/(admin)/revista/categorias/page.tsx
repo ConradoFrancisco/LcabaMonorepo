@@ -7,7 +7,7 @@ import MagazineService from '../../../../../services/MagazineService';
 import ComponentCard from '@/components/common/ComponentCard';
 import Search from '@/components/my-components/Search';
 import TableComponent from '@/components/common/TableComponent';
-import FormInModal from '@/components/FormsModals/RevistaFormInModal';
+import FormInModal from '@/components/FormsModals/CategoriasFormInModal';
 
 export default function CategoriasPage() {
   const [search, setSearch] = useState<string>('');
