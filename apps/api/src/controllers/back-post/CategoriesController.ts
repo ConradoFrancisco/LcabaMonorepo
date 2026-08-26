@@ -6,7 +6,8 @@ class CategoriesController {
     public async createCategory(req: Request, res: Response): Promise<void> {
         try {
             const { title, table } = req.body;
-            const response = await CategoriesModel.createCategory({ title, table });
+            const id_user = req.body.id_user
+            const response = await CategoriesModel.createCategory({ title, table, id_user });
             res.status(200);
             res.json({ success: true, message: 'Categoría creada exitosamente', data: response });
         } catch (error) {
