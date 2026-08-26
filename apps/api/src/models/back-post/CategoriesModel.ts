@@ -17,12 +17,25 @@ interface FormDataCategory {
 class CategoriesModel {
     public async createCategory({ title, table, id_user }: { title: string, table: string, id_user: number }) {
         try {
-            const query = `
-        INSERT INTO ${table} (title,iduser_ins)
-        VALUES (?,?)
+            const queryTranslation = `
+                INSERT INTO ${table}_translations (title)
+            VALUES (?)
       `;
-            const [result] = (await pool.query(query, [title, id_user])) as [any[], any];
-            return result;
+            const [result] = (await pool.query(queryTranslation, [title])) as [
+                import('mysql2').ResultSetHeader,
+                any,
+            ];
+
+            const query = `
+        INSERT INTO ${table} (fk_id, id_user)
+        VALUES (?,?)
+      `
+
+            const resultTranslation = (await pool.query(query, [result.insertId, id_user])) as [
+                import('mysql2').ResultSetHeader,
+                any,
+            ];
+            return resultTranslation;
         } catch (error) {
             console.error('Error en createCategory:', error);
             throw new Error('Error al crear la categoría');
