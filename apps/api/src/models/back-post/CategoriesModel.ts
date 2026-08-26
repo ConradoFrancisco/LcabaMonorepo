@@ -19,10 +19,10 @@ class CategoriesModel {
         try {
 
             const query = `
-        INSERT INTO ${table} (iduser_ins,section)
+        INSERT INTO ${table} (iduser_ins,iduser_upd,section)
         VALUES (?,?)
       `
-            const [result] = (await pool.query(query, [id_user, 'cat'])) as [
+            const [result] = (await pool.query(query, [id_user, id_user, 'cat'])) as [
                 import('mysql2').ResultSetHeader,
                 any,
             ];
