@@ -42,6 +42,7 @@ export default function CategoriasPage() {
         }
       >
         <Search setSearch={setSearch} tipo={'categorias'} setOffset={setOffset} />
+
         <TableComponent
           data={data}
           loading={loading}

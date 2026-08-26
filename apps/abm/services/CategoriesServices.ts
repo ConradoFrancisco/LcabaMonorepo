@@ -22,7 +22,7 @@ class CategoriesService {
     title: string;
     id_user: number;
     table: string;
-  }): Promise<unknown> {
+  }): Promise<{ data: { id: number } }> {
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API}/categories/create`, {
         title,
