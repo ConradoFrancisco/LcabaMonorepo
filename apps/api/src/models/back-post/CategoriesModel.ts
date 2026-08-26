@@ -19,7 +19,7 @@ class CategoriesModel {
         try {
 
             const query = `
-        INSERT INTO ${table} (id_user)
+        INSERT INTO ${table} (iduser_ins)
         VALUES (?)
       `
             const [result] = (await pool.query(query, id_user)) as [
