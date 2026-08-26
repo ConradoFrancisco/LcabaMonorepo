@@ -61,7 +61,7 @@ export default function CategoriaFormInModal({
               id_user: auth.user?.id_user || 0,
               table: 'magazine_categorias',
             });
-            navigation.push(`/revista/categorias/edit/${(response as { id: number }).id}`);
+            navigation.push(`/revista/categorias/edit/${response.data.id}`);
 
             // si salió bien => cerrar modal
             closeModal();
