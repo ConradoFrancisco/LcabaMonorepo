@@ -22,6 +22,8 @@ export default function RevistaPage() {
     destacado: undefined,
   });
 
+
+
   const [loading, setLoading] = useState(false);
   const { data, types, offset, limit, setOffset, total, categorias, setFlag, flag, setLimit } =
     useData({
