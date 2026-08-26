@@ -31,6 +31,7 @@ import path from 'path';
 import { LaborservicesRouter } from './routes/back-post/LaborservicesRouter';
 import { postRouter } from './routes/back-post/PostRouter';
 import PagesRouter from './routes/back-post/general/PagesRouter';
+import CategoriesRouter from './routes/back-post/CategoriesRouter';
 
 const app = express();
 const PORT = Number(process.env.PORT || 3001);
@@ -74,6 +75,7 @@ app.use('/labor', LaborservicesRouter);
 app.use('/posts', postRouter);
 app.use('/fileserver', fileServerRouter);
 app.use('/pages', PagesRouter);
+app.use('/categories', CategoriesRouter);
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
