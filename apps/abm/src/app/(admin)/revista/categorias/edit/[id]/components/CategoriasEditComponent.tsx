@@ -31,43 +31,57 @@ import {
 import PostService from '../../../../../../../../services/PostService';
 import { useAuth } from '@/context/AuthContext';
 import CategoriasRevistaSeteos from './CategoriasRevistaSeteos';
+import CategoriesServices from '../../../../../../../../services/CategoriesServices';
 
-export default function CategoriasEditComponent({ data }: { data: MagazinePost }) {
-  const { textos, seteos, images, videos, archivos } = data;
-  const [imagesFromDB, setImagesFromDB] = useState<Image[]>(images);
+type CategoriaTipo = Record<string, unknown> & {
+  id: number;
+  title?: string;
+  description?: string;
+  shortdesc?: string;
+  extradesc?: string;
+  subtitle?: string;
+  url?: string;
+  url_ext?: string;
+  images?: Image[];
+  videos?: MagazinePost['videos'];
+  archivos?: MagazinePost['archivos'];
+};
+
+export default function CategoriasEditComponent({ response }: { response: CategoriaTipo }) {
+  const {
+    title,
+    description,
+    shortdesc,
+    extradesc,
+    subtitle,
+    url,
+    url_ext,
+    images,
+    videos,
+    archivos,
+    ...seteos
+  } = response;
+  const textos = {
+    title: title ?? '',
+    description: description ?? '',
+    shortdesc: shortdesc ?? '',
+    extradesc: extradesc ?? '',
+    subtitle: subtitle ?? '',
+    url: url ?? '',
+    url_ext: url_ext ?? '',
+  };
+  const [imagesFromDB, setImagesFromDB] = useState<Image[]>(images ?? []);
   const [nuevasImagenes, setNewImagenes] = useState<File[]>([]);
-  const [videosDb, setVideosDb] = useState(videos);
-  const [archivosFromDb, setArchivosFromDb] = useState(archivos);
+  const [videosDb, setVideosDb] = useState(videos ?? []);
+  const [archivosFromDb, setArchivosFromDb] = useState(archivos ?? []);
   const [nuevosArchivos, setNuevosArchivos] = useState<File[]>([]);
-  const [tituloHeader, setTituloHeader] = useState(data?.textos?.title);
+  const [tituloHeader, setTituloHeader] = useState(title);
   const [activeTab, setActiveTab] = useState('textos');
   const { auth } = useAuth();
   const setSeteos = (newSeteos: EditComponentState['seteos']) => {
     setState((prev) => ({ ...prev, seteos: newSeteos }));
   };
-  const dayMap: Record<string, string> = {
-    sunday: '0',
-    monday: '1',
-    tuesday: '2',
-    wednesday: '3',
-    thursday: '4',
-    friday: '5',
-    saturday: '6',
-  };
-  const formatLineas = (apiData: IDia[]): IDia[] => {
-    if (!apiData) return [];
-    return apiData.map((item) => {
-      const dayKey = (item.day || '').trim().toLowerCase();
-      return {
-        ...item,
-        dia: item.date ? '8' : dayMap[dayKey] || '',
-        desde: item.hour_start ? item.hour_start.substring(0, 5) : '',
-        hasta: item.hour_end ? item.hour_end.substring(0, 5) : '',
-        descripcion: item.date_desc || '',
-        date: item.date || '',
-      };
-    });
-  };
+
   const [state, setState] = useState<EditComponentState>({
     textos: { ...textos },
     seteos: { ...seteos },
@@ -87,7 +101,7 @@ export default function CategoriasEditComponent({ data }: { data: MagazinePost }
           id_userupd: currentUserId,
         },
       };
-      return PostService.editPost(updatedPayload);
+      return CategoriesServices.editCategory(updatedPayload);
     },
     rutaDestino: '/revista/categorias',
     state,
@@ -130,7 +144,7 @@ export default function CategoriasEditComponent({ data }: { data: MagazinePost }
           newImagenes={nuevasImagenes}
           setNewImagenes={setNewImagenes}
           seccion="magazine_categories"
-          postId={seteos.id}
+          postId={response.id as number}
           setImagesFromDB={setImagesFromDB}
         />
       ),
@@ -158,7 +172,7 @@ export default function CategoriasEditComponent({ data }: { data: MagazinePost }
           archivosFromDb={archivosFromDb}
           newArchivos={nuevosArchivos}
           setNewArchivos={setNuevosArchivos}
-          postId={seteos.id}
+          postId={response.id as number}
           seccion="magazine_categories"
           setArchivosFromDb={setArchivosFromDb}
         />
