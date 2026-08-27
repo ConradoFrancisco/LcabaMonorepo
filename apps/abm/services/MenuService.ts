@@ -1,10 +1,9 @@
-import axios from 'axios';
-import { BaseNextResponse } from 'next/dist/server/base-http';
+import apiClient from './apiClient';
 
 class MenuService {
   public async getSideMenu(): Promise<unknown> {
     try {
-      const response = await axios.get(`http://10.151.1.114:3000/cmMenu`);
+      const response = await apiClient.get('/cmMenu');
       return response.data;
     } catch (error) {
       console.error('Error fetching side menu:', error);
@@ -12,7 +11,7 @@ class MenuService {
   }
   public async getAll(): Promise<any[]> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/cmMenu/full`);
+      const response = await apiClient.get('/cmMenu/full');
       return response.data;
     } catch (error) {
       console.error('Error fetching menus', error);

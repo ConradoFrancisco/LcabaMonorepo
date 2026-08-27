@@ -4,6 +4,7 @@ import { VideoItem } from '../EditMagazinePostDTO';
 
 
 class EditCategoriesDTO {
+    public PrefixTable: string;
     public id: number;
     public videos: VideoItem[];
 
@@ -34,6 +35,7 @@ class EditCategoriesDTO {
 
 
     constructor(editParams: EditParams) {
+        this.PrefixTable = editParams.table;
         this.id = editParams.seteos.id;
         this.videos = editParams.newVideos;
         this.translations = {

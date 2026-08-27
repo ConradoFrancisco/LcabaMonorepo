@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 
+import { authJwt } from './middlewares/authJwt';
 import { fileServerRouter } from './routes/back-post/FileServerRouter';
 
 import { menuRouter } from './routes/front-get/menuRouter';
@@ -49,7 +50,7 @@ app.get('/', (_req: Request, res: Response): void => {
   res.send('¡Api Lcaba con Node.js, TypeScript y Express!');
 });
 
-// router
+// Rutas Públicas y de Autenticación
 app.use('/auth', authRouter);
 app.use('/menu', menuRouter);
 app.use('/cmMenu', cmMenuRouter);
@@ -58,24 +59,26 @@ app.use('/area', areaRouter);
 app.use('/banner', bannerRouter);
 app.use('/contratacion', contratacionRouter);
 app.use('/culturas', culturaRouter);
-app.use('/cultura', culturaRouterb);
-app.use('/dgpc', DgpcRouter);
-app.use('/magazine', magazineRouter);
-app.use('/ilcp', IlcpRouter);
-app.use('/funcionarios', funcionariosRouter);
-app.use('/obras', ObrasRouter);
-app.use('/compras', ComprasRouter);
-app.use('/prensa', PrensaRouter);
-app.use('/gacetilla', GacetillaRouter);
-app.use('/taquigrafos', TaquigrafosRouter);
-app.use('/general', GeneralRouter);
-app.use('/upload', docsRouter);
-app.use('/labor', LaborservicesRouter);
-app.use('/posts', postRouter);
+
+// Rutas Administrativas Protegidas con Token JWT
+app.use('/cultura', authJwt, culturaRouterb);
+app.use('/dgpc', authJwt, DgpcRouter);
+app.use('/magazine', authJwt, magazineRouter);
+app.use('/ilcp', authJwt, IlcpRouter);
+app.use('/funcionarios', authJwt, funcionariosRouter);
+app.use('/obras', authJwt, ObrasRouter);
+app.use('/compras', authJwt, ComprasRouter);
+app.use('/prensa', authJwt, PrensaRouter);
+app.use('/gacetilla', authJwt, GacetillaRouter);
+app.use('/taquigrafos', authJwt, TaquigrafosRouter);
+app.use('/general', authJwt, GeneralRouter);
+app.use('/upload', authJwt, docsRouter);
+app.use('/labor', authJwt, LaborservicesRouter);
+app.use('/posts', authJwt, postRouter);
 app.use('/fileserver', fileServerRouter);
-app.use('/pages', PagesRouter);
-app.use('/categories', CategoriesRouter);
-app.use('/issue', IssueRouter)
+app.use('/pages', authJwt, PagesRouter);
+app.use('/categories', authJwt, CategoriesRouter);
+app.use('/issue', authJwt, IssueRouter);
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);

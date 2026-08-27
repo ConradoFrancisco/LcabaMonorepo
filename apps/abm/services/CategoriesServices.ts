@@ -1,4 +1,4 @@
-import axios from 'axios';
+import apiClient from './apiClient';
 
 export interface CategoriesServiceMagazine {
   id: number;
@@ -19,12 +19,21 @@ class CategoriesService {
     limit?: number;
     input?: string;
     table?: string;
+    filtros?: any;
     [key: string]: any;
   }): Promise<any> {
-    const { offset = 0, limit = 0, input = undefined, table = undefined } = params;
+    const { offset = 0, limit = 0, input = undefined, table = undefined, filtros } = params;
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/categories`, {
-        params: { limit, offset, input, table },
+      const response = await apiClient.get('/categories', {
+        params: {
+          limit,
+          offset,
+          input,
+          table,
+          ...(filtros && Object.keys(filtros).length > 0
+            ? { filtros: JSON.stringify(filtros) }
+            : {}),
+        },
       });
       return response.data;
     } catch (error) {
@@ -43,7 +52,7 @@ class CategoriesService {
     table: string;
   }): Promise<{ data: { id: number } }> {
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API}/categories/create`, {
+      const response = await apiClient.post('/categories/create', {
         title,
         id_user,
         table,
@@ -57,7 +66,7 @@ class CategoriesService {
 
   public async getCategoryById(id: string, table: string): Promise<{ id: number; titulo: string; status: number, table: string } | null> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/categories/${id}`, { params: { table } });
+      const response = await apiClient.get(`/categories/${id}`, { params: { table } });
       return response.data;
     } catch (error) {
       console.error('Error fetching category by ID:', error);
@@ -65,24 +74,9 @@ class CategoriesService {
     }
   }
 
-  public async editCategory({
-    id,
-    title,
-    id_user,
-    table,
-  }: {
-    id: number;
-    title: string;
-    id_user: number;
-    table: string;
-  }): Promise<unknown> {
+  public async editCategory(payload: any): Promise<unknown> {
     try {
-      const response = await axios.patch(`${process.env.NEXT_PUBLIC_API}/categories/edit`, {
-        id,
-        title,
-        id_user,
-        table,
-      });
+      const response = await apiClient.put('/categories/edit-full', payload);
       return response.data;
     } catch (error) {
       console.error('Error editing category:', error);

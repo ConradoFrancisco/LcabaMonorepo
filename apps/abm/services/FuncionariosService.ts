@@ -1,5 +1,5 @@
 import { BaseResponse } from '@/hooks/useData';
-import axios from 'axios';
+import apiClient from './apiClient';
 export interface publicacion {
   id: number;
   titulo: string;
@@ -24,7 +24,7 @@ class FuncionariosService {
     categoria?: number;
   }): Promise<BaseResponse<publicacion>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/funcionarios`, {
+      const response = await apiClient.get('/funcionarios', {
         params: { limit, offset, input },
       });
       return response.data;
@@ -43,7 +43,7 @@ class FuncionariosService {
     input?: string;
   }): Promise<BaseResponse<publicacion>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/cultura/categories`, {
+      const response = await apiClient.get('/cultura/categories', {
         params: { limit, offset, input },
       });
       return response.data;
@@ -62,7 +62,7 @@ class FuncionariosService {
     input?: string;
   }): Promise<BaseResponse<publicacion>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/funcionarios/types`, {
+      const response = await apiClient.get('/funcionarios/types', {
         params: { limit, offset, input },
       });
       return response.data;

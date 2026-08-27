@@ -5,7 +5,8 @@ import { Modal } from '../../ui/modal';
 import Select from '../../form/Select';
 import Switch from '../../form/switch/Switch';
 import { toast } from 'react-toastify';
-import axios from 'axios';
+import apiClient from '../../../../services/apiClient';
+
 
 /* eslint-disable @next/next/no-img-element */
 export default function ImageTable({
@@ -42,8 +43,8 @@ export default function ImageTable({
     if (!selectedImage) return;
 
     try {
-      await axios.put(
-        `${process.env.NEXT_PUBLIC_API}/upload/update-image`,
+      await apiClient.put(
+        '/upload/update-image',
         {
           id: postId,
           type: editData.type,
@@ -82,7 +83,7 @@ export default function ImageTable({
     if (!itemToDelete) return;
 
     try {
-      await axios.delete(`${process.env.NEXT_PUBLIC_API}/upload/delete-image`, {
+      await apiClient.delete('/upload/delete-image', {
         data: {
           fk_iddoc: itemToDelete,
           table: seccion,

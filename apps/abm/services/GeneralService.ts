@@ -1,5 +1,5 @@
 import { BaseResponse } from '@/hooks/useData';
-import axios from 'axios';
+import apiClient from './apiClient';
 export interface Magazine {
   id: number;
   titulo: string;
@@ -25,7 +25,7 @@ class GeneralService {
     categoria?: number;
   }): Promise<BaseResponse<Magazine>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/general/pages`, {
+      const response = await apiClient.get('/general/pages', {
         params: { limit, offset, input },
       });
       return response.data;
@@ -37,8 +37,8 @@ class GeneralService {
 
   public async createPage(data: { title: string; id_user: number }): Promise<any> {
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API}/general/pages/create`,
+      const response = await apiClient.post(
+        '/general/pages/create',
         data,
       );
       return response.data;
@@ -60,7 +60,7 @@ class GeneralService {
     pageId?: number;
   }): Promise<BaseResponse<Magazine>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/general/sections`, {
+      const response = await apiClient.get('/general/sections', {
         params: { limit, offset, input, pageId },
       });
       return response.data;
@@ -80,7 +80,7 @@ class GeneralService {
     categoria?: number;
   }): Promise<BaseResponse<Magazine>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/general/banners`, {
+      const response = await apiClient.get('/general/banners', {
         params: { limit, offset, input },
       });
       return response.data;
@@ -92,7 +92,7 @@ class GeneralService {
 
   public async getPageById(id: string): Promise<BaseResponse<Magazine>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/general/pages/${id}`);
+      const response = await apiClient.get(`/general/pages/${id}`);
       return response.data;
     } catch (error) {
       console.error('Error fetching page:', error);
@@ -103,8 +103,8 @@ class GeneralService {
   public async editPage(data: Record<string, any>): Promise<any> {
     const id = data?.seteos?.id;
     try {
-      const response = await axios.put(
-        `${process.env.NEXT_PUBLIC_API}/general/pages/${id}/edit`,
+      const response = await apiClient.put(
+        `/general/pages/${id}/edit`,
         data
       );
       return response.data;
@@ -116,7 +116,7 @@ class GeneralService {
 
   public async getSectionById(id: string): Promise<any> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/general/sections/${id}`);
+      const response = await apiClient.get(`/general/sections/${id}`);
       return response.data;
     } catch (error) {
       console.error('Error fetching section:', error);
@@ -127,8 +127,8 @@ class GeneralService {
   public async editSection(data: Record<string, any>): Promise<any> {
     const id = data?.seteos?.id;
     try {
-      const response = await axios.put(
-        `${process.env.NEXT_PUBLIC_API}/general/sections/${id}/edit`,
+      const response = await apiClient.put(
+        `/general/sections/${id}/edit`,
         data
       );
       return response.data;
@@ -140,8 +140,8 @@ class GeneralService {
 
   public async changeSectionStatus(id: number, status: number): Promise<any> {
     try {
-      const response = await axios.put(
-        `${process.env.NEXT_PUBLIC_API}/general/sections/${id}/status`,
+      const response = await apiClient.put(
+        `/general/sections/${id}/status`,
         { status }
       );
       return response.data;

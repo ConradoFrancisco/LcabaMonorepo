@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Modal } from '../../ui/modal';
 import { toast } from 'react-toastify';
-import axios from 'axios';
+import apiClient from '../../../../services/apiClient';
 import { Edit, Trash2 } from 'lucide-react';
 import ConfirmationModal, {
   ParlamentariaOptions,
@@ -133,7 +133,7 @@ export default function VideoList({
     if (pendingDeleteIsExisting) {
       const video = videosdb[pendingDeleteIndex];
       try {
-        await axios.delete(`${process.env.NEXT_PUBLIC_API}/magazine/video/${video.id}`, {
+        await apiClient.delete(`/magazine/video/${video.id}`, {
           params: { table },
         });
         if (setVideosdb) {
@@ -170,7 +170,7 @@ export default function VideoList({
     if (!selectedVideo) return;
 
     try {
-      await axios.put(`${process.env.NEXT_PUBLIC_API}/magazine/video`, {
+      await apiClient.put('/magazine/video', {
         id: selectedVideo.id,
         title: editData.title,
         description: editData.description,
@@ -183,11 +183,11 @@ export default function VideoList({
         const updatedVideos = videosdb.map((v) =>
           v.id === selectedVideo.id
             ? {
-                ...v,
-                title: editData.title,
-                description: editData.description,
-                url: editData.url,
-              }
+              ...v,
+              title: editData.title,
+              description: editData.description,
+              url: editData.url,
+            }
             : v,
         );
         setVideosdb(updatedVideos);

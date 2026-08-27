@@ -1,10 +1,10 @@
-import axios from 'axios';
+import apiClient from "../../services/apiClient";
 
-export const API_URL = process.env.NEXT_PUBLIC_API || 'http://localhost:3000';
+
 class RevistaService {
   public async getSideMenu(): Promise<unknown> {
     try {
-      const response = await axios.get(`${API_URL}/magazine`);
+      const response = await apiClient.get('/magazine');
       return response.data;
     } catch (error) {
       console.error('Error fetching side menu:', error);

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import CulturaService from '../../../../../../../../services/CulturaService';
 import MultiSelect from '@/components/form/MultiSelect';
+import CategoriesServices from '../../../../../../../../services/CategoriesServices';
 
 const hasRealSelection = (val: unknown) =>
   String(val ?? '')
@@ -119,12 +120,13 @@ export default function CulturaPublicacionSeteos({
   };
 
   const fetchCategorias = async () => {
-    const response = await CulturaService.getAllCategories({
+    const response = await CategoriesServices.getAllCategories({
       limit: 100,
       offset: 0,
+      table: 'cultura_categorias',
     });
     const data = (response.data as unknown as ICategoria[]) || [];
-    const sortedData = [...data].sort((a, b) => a.titulo.localeCompare(b.titulo));
+    const sortedData = [...data].sort((a: any, b: any) => a.titulo.localeCompare(b.titulo));
     const subCategoriasArr = sortedData.filter((cat) => cat.menu === null);
     const categoriasArr = sortedData.filter((cat) => cat.menu !== null);
     setCategorias(categoriasArr);
@@ -225,15 +227,13 @@ export default function CulturaPublicacionSeteos({
               },
             })
           }
-          className={`flex h-6 w-12 items-center rounded-full transition ${
-            seteos.status.data[0] === 1 ? 'bg-green-500' : 'bg-gray-300'
-          }`}
+          className={`flex h-6 w-12 items-center rounded-full transition ${seteos.status.data[0] === 1 ? 'bg-green-500' : 'bg-gray-300'
+            }`}
           aria-label="Alternar publicado"
         >
           <span
-            className={`h-5 w-5 transform rounded-full bg-white shadow transition ${
-              seteos.status.data[0] === 1 ? 'translate-x-6' : 'translate-x-1'
-            }`}
+            className={`h-5 w-5 transform rounded-full bg-white shadow transition ${seteos.status.data[0] === 1 ? 'translate-x-6' : 'translate-x-1'
+              }`}
           />
         </button>
       </div>

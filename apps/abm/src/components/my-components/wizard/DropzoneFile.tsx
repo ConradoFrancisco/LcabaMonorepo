@@ -6,7 +6,7 @@ import ComponentCard from '../../common/ComponentCard';
 import Badge from '../../ui/badge/Badge';
 import { getFileIcon } from '@/app/utils/getIcon';
 import { IArchivo } from '@/types/postTypes';
-import axios from 'axios';
+
 import { toast } from 'react-toastify';
 import { useAuth } from '@/context/AuthContext';
 import { Modal } from '@/components/ui/modal';
@@ -15,6 +15,7 @@ import Switch from '@/components/form/switch/Switch';
 import ConfirmationModal, {
   ParlamentariaOptions,
 } from './InfoParlamentaria/components/modals/ConfirmationModal';
+import apiClient from '../../../../services/apiClient';
 export interface FileDropzoneProps {
   archivosFromDb: IArchivo[];
   newArchivos: File[];
@@ -111,10 +112,8 @@ const FileDropzone: React.FC<FileDropzoneProps> = ({
   const handleEliminarFromDb = async () => {
     if (pendingDeleteId === null) return;
     try {
-      const token = localStorage.getItem('token');
-      await axios.delete(`${process.env.NEXT_PUBLIC_API}/upload/delete-file`, {
+      await apiClient.delete('/upload/delete-file', {
         data: { fk_iddoc: pendingDeleteId, table: seccion, postId },
-        headers: { Authorization: `Bearer ${token}` },
       });
       setArchivosFromDb((prev) => prev.filter((a) => a.fk_iddoc !== pendingDeleteId));
       toast.success('Archivo eliminado correctamente');
@@ -154,16 +153,13 @@ const FileDropzone: React.FC<FileDropzoneProps> = ({
         formData.append('file', file);
       });
 
-      const token = localStorage.getItem('token');
-
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API}/upload/upload-files`,
+      const response = await apiClient.post(
+        '/upload/upload-files',
         formData,
         {
           params: { table: seccion, postId, username: auth.user?.username },
           headers: {
             'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`,
           },
         },
       );
@@ -183,11 +179,10 @@ const FileDropzone: React.FC<FileDropzoneProps> = ({
       <div className="dark:hover:border-brand-500 hover:border-brand-500 cursor-pointer rounded-xl border border-dashed border-gray-300 transition dark:border-gray-700">
         <form
           {...getRootProps()}
-          className={`dropzone rounded-xl border-dashed border-gray-300 p-7 lg:p-10 ${
-            isDragActive
+          className={`dropzone rounded-xl border-dashed border-gray-300 p-7 lg:p-10 ${isDragActive
               ? 'border-brand-500 bg-gray-100 dark:bg-gray-800'
               : 'border-gray-300 bg-gray-50 dark:border-gray-700 dark:bg-gray-900'
-          }`}
+            }`}
           id="demo-upload"
         >
           <input {...getInputProps()} />
@@ -462,9 +457,8 @@ const FileDropzone: React.FC<FileDropzoneProps> = ({
                   console.log(archivoToEdit);
 
                   try {
-                    const token = localStorage.getItem('token');
-                    await axios.put(
-                      `${process.env.NEXT_PUBLIC_API}/upload/update-file`,
+                    await apiClient.put(
+                      '/upload/update-file',
                       {
                         id: postId,
                         fk_iddoc: archivoToEdit.fk_iddoc,
@@ -475,7 +469,6 @@ const FileDropzone: React.FC<FileDropzoneProps> = ({
                       },
                       {
                         params: { table: seccion },
-                        headers: { Authorization: `Bearer ${token}` },
                       },
                     );
                     setArchivosFromDb((prev) =>

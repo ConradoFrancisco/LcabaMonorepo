@@ -1,26 +1,35 @@
 'use client';
 
 import useData from '@/hooks/useData';
-import { useDebounce } from '@/hooks/useDebounce';
 import { useEffect, useState } from 'react';
-import MagazineService from '../../../../../services/MagazineService';
 import ComponentCard from '@/components/common/ComponentCard';
-import Search from '@/components/my-components/Search';
 import TableComponent from '@/components/common/TableComponent';
 import FormInModal from '@/components/FormsModals/CategoriasFormInModal';
 import CategoriesServices from '../../../../../services/CategoriesServices';
+import FiltrosTablaCategoria, {
+  FiltrosCategoriaState,
+} from '@/components/form/FiltrosTablaCategoria';
 
 export default function CategoriasPage() {
-  const [search, setSearch] = useState<string>('');
-  const { debounceValue, loading, setLoading } = useDebounce(search, 1000);
+  const [filtros, setFiltros] = useState<FiltrosCategoriaState>({
+    search: '',
+    fechaDesde: '',
+    fechaHasta: '',
+    status: '',
+    destacado: undefined,
+  });
+  const [loading, setLoading] = useState(false);
   const [abierto, setAbierto] = useState(false);
+
   const { data, offset, limit, setOffset, total, setFlag, flag } = useData({
     getAll: CategoriesServices.getAllCategories,
     loading,
     setLoading,
-    search: debounceValue,
+    search: filtros.search || '',
     table: 'magazine_categorias',
+    filtros,
   });
+
   const [claves, setClaves] = useState<string[]>([]);
 
   useEffect(() => {
@@ -43,7 +52,12 @@ export default function CategoriasPage() {
           </button>
         }
       >
-        <Search setSearch={setSearch} tipo={'categorias'} setOffset={setOffset} />
+        <FiltrosTablaCategoria
+          filtros={filtros}
+          setFiltros={setFiltros}
+          setFlag={setFlag}
+          setOffset={setOffset}
+        />
 
         <TableComponent
           data={data}

@@ -1,19 +1,6 @@
 import pool from '../../db/dbConfig';
+import EditCategoriesDTO from '../../DTOS/categories/EditCategoriesDTO';
 import { IsearchParams } from './MagazineModel';
-
-interface FormDataCategory {
-    id: number;
-    title: string;
-    shortdesc: string;
-    description: string;
-    fk_pageid: number;
-    bgcolor: string;
-    fgcolor: string;
-    keywords: string[];
-    status: number;
-    table: string;
-    orderby: number;
-}
 
 class CategoriesModel {
     public async createCategory({ title, table, id_user }: { title: string, table: string, id_user: number }) {
@@ -57,61 +44,43 @@ class CategoriesModel {
         }
     }
 
-    public async editCategoryTitle({ id, title, table, id_user }: { id: number, title: string, table: string, id_user: number }) {
-        try {
-            const queryTranslation = `
-                UPDATE ${table}_translations
-                SET title = ?
-                WHERE fk_id = ?
-            `;
-            await pool.query(queryTranslation, [title, id]);
-
-            const query = `
-                UPDATE ${table}
-                SET iduser_upd = ?
-                WHERE id = ?
-            `;
-            await pool.query(query, [id_user, id]);
-
-            return { id };
-        } catch (error) {
-            console.error('Error en editCategoryTitle:', error);
-            throw new Error('Error al editar la categoría');
-        }
-    }
-
-    public async editCategory(data: FormDataCategory) {
-        try {
-            const query = `
-        UPDATE ${data.table}
-        SET title = ?,shortdesc = ?,description = ?,fk_pageid = ?,bgcolor = ?,fgcolor = ?,keywords = ?,status = ?
-        WHERE id = ?
-      `;
-            const [result] = (await pool.query(query, [
-                data.title,
-                data.shortdesc,
-                data.description,
-                data.fk_pageid,
-                data.bgcolor,
-                data.fgcolor,
-                data.keywords,
-                data.status,
-                data.id,
-            ])) as [any[], any];
-            return result;
-        } catch (error) {
-            console.error('Error en editCategory:', error);
-            throw new Error('Error al editar la categoría');
-        }
-    }
     public async getAllCategories(params: IsearchParams): Promise<{ data: any[]; total: number }> {
-        let search = '';
+        let filters = '';
         let order = ' ORDER BY a.id DESC';
         let limit = '';
-        const arrayParams: (string | number)[] = [];
+        const arrayParamsCount: any[] = [];
+        const arrayParamsData: any[] = [];
+
         if (params.search) {
-            search = ` WHERE a.title LIKE ? `;
-            arrayParams.push(`%${params.search}%`);
+            filters += ` AND a.title LIKE ? `;
+            arrayParamsCount.push(`%${params.search}%`);
+            arrayParamsData.push(`%${params.search}%`);
+        }
+
+        if (params.filtros?.status) {
+            filters += ` AND a.status = ? `;
+            const statusVal = parseInt(params.filtros.status);
+            arrayParamsCount.push(statusVal);
+            arrayParamsData.push(statusVal);
+        }
+
+        if (params.filtros?.destacado !== undefined && params.filtros?.destacado !== null) {
+            filters += ` AND a.desta = ? `;
+            const destacadoVal = parseInt(params.filtros.destacado);
+            arrayParamsCount.push(destacadoVal);
+            arrayParamsData.push(destacadoVal);
+        }
+
+        if (params.filtros?.fechaDesde) {
+            filters += ` AND a.date_ins >= ? `;
+            arrayParamsCount.push(params.filtros.fechaDesde);
+            arrayParamsData.push(params.filtros.fechaDesde);
+        }
+
+        if (params.filtros?.fechaHasta) {
+            filters += ` AND a.date_ins <= ? `;
+            arrayParamsCount.push(params.filtros.fechaHasta);
+            arrayParamsData.push(params.filtros.fechaHasta);
         }
 
         if (params.order) {
@@ -120,11 +89,11 @@ class CategoriesModel {
 
         if (params.limit) {
             limit = ` LIMIT ?`;
-            arrayParams.push(params.limit);
+            arrayParamsData.push(params.limit);
         }
         if (params.offset) {
             limit += ` OFFSET ? `;
-            arrayParams.push(params.offset);
+            arrayParamsData.push(params.offset);
         } else {
             limit += ` OFFSET 0 `;
         }
@@ -133,10 +102,11 @@ class CategoriesModel {
             const countQuery = `
               SELECT COUNT(*) as total
               FROM ${params.table}_vw a
-              JOIN cm_users_ad b ON b.id_user = a.iduser_upd ${search}
+              JOIN cm_users_ad b ON b.id_user = a.iduser_upd
+              WHERE 1=1 ${filters}
           `;
             const query = `
-              SELECT 
+              SELECT
                   a.id as id,
                   a.menu as menu,
                   a.title as titulo,
@@ -147,14 +117,14 @@ class CategoriesModel {
                   a.orderby as orden,
                   a.url as url,
                   a.date_ins as fecha,
-                  CONCAT(b.name,' ', b.surname) as ultimaAccion 
+                  CONCAT(b.name,' ', b.surname) as ultimaAccion
               FROM ${params.table}_vw a
               JOIN cm_users_ad b ON b.id_user = a.iduser_upd
-                ${search} ${order} ${limit} ;
+              WHERE 1=1 ${filters} ${order} ${limit} ;
           `;
-            const [countRows] = (await pool.query(countQuery, arrayParams)) as [any[], any];
+            const [countRows] = (await pool.query(countQuery, arrayParamsCount)) as [any[], any];
             const total = countRows[0]?.total ?? 0;
-            const [data] = (await pool.query(query, arrayParams)) as [any[], any];
+            const [data] = (await pool.query(query, arrayParamsData)) as [any[], any];
             return {
                 data: data as any[],
                 total: Number(total),
@@ -162,6 +132,61 @@ class CategoriesModel {
         } catch (error) {
             console.error('Error en getAllCategories:', error);
             throw new Error('Error al obtener las categorias');
+        }
+    }
+
+
+    public async editCategorie(data: EditCategoriesDTO) {
+        const mainTable = data.mainTable;
+        const TranslationTable = data.translations;
+        try {
+            const queryTranslations = `
+                UPDATE ${data.PrefixTable}_translations
+                SET title = ?, shortdesc = ?, description = ?, keywords = ?
+                WHERE fk_id = ?
+            `;
+            await pool.query(queryTranslations, [
+                TranslationTable.title,
+                TranslationTable.shortdesc,
+                TranslationTable.description,
+                JSON.stringify(TranslationTable.keywords ?? []),
+                TranslationTable.fk_id,
+            ]);
+
+            const queryMain = `
+                UPDATE ${data.PrefixTable}
+                SET
+                    orderby    = ?,
+                    section    = ?,
+                    bgcolor    = ?,
+                    fgcolor    = ?,
+                    parentid   = ?,
+                    url        = ?,
+                    desta      = ?,
+                    status     = ?,
+                    fk_menuid  = ?,
+                    iduser_upd = ?,
+                    date_upd   = NOW()
+                WHERE id = ?
+            `;
+            await pool.query(queryMain, [
+                mainTable.orderby   ?? null,
+                mainTable.section   ?? null,
+                mainTable.bgColor   ?? null,
+                mainTable.fgColor   ?? null,
+                mainTable.parentid  ?? null,
+                mainTable.url       ?? null,
+                mainTable.desta     ?? null,
+                mainTable.status    ?? null,
+                mainTable.fk_menuid ?? null,
+                mainTable.iduser_upd ?? null,
+                data.id,
+            ]);
+
+            return { id: data.id };
+        } catch (error) {
+            console.error('Error en editCategorie:', error);
+            throw new Error('Error al editar la categoría');
         }
     }
 }

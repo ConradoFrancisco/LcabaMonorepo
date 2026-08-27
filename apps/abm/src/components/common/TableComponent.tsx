@@ -195,14 +195,18 @@ export default function TableComponent({
                               const cellValue = (row as Record<string, unknown>)[clave];
 
                               if (clave === 'status' || clave === 'estado' || clave === 'Estado') {
-                                const isObject =
-                                  typeof cellValue === 'object' && cellValue !== null;
-                                const hasDataArray =
-                                  isObject &&
-                                  Array.isArray((cellValue as { data?: unknown[] }).data);
-                                const isActive =
-                                  hasDataArray &&
-                                  (cellValue as { data?: unknown[] }).data?.[0] === 1;
+                                let isActive = false;
+
+                                if (typeof cellValue === 'number') {
+                                  isActive = cellValue === 1;
+                                } else if (typeof cellValue === 'object' && cellValue !== null) {
+                                  const hasDataArray = Array.isArray(
+                                    (cellValue as { data?: unknown[] }).data,
+                                  );
+                                  isActive =
+                                    hasDataArray &&
+                                    (cellValue as { data?: unknown[] }).data?.[0] === 1;
+                                }
 
                                 return (
                                   <Badge size="sm" color={isActive ? 'success' : 'warning'}>

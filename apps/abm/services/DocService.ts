@@ -1,4 +1,4 @@
-import axios from 'axios';
+import apiClient from './apiClient';
 
 class DocService {
   public async uploadFiles(
@@ -9,9 +9,9 @@ class DocService {
     fileType?: string,
   ) {
     const endpointType = fileType === 'files' ? 'upload-files' : 'upload-images';
-    const URL = `${process.env.NEXT_PUBLIC_API}/upload/${endpointType}`;
+    const URL = `/upload/${endpointType}`;
     try {
-      const response = await axios.post(URL, formData, {
+      const response = await apiClient.post(URL, formData, {
         params: {
           username: auth.user?.username,
           table: seccion,
@@ -28,9 +28,9 @@ class DocService {
     }
   }
   public async updateImage(id: number, type: string, fk_iddoc: number, title: string) {
-    const URL = `${process.env.NEXT_PUBLIC_API}/upload/update-image`;
+    const URL = `/upload/update-image`;
     try {
-      const response = await axios.put(
+      const response = await apiClient.put(
         URL,
         {
           id,

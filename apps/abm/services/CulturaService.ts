@@ -1,6 +1,6 @@
 import { BaseResponse } from '@/hooks/useData';
 import { CulturaPost, EditComponentState } from '@/types/postTypes';
-import axios from 'axios';
+import apiClient from './apiClient';
 
 export interface Cultura {
   id: number;
@@ -26,7 +26,7 @@ class CulturaService {
     input?: string;
   }): Promise<BaseResponse<Cultura>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/cultura/types`, {
+      const response = await apiClient.get('/cultura/types', {
         params: { limit, offset, input },
       });
       return response.data;
@@ -46,7 +46,7 @@ class CulturaService {
     id_user: number;
   }): Promise<unknown> {
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API}/cultura/create`, {
+      const response = await apiClient.post('/cultura/create', {
         categoryId,
         title,
         id_user,
@@ -60,20 +60,19 @@ class CulturaService {
 
   public async getPostById(id: string): Promise<CulturaPost | null> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/cultura/post/${id}`);
+      const response = await apiClient.get(`/cultura/post/${id}`);
 
       return response.data;
     } catch (error) {
       console.error('Error fetching post by ID:', error);
-      console.error(process.env.NEXT_PUBLIC_API, id);
       return null;
     }
   }
 
   public async editPost(formData: EditComponentState) {
     try {
-      const response = await axios.patch(
-        `${process.env.NEXT_PUBLIC_API}/cultura/post/edit`,
+      const response = await apiClient.patch(
+        '/cultura/post/edit',
         formData,
         {
           headers: {

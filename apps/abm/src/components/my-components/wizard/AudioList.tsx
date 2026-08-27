@@ -3,12 +3,13 @@
 import { useState } from 'react';
 import { Modal } from '../../ui/modal';
 import { toast } from 'react-toastify';
-import axios from 'axios';
+
 import { Edit, Trash2 } from 'lucide-react';
 import { IAudio } from '@/types/postTypes';
 import ConfirmationModal, {
   ParlamentariaOptions,
 } from './InfoParlamentaria/components/modals/ConfirmationModal';
+import apiClient from '../../../../services/apiClient';
 
 interface NewIAudio {
   url: string;
@@ -114,7 +115,7 @@ export default function AudioList({
     if (pendingDeleteIsExisting) {
       const audio = audiosdb[pendingDeleteIndex];
       try {
-        await axios.delete(`${process.env.NEXT_PUBLIC_API}/magazine/audio/${audio.id}`);
+        await apiClient.delete(`/magazine/audio/${audio.id}`);
         if (setAudiosdb) {
           setAudiosdb(audiosdb.filter((_, i) => i !== pendingDeleteIndex));
         }
@@ -143,7 +144,7 @@ export default function AudioList({
     if (!selectedAudio) return;
 
     try {
-      await axios.put(`${process.env.NEXT_PUBLIC_API}/magazine/audio`, {
+      await apiClient.put('/magazine/audio', {
         id: selectedAudio.id,
         title: editData.title,
         description: editData.description,

@@ -1,5 +1,5 @@
 import { BaseResponse } from '@/hooks/useData';
-import axios from 'axios';
+import apiClient from './apiClient';
 export interface publicacion {
   id: number;
   titulo: string;
@@ -24,7 +24,7 @@ class DgpcService {
     categoria?: number;
   }): Promise<BaseResponse<publicacion>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/dgpc`, {
+      const response = await apiClient.get('/dgpc', {
         params: { limit, offset, input },
       });
       return response.data;
@@ -44,7 +44,7 @@ class DgpcService {
     categoria?: number;
   }): Promise<BaseResponse<publicacion>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/dgpc/types`, {
+      const response = await apiClient.get('/dgpc/types', {
         params: { limit, offset, input },
       });
       return response.data;
@@ -64,7 +64,7 @@ class DgpcService {
     categoria?: number;
   }): Promise<BaseResponse<publicacion>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/dgpc/posts`, {
+      const response = await apiClient.get('/dgpc/posts', {
         params: { limit, offset, input },
       });
       return response.data;
@@ -84,7 +84,7 @@ class DgpcService {
     categoria?: number;
   }): Promise<BaseResponse<publicacion>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/dgpc/posts/types`, {
+      const response = await apiClient.get('/dgpc/posts/types', {
         params: { limit, offset, input },
       });
       return response.data;

@@ -40,7 +40,7 @@ export default function CulturaEditComponent({ data }: { data: CulturaPost }) {
   const { auth } = useAuth();
   // MAIN DATA POR PROPS
   const { textos, seteos, images, archivos, videos, dias, infoParlamentaria } = data;
-  console.table(data);
+  console.log('he aqui el token:', auth.token);
   const [tituloHeader, setTituloHeader] = useState(data?.textos?.title);
   // IMAGENES NUEVAS
   const [imagesFromDB, setImagesFromDB] = useState<Image[]>(images);
@@ -85,11 +85,11 @@ export default function CulturaEditComponent({ data }: { data: CulturaPost }) {
 
   const publicUrl = seteos?.id
     ? buildPublicUrlGeneral({
-        origin: siteUrl,
-        section: 'cultura_posts',
-        title: titulo,
-        id: seteos.id,
-      })
+      origin: siteUrl,
+      section: 'cultura_posts',
+      title: titulo,
+      id: seteos.id,
+    })
     : '';
 
   const tabs: Itabs[] = [

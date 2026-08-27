@@ -33,6 +33,7 @@ export interface Iday {
   descripcion?: string;
 }
 export type EditParams = {
+  table: string;
   textos: {
     title: string;
     subtitle: string;

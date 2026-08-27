@@ -1,10 +1,10 @@
-import axios from 'axios';
+import apiClient from './apiClient';
 
 class LaborService {
   public async getExpedienteByNroyAnio(numero: number, anio: number) {
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API}/labor/getExpedienteByNroyAnio`,
+      const response = await apiClient.post(
+        '/labor/getExpedienteByNroyAnio',
         { numero, anio },
       );
       return response.data;
@@ -16,7 +16,7 @@ class LaborService {
 
   public async GetDespachoNroAno(numero: number, anio: number) {
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API}/labor/GetDespachoNroAno`, {
+      const response = await apiClient.post('/labor/GetDespachoNroAno', {
         numero,
         anio,
       });
@@ -29,7 +29,7 @@ class LaborService {
 
   public async GetSancionNroDeLey(numero: number) {
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API}/labor/GetSancionNroDeLey`, {
+      const response = await apiClient.post('/labor/GetSancionNroDeLey', {
         numero,
       });
       return response.data;
@@ -41,8 +41,8 @@ class LaborService {
 
   public async GetSancionNroOrdenAnoParlamentario(numero: number, anio: number) {
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API}/labor/GetSancionNroOrdenAnoParlamentario`,
+      const response = await apiClient.post(
+        '/labor/GetSancionNroOrdenAnoParlamentario',
         { numero, anio },
       );
       return response.data;
@@ -53,8 +53,8 @@ class LaborService {
   }
   public async GetComisiones(title: string) {
     try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API}/labor/GetComisionesActivas`,
+      const response = await apiClient.get(
+        '/labor/GetComisionesActivas',
         { params: { title } },
       );
       return response;
@@ -70,8 +70,8 @@ class LaborService {
     limit: number,
   ) {
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API}/labor/getAudienciasPorRangoFecha`,
+      const response = await apiClient.post(
+        '/labor/getAudienciasPorRangoFecha',
         { fch_desde, fch_hasta },
         { params: { page, limit } },
       );
@@ -83,8 +83,8 @@ class LaborService {
   }
   public async getDiputados(search: string) {
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API}/labor/getDiputadosHistorico`,
+      const response = await apiClient.post(
+        '/labor/getDiputadosHistorico',
         { search },
       );
       return response.data;
@@ -101,8 +101,8 @@ class LaborService {
   ) {
     console.log();
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API}/labor/GetSesionesAvanzado`,
+      const response = await apiClient.post(
+        '/labor/GetSesionesAvanzado',
         { fch_desde, fch_hasta },
         { params: { page, limit } },
       );

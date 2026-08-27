@@ -1,5 +1,5 @@
 import { BaseResponse } from '@/hooks/useData';
-import axios from 'axios';
+import apiClient from './apiClient';
 import { EditComponentState, Post } from '@/types/postTypes';
 
 class PostService {
@@ -17,7 +17,7 @@ class PostService {
     filtros?: Record<string, any>;
   }): Promise<BaseResponse<Post[]>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/posts`, {
+      const response = await apiClient.get('/posts', {
         params: { limit, offset, input, table, filtros },
       });
       return response.data;
@@ -28,7 +28,7 @@ class PostService {
   }
   public async getPostById(id: string, table: string): Promise<any | null> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/posts/post/${id}`, {
+      const response = await apiClient.get(`/posts/post/${id}`, {
         params: { table },
       });
       return response.data;
@@ -39,7 +39,7 @@ class PostService {
   }
   public async getTypes(table: string, gacetilla: boolean): Promise<any[] | null> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/posts/types`, {
+      const response = await apiClient.get('/posts/types', {
         params: { table, gacetilla },
       });
       return response.data;
@@ -55,8 +55,8 @@ class PostService {
     table?: string,
   ): Promise<any | null> {
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API}/posts/post/${idPost}/legislador`,
+      const response = await apiClient.post(
+        `/posts/post/${idPost}/legislador`,
         {
           idLegislador: idLegislador,
           UserId: userId,
@@ -79,8 +79,8 @@ class PostService {
     table?: string,
   ): Promise<any | null> {
     try {
-      const response = await axios.delete(
-        `${process.env.NEXT_PUBLIC_API}/posts/post/${idPost}/legislador`,
+      const response = await apiClient.delete(
+        `/posts/post/${idPost}/legislador`,
         {
           params: { idLegislador, UserId: userId, table },
         },
@@ -98,8 +98,8 @@ class PostService {
     table?: string,
   ): Promise<any | null> {
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API}/posts/post/${idPost}/sesion`,
+      const response = await apiClient.post(
+        `/posts/post/${idPost}/sesion`,
         { idSesion, UserId: userId },
         { params: { table } },
       );
@@ -116,8 +116,8 @@ class PostService {
     table?: string,
   ): Promise<any> {
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API}/posts/post/${idPost}/audiencia`,
+      const response = await apiClient.post(
+        `/posts/post/${idPost}/audiencia`,
         { idAudiencia, UserId, table },
         {},
       );
@@ -135,8 +135,8 @@ class PostService {
     table?: string,
   ): Promise<any> {
     try {
-      const response = await axios.delete(
-        `${process.env.NEXT_PUBLIC_API}/posts/post/${idPost}/audiencia`,
+      const response = await apiClient.delete(
+        `/posts/post/${idPost}/audiencia`,
         {
           data: { idAudiencia, UserId, table },
         },
@@ -154,8 +154,8 @@ class PostService {
     table?: string,
   ): Promise<any | null> {
     try {
-      const response = await axios.delete(
-        `${process.env.NEXT_PUBLIC_API}/posts/post/${idPost}/sesion`,
+      const response = await apiClient.delete(
+        `/posts/post/${idPost}/sesion`,
         {
           data: { idSesion, UserId: userId },
           params: { table },
@@ -175,7 +175,7 @@ class PostService {
   }): Promise<any | null> {
     console.log('PostService.create: Sending data to backend:', data);
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API}/posts/post/create`, data);
+      const response = await apiClient.post('/posts/post/create', data);
       console.log('PostService.create: Backend response:', response.data);
       return response.data;
     } catch (error) {
@@ -185,7 +185,7 @@ class PostService {
   }
   public async getAllTypes(table: string): Promise<any[] | null> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/posts/types`, {
+      const response = await apiClient.get('/posts/types', {
         params: { table },
       });
       return response.data;
@@ -201,8 +201,8 @@ class PostService {
     table?: string,
   ): Promise<any> {
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API}/posts/post/${idPost}/expediente`,
+      const response = await apiClient.post(
+        `/posts/post/${idPost}/expediente`,
         { idExpediente, UserId, table },
         {},
       );
@@ -219,8 +219,8 @@ class PostService {
     table?: string,
   ): Promise<any> {
     try {
-      const response = await axios.delete(
-        `${process.env.NEXT_PUBLIC_API}/posts/post/${idPost}/expediente`,
+      const response = await apiClient.delete(
+        `/posts/post/${idPost}/expediente`,
         {
           data: { idExpediente, UserId, table },
         },
@@ -239,8 +239,8 @@ class PostService {
     table?: string,
   ): Promise<any> {
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API}/posts/post/${idPost}/comision`,
+      const response = await apiClient.post(
+        `/posts/post/${idPost}/comision`,
         { idComision, UserId, table },
         {},
       );
@@ -258,8 +258,8 @@ class PostService {
     table?: string,
   ): Promise<any> {
     try {
-      const response = await axios.delete(
-        `${process.env.NEXT_PUBLIC_API}/posts/post/${idPost}/comision`,
+      const response = await apiClient.delete(
+        `/posts/post/${idPost}/comision`,
         {
           data: { idComision, UserId, table },
         },
@@ -273,8 +273,8 @@ class PostService {
   public async editPost(formData: EditComponentState) {
     console.log(formData);
     try {
-      const response = await axios.patch(
-        `${process.env.NEXT_PUBLIC_API}/magazine/post/edit/`,
+      const response = await apiClient.patch(
+        '/magazine/post/edit/',
         formData,
         {
           headers: {
@@ -291,7 +291,7 @@ class PostService {
   }
   public async deletePost(idPost: string | number, table: string): Promise<any> {
     try {
-      const response = await axios.delete(`${process.env.NEXT_PUBLIC_API}/posts/post/${idPost}`, {
+      const response = await apiClient.delete(`/posts/post/${idPost}`, {
         params: { table },
       });
       return response.data;
@@ -307,8 +307,8 @@ class PostService {
     table: string,
   ): Promise<any> {
     try {
-      const response = await axios.patch(
-        `${process.env.NEXT_PUBLIC_API}/posts/post/${idPost}/status`,
+      const response = await apiClient.patch(
+        `/posts/post/${idPost}/status`,
         { status },
         { params: { table } },
       );
@@ -324,8 +324,8 @@ class PostService {
     table: string,
   ): Promise<any> {
     try {
-      const response = await axios.patch(
-        `${process.env.NEXT_PUBLIC_API}/posts/post/${idPost}`,
+      const response = await apiClient.patch(
+        `/posts/post/${idPost}`,
         { typeId },
         { params: { table } },
       );

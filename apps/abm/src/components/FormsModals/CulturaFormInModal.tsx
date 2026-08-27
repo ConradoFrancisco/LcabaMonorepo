@@ -8,6 +8,7 @@ import Input from '../form/input/InputField';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import CulturaService from '../../../services/CulturaService';
+import CategoriesServices from '../../../services/CategoriesServices';
 // Definimos el esquema de validación con Yup
 const validationSchema = Yup.object({
   titulo: Yup.string()
@@ -37,11 +38,12 @@ export default function CulturaFormInModal({
   };
 
   const getCategories = async () => {
-    const response = await CulturaService.getAllCategories({
+    const response = await CategoriesServices.getAllCategories({
       limit: 70,
       offset: 0,
+      table: 'cultura_categorias',
     });
-    const sorted = (response.data || []).sort((a, b) => a.titulo.localeCompare(b.titulo));
+    const sorted = (response.data || []).sort((a: any, b: any) => a.titulo.localeCompare(b.titulo));
     setCategories(sorted);
     console.log(sorted);
   };

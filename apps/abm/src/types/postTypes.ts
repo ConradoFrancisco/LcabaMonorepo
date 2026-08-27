@@ -105,6 +105,26 @@ export interface CulturaPost {
   audios: IAudio[];
 }
 
+export interface ISeteosIssue {
+  id: number;
+  magazine_number?: number;
+  numero?: number;
+  url?: string;
+  bgcolor?: string | null;
+  textcolor?: string | null;
+  status?: BufferField | number | boolean;
+  iduser_ins?: number;
+  date_ins?: string;
+  iduser_upd?: number;
+  date_upd?: string;
+  title?: string;
+  titulo?: string;
+  description?: string;
+  shortdesc?: string;
+  keywords?: string[];
+  [key: string]: any;
+}
+
 export interface ISeteosCategoriasRevista {
   titulo: string;
   fk_id_category: number;
@@ -421,12 +441,12 @@ export interface NewVideoItem {
 export type EditComponentState<T = any> = {
   textos: {
     title: string;
-    subtitle: string;
-    shortdesc: string;
-    extradesc: string;
-    url: string;
-    url_ext: string;
-    description: string;
+    subtitle?: string;
+    shortdesc?: string;
+    extradesc?: string;
+    url?: string;
+    url_ext?: string;
+    description?: string;
     text_footer?: string;
     abbreviation?: string;
     keywords?: string;

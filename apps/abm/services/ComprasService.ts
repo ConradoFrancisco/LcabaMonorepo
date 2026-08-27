@@ -1,5 +1,5 @@
 import { BaseResponse } from '@/hooks/useData';
-import axios from 'axios';
+import apiClient from './apiClient';
 export interface Magazine {
   id: number;
   titulo: string;
@@ -25,7 +25,7 @@ class ComprasService {
     categoria?: number;
   }): Promise<BaseResponse<Magazine>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/compras/contrataciones`, {
+      const response = await apiClient.get('/compras/contrataciones', {
         params: { limit, offset, input },
       });
       return response.data;
@@ -45,7 +45,7 @@ class ComprasService {
     categoria?: number;
   }): Promise<BaseResponse<Magazine>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/compras/licitaciones`, {
+      const response = await apiClient.get('/compras/licitaciones', {
         params: { limit, offset, input },
       });
       return response.data;

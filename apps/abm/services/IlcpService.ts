@@ -1,5 +1,5 @@
 import { BaseResponse } from '@/hooks/useData';
-import axios from 'axios';
+import apiClient from './apiClient';
 export interface publicacion {
   id: number;
   titulo: string;
@@ -24,7 +24,7 @@ class IlcpService {
     categoria?: number;
   }): Promise<BaseResponse<publicacion>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/ilcp/beneficios`, {
+      const response = await apiClient.get('/ilcp/beneficios', {
         params: { limit, offset, input },
       });
       console.log(response);
@@ -45,7 +45,7 @@ class IlcpService {
     input?: string;
   }): Promise<BaseResponse<publicacion>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/ilcp/cursos`, {
+      const response = await apiClient.get('/ilcp/cursos', {
         params: { limit, offset, input },
       });
       return response.data;
@@ -64,7 +64,7 @@ class IlcpService {
     input?: string;
   }): Promise<BaseResponse<publicacion>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/ilcp/docentes`, {
+      const response = await apiClient.get('/ilcp/docentes', {
         params: { limit, offset, input },
       });
       return response.data;
@@ -83,7 +83,7 @@ class IlcpService {
     input?: string;
   }): Promise<BaseResponse<publicacion>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/ilcp/tipos`, {
+      const response = await apiClient.get('/ilcp/tipos', {
         params: { limit, offset, input },
       });
       return response.data;
@@ -102,7 +102,7 @@ class IlcpService {
     input?: string;
   }): Promise<BaseResponse<publicacion>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/ilcp/categorias`, {
+      const response = await apiClient.get('/ilcp/categorias', {
         params: { limit, offset, input },
       });
       return response.data;
@@ -121,7 +121,7 @@ class IlcpService {
     input?: string;
   }): Promise<BaseResponse<publicacion>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/ilcp/cursos/salones`, {
+      const response = await apiClient.get('/ilcp/cursos/salones', {
         params: { limit, offset, input },
       });
       return response.data;
@@ -140,7 +140,7 @@ class IlcpService {
     input?: string;
   }): Promise<BaseResponse<publicacion>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/ilcp/origenes`, {
+      const response = await apiClient.get('/ilcp/origenes', {
         params: { limit, offset, input },
       });
       return response.data;
@@ -159,7 +159,7 @@ class IlcpService {
     input?: string;
   }): Promise<BaseResponse<publicacion>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/ilcp/posts`, {
+      const response = await apiClient.get('/ilcp/posts', {
         params: { limit, offset, input },
       });
       return response.data;
@@ -178,7 +178,7 @@ class IlcpService {
     input?: string;
   }): Promise<BaseResponse<publicacion>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/ilcp/post/types`, {
+      const response = await apiClient.get('/ilcp/post/types', {
         params: { limit, offset, input },
       });
       return response.data;
@@ -197,7 +197,7 @@ class IlcpService {
     input?: string;
   }): Promise<BaseResponse<publicacion>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/ilcp/modulos`, {
+      const response = await apiClient.get('/ilcp/modulos', {
         params: { limit, offset, input },
       });
       return response.data;

@@ -1,6 +1,6 @@
 import { BaseResponse } from '@/hooks/useData';
 import { EditComponentState, MagazinePost } from '@/types/postTypes';
-import axios from 'axios';
+import apiClient from './apiClient';
 
 export interface Magazine {
   id: number;
@@ -27,7 +27,7 @@ class MagazineService {
     categoria?: number;
   }): Promise<BaseResponse<Magazine>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/magazine`, {
+      const response = await apiClient.get('/magazine', {
         params: { limit, offset, input },
       });
       return response.data;
@@ -47,7 +47,7 @@ class MagazineService {
     input?: string;
   }): Promise<BaseResponse<Magazine>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/magazine/issues`, {
+      const response = await apiClient.get('/magazine/issues', {
         params: { limit, offset, input },
       });
       return response.data;
@@ -67,7 +67,7 @@ class MagazineService {
     input?: string;
   }): Promise<BaseResponse<Magazine>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/magazine/types`, {
+      const response = await apiClient.get('/magazine/types', {
         params: { limit, offset, input },
       });
       return response.data;
@@ -87,7 +87,7 @@ class MagazineService {
     id_user: number;
   }): Promise<unknown> {
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API}/magazine`, {
+      const response = await apiClient.post('/magazine', {
         issueId,
         title,
         id_user,
@@ -101,7 +101,7 @@ class MagazineService {
 
   public async getPostById(id: string): Promise<MagazinePost | null> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/magazine/post/${id}`);
+      const response = await apiClient.get(`/magazine/post/${id}`);
       return response.data;
     } catch (error) {
       console.error('Error fetching post by ID:', error);
@@ -112,8 +112,8 @@ class MagazineService {
   public async editPost(formData: EditComponentState) {
     console.log(formData);
     try {
-      const response = await axios.patch(
-        `${process.env.NEXT_PUBLIC_API}/magazine/post/edit/`,
+      const response = await apiClient.patch(
+        '/magazine/post/edit/',
         formData,
         {
           headers: {

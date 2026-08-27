@@ -8,6 +8,7 @@ import axios from 'axios';
 import { Image } from '@/types/postTypes';
 import { toast } from 'react-toastify';
 import { useAuth } from '@/context/AuthContext';
+import apiClient from '../../../../services/apiClient';
 
 interface DropzoneProps {
   imagesFromDB: Image[];
@@ -54,9 +55,8 @@ const DropzoneComponent: React.FC<DropzoneProps> = ({
         formData.append('file', file);
       });
 
-      const token = localStorage.getItem('token');
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API}/upload/upload-images`,
+      const response = await apiClient.post(
+        '/upload/upload-images',
         formData,
         {
           params: {
@@ -66,7 +66,6 @@ const DropzoneComponent: React.FC<DropzoneProps> = ({
           },
           headers: {
             'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`,
           },
         },
       );
@@ -84,11 +83,10 @@ const DropzoneComponent: React.FC<DropzoneProps> = ({
     <ComponentCard title="Subir Imágenes">
       <div
         {...getRootProps()}
-        className={`cursor-pointer rounded-xl border border-dashed p-7 transition lg:p-10 ${
-          isDragActive
-            ? 'border-brand-500 bg-gray-100 dark:bg-gray-800'
-            : 'border-gray-300 bg-gray-50 dark:border-gray-700 dark:bg-gray-900'
-        }`}
+        className={`cursor-pointer rounded-xl border border-dashed p-7 transition lg:p-10 ${isDragActive
+          ? 'border-brand-500 bg-gray-100 dark:bg-gray-800'
+          : 'border-gray-300 bg-gray-50 dark:border-gray-700 dark:bg-gray-900'
+          }`}
       >
         <input {...getInputProps()} />
         <div className="text-center">

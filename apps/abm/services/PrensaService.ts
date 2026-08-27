@@ -1,6 +1,6 @@
 import { BaseResponse } from '@/hooks/useData';
 import { EditComponentState } from '@/types/postTypes';
-import axios from 'axios';
+import apiClient from './apiClient';
 
 export interface Magazine {
   id: number;
@@ -27,7 +27,7 @@ class PrensaService {
     categoria?: number;
   }): Promise<BaseResponse<Magazine>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/prensa`, {
+      const response = await apiClient.get('/prensa', {
         params: { limit, offset, input },
       });
       return response.data;
@@ -47,7 +47,7 @@ class PrensaService {
     categoria?: number;
   }): Promise<BaseResponse<Magazine>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/prensa/types`, {
+      const response = await apiClient.get('/prensa/types', {
         params: { limit, offset, input },
       });
       return response.data;
@@ -67,7 +67,7 @@ class PrensaService {
     categoria?: number;
   }): Promise<BaseResponse<Magazine>> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/prensa/suscriptores`, {
+      const response = await apiClient.get('/prensa/suscriptores', {
         params: { limit, offset, input },
       });
       return response.data;
@@ -79,7 +79,7 @@ class PrensaService {
   public async editPost(formData: EditComponentState) {
     console.log(formData, 'acaformData');
     try {
-      const response = await axios.patch(`${process.env.NEXT_PUBLIC_API}/prensa/edit`, formData, {
+      const response = await apiClient.patch('/prensa/edit', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

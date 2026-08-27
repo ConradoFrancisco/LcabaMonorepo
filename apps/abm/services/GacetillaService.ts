@@ -1,13 +1,11 @@
-import axios from 'axios';
-
-const API_URL = process.env.NEXT_PUBLIC_API || 'http://localhost:3000';
+import apiClient from './apiClient';
 
 class GacetillaService {
   /**
    * Busca publicaciones
    */
   async searchPublications(query: string) {
-    const response = await axios.get(`${API_URL}/gacetilla/search-publications`, {
+    const response = await apiClient.get('/gacetilla/search-publications', {
       params: { q: query },
     });
     return response.data;
@@ -17,7 +15,7 @@ class GacetillaService {
    * Busca suscriptores
    */
   async searchSubscribers(query: string) {
-    const response = await axios.get(`${API_URL}/gacetilla/search-subscribers`, {
+    const response = await apiClient.get('/gacetilla/search-subscribers', {
       params: { q: query },
     });
     return response.data;
@@ -32,7 +30,7 @@ class GacetillaService {
     message: string;
     publicationId?: number;
   }) {
-    const response = await axios.post(`${API_URL}/gacetilla/send`, data);
+    const response = await apiClient.post('/gacetilla/send', data);
     return response.data;
   }
 }

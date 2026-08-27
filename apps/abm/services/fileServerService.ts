@@ -1,27 +1,14 @@
 // \Lcaba-Admin\services\fileServerService.ts
-import axios from 'axios';
-
-const API_URL = process.env.NEXT_PUBLIC_API;
-
-function getToken() {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem('token');
-}
-
-function authHeaders() {
-  return { Authorization: `Bearer ${getToken()}` };
-}
+import apiClient from './apiClient';
 
 class FileServerService {
   // Listar archivos
   public async listFiles() {
     try {
-      const response = await axios.get(`${API_URL}/fileserver/list`, {
-        headers: authHeaders(),
-      });
+      const response = await apiClient.get('/fileserver/list');
       return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) return error.response.data;
+    } catch (error: any) {
+      if (error.response) return error.response.data;
       throw error;
     }
   }
@@ -32,15 +19,14 @@ class FileServerService {
       const formData = new FormData();
       files.forEach((file) => formData.append('files', file));
 
-      const response = await axios.post(`${API_URL}/fileserver/_pagedata`, formData, {
+      const response = await apiClient.post('/fileserver/_pagedata', formData, {
         headers: {
-          ...authHeaders(),
           'Content-Type': 'multipart/form-data',
         },
       });
       return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) return error.response.data;
+    } catch (error: any) {
+      if (error.response) return error.response.data;
       throw error;
     }
   }
@@ -48,10 +34,9 @@ class FileServerService {
   // Descargar archivo
   public async downloadFile(filename: string) {
     try {
-      const response = await axios.get(
-        `${API_URL}/fileserver/download/${encodeURIComponent(filename)}`,
+      const response = await apiClient.get(
+        `/fileserver/download/${encodeURIComponent(filename)}`,
         {
-          headers: authHeaders(),
           responseType: 'blob',
         },
       );
@@ -65,8 +50,8 @@ class FileServerService {
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) return error.response.data;
+    } catch (error: any) {
+      if (error.response) return error.response.data;
       throw error;
     }
   }
@@ -74,12 +59,10 @@ class FileServerService {
   // Eliminar archivo
   public async deleteFile(filename: string) {
     try {
-      const response = await axios.delete(`${API_URL}/fileserver/${encodeURIComponent(filename)}`, {
-        headers: authHeaders(),
-      });
+      const response = await apiClient.delete(`/fileserver/${encodeURIComponent(filename)}`);
       return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) return error.response.data;
+    } catch (error: any) {
+      if (error.response) return error.response.data;
       throw error;
     }
   }
