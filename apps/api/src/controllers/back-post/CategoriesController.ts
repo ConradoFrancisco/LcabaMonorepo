@@ -19,7 +19,7 @@ class CategoriesController {
     public async getCategoryById(req: Request, res: Response): Promise<void> {
         try {
             const id = Number(req.params.id);
-            const response = await CategoriesModel.getCategoryById(id);
+            const response = await CategoriesModel.getCategoryById(id, req.query.table as string);
             res.status(200);
             res.json(response);
         } catch (error) {

@@ -42,11 +42,11 @@ class CategoriesModel {
         }
     }
 
-    public async getCategoryById(id: number) {
+    public async getCategoryById(id: number, table: string) {
         try {
             const query = `
-        SELECT id, title as titulo, status
-        FROM magazine_categorias_vw
+        SELECT *
+        FROM ${table}_vw
         WHERE id = ?
       `;
             const [rows] = (await pool.query(query, [id])) as [any[], any];

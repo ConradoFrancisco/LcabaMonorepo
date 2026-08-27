@@ -55,9 +55,9 @@ class CategoriesService {
     }
   }
 
-  public async getCategoryById(id: string): Promise<{ id: number; titulo: string; status: number } | null> {
+  public async getCategoryById(id: string, table: string): Promise<{ id: number; titulo: string; status: number, table: string } | null> {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/categories/${id}`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/categories/${id}`, { params: { table } });
       return response.data;
     } catch (error) {
       console.error('Error fetching category by ID:', error);
