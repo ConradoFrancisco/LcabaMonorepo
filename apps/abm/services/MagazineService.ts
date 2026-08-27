@@ -57,25 +57,6 @@ class MagazineService {
     }
   }
 
-  public async getAllCategories({
-    offset = 0,
-    limit = 0,
-    input = undefined,
-  }: {
-    offset?: number;
-    limit?: number;
-    input?: string;
-  }): Promise<BaseResponse<Magazine>> {
-    try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/magazine/categories`, {
-        params: { limit, offset, input },
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching magazine categories:', error);
-      throw error;
-    }
-  }
   public async getAllTypes({
     offset = 0,
     limit = 0,

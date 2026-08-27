@@ -14,6 +14,25 @@ export interface CategoriesServiceMagazine {
 }
 
 class CategoriesService {
+  public async getAllCategories(params: {
+    offset?: number;
+    limit?: number;
+    input?: string;
+    table?: string;
+    [key: string]: any;
+  }): Promise<any> {
+    const { offset = 0, limit = 0, input = undefined, table = undefined } = params;
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/categories`, {
+        params: { limit, offset, input, table },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching magazine categories:', error);
+      throw error;
+    }
+  }
+
   public async createCategory({
     title,
     id_user,

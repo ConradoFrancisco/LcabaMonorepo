@@ -8,6 +8,7 @@ import Input from '../form/input/InputField';
 import MagazineService from '../../../services/MagazineService';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import IssueService from '../../../services/IssueService';
 // Definimos el esquema de validación con Yup
 const validationSchema = Yup.object({
   titulo: Yup.string()
@@ -37,9 +38,10 @@ export default function RevistaFormInModal({
   };
 
   const getIssues = async () => {
-    const response = await MagazineService.getAllIssues({
+    const response = await IssueService.getAll({
       limit: 10,
       offset: 0,
+      table: 'magazine'
     });
     setIssues(response.data);
   };
@@ -58,15 +60,12 @@ export default function RevistaFormInModal({
         validationSchema={validationSchema}
         onSubmit={async (values, { setSubmitting }) => {
           try {
-            // Simulamos un guardado en backend
             const response = await MagazineService.create({
               issueId: values.issueId,
               title: values.titulo,
               id_user: auth.user?.id_user || 0,
             });
             navigation.push(`/revista/publicaciones/edit/${(response as { id: number }).id}`);
-
-            // si salió bien => cerrar modal
             closeModal();
           } catch (error) {
             console.error('Error al guardar', error);

@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import MagazineService from '../../../../../../../../services/MagazineService';
 import * as Yup from 'yup';
 import { ISeteosPublicacionRevista } from '@/types/postTypes';
+import CategoriesServices from '../../../../../../../../services/CategoriesServices';
+import IssueService from '../../../../../../../../services/IssueService';
 
 const BIENESTAR_ID = '98';
 
@@ -68,9 +70,10 @@ export default function RevistaPublicacionSeteos({
   const [types, setTypes] = useState<Itype[] | undefined>();
 
   const fetchRevistas = async () => {
-    const response = await MagazineService.getAllIssues({
+    const response = await IssueService.getAll({
       limit: 100,
       offset: 0,
+      table: 'magazine'
     });
     setRevistas(response.data as unknown as IRevista[]);
   };
@@ -82,9 +85,10 @@ export default function RevistaPublicacionSeteos({
     setTypes(response.data as unknown as Itype[]);
   };
   const fetchCategorias = async () => {
-    const response = await MagazineService.getAllCategories({
+    const response = await CategoriesServices.getAllCategories({
       limit: 100,
       offset: 0,
+      table: 'magazine_categorias'
     });
     const subCategoriasArr = (response.data as unknown as ICategoria[]).filter(
       (cat: ICategoria) => cat.menu === null,
@@ -165,14 +169,12 @@ export default function RevistaPublicacionSeteos({
               },
             })
           }
-          className={`flex h-6 w-12 items-center rounded-full transition ${
-            seteos.status.data[0] === 1 ? 'bg-green-500' : 'bg-gray-300'
-          }`}
+          className={`flex h-6 w-12 items-center rounded-full transition ${seteos.status.data[0] === 1 ? 'bg-green-500' : 'bg-gray-300'
+            }`}
         >
           <span
-            className={`h-5 w-5 transform rounded-full bg-white shadow transition ${
-              seteos.status.data[0] === 1 ? 'translate-x-6' : 'translate-x-1'
-            }`}
+            className={`h-5 w-5 transform rounded-full bg-white shadow transition ${seteos.status.data[0] === 1 ? 'translate-x-6' : 'translate-x-1'
+              }`}
           />
         </button>
       </div>
@@ -246,11 +248,10 @@ export default function RevistaPublicacionSeteos({
               ? 'Para habilitarlo, debe seleccionar BIENESTAR en Categoría'
               : undefined
           }
-          className={`h-11 w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm dark:border-gray-700 ${
-            seteos.fk_idcat === BIENESTAR_ID
-              ? 'bg-transparent text-gray-800 dark:bg-gray-900 dark:text-white/90'
-              : 'cursor-not-allowed bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500'
-          }`}
+          className={`h-11 w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm dark:border-gray-700 ${seteos.fk_idcat === BIENESTAR_ID
+            ? 'bg-transparent text-gray-800 dark:bg-gray-900 dark:text-white/90'
+            : 'cursor-not-allowed bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500'
+            }`}
         >
           <option value="">Seleccione una subcategoría</option>
           {subCategorias.map((subcategoria) => (

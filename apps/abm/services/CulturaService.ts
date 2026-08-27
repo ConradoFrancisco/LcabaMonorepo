@@ -16,46 +16,6 @@ export interface Cultura {
 }
 
 class CulturaService {
-  public async getAllIssues({
-    offset = 0,
-    limit = 0,
-    input = undefined,
-  }: {
-    offset?: number;
-    limit?: number;
-    input?: string;
-  }): Promise<BaseResponse<Cultura>> {
-    try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/cultura/issues`, {
-        params: { limit, offset, input },
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching cultura issues:', error);
-      throw error;
-    }
-  }
-
-  public async getAllCategories({
-    offset = 0,
-    limit = 0,
-    input = undefined,
-  }: {
-    offset?: number;
-    limit?: number;
-    input?: string;
-  }): Promise<BaseResponse<Cultura>> {
-    try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/cultura/categories`, {
-        params: { limit, offset, input },
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching cultura categories:', error);
-      throw error;
-    }
-  }
-
   public async getAllTypes({
     offset = 0,
     limit = 0,
