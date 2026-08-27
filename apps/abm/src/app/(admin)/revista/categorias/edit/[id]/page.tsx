@@ -12,7 +12,7 @@ export default async function page({ params }: { params: Promise<{ id: string }>
         {response === null ? (
           <div>No se encontró el registro</div>
         ) : (
-          <CategoriasEditComponent data={response} />
+          <CategoriasEditComponent response={response} />
         )}
       </ComponentCard>
     </div>
