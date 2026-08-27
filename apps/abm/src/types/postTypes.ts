@@ -75,7 +75,6 @@ export interface MagazinePost {
     url_ext: string;
   };
   infoParlamentaria: InfoParlamentariaData;
-
   seteos: ISeteosPublicacionRevista;
   images: Image[];
   archivos: IArchivo[];

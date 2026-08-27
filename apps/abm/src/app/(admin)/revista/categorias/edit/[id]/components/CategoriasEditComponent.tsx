@@ -129,7 +129,7 @@ export default function CategoriasEditComponent({ data }: { data: MagazinePost }
           imagesFromDB={imagesFromDB}
           newImagenes={nuevasImagenes}
           setNewImagenes={setNewImagenes}
-          seccion="magazine_posts"
+          seccion="magazine_categories"
           postId={seteos.id}
           setImagesFromDB={setImagesFromDB}
         />
@@ -159,7 +159,7 @@ export default function CategoriasEditComponent({ data }: { data: MagazinePost }
           newArchivos={nuevosArchivos}
           setNewArchivos={setNuevosArchivos}
           postId={seteos.id}
-          seccion="magazine_posts"
+          seccion="magazine_categories"
           setArchivosFromDb={setArchivosFromDb}
         />
       ),

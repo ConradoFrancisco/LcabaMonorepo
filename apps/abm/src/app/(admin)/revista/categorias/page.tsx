@@ -47,6 +47,7 @@ export default function CategoriasPage() {
 
         <TableComponent
           data={data}
+          section="/revista/categorias"
           loading={loading}
           total={total}
           limit={limit}
