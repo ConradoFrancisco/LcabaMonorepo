@@ -8,89 +8,57 @@ class EditCategoriesDTO {
     public videos: VideoItem[];
 
     public translations: {
+        fk_id: number;
         title: string;
         description: string;
-        fk_id: number;
         shortdesc?: string;
         keywords?: string[]
     };
-    public mainPost?: {
-        source?: string;
-        slider?: number;
-        desta?: number;
-        url?: string;
-        status?: number;
-        iduser_ins?: number;
-        date_ini?: string;
-        date_end?: string;
+
+    public mainTable: {
+        fk_id: number;
         orderby?: number;
-        id_userupd?: number;
-        url_ext?: string;
-        type?: number;
+        section?: string;
+        bgColor?: string;
+        fgColor?: string;
+        parentid?: number;
+        url?: string;
+        desta?: number;
+        status?: number;
+        fk_menuid?: number;
+        iduser_ins?: number;
+        date_ins?: string;
+        iduser_upd?: number;
+        date_upd?: string;
     };
-    public days?: {
-        fk_idpost: number;
-        day: string | null;
-        date: string | null;
-        hour_start: string | null;
-        hour_end: string | null;
-        date_desc: string | null;
-        status: number;
-        id_user_ins: number;
-        id_user_upd: number | undefined;
-        date_upd: string;
-    }[];
+
 
     constructor(editParams: EditParams) {
         this.id = editParams.seteos.id;
         this.videos = editParams.newVideos;
-        this.audios = editParams.newAudios;
         this.translations = {
+            fk_id: editParams.seteos.id,
             title: editParams.textos.title,
             description: editParams.textos.description,
-            extradesc: editParams.textos.extradesc,
             shortdesc: editParams.textos.shortdesc,
-            subtitle: editParams.textos.subtitle,
+            keywords: editParams.textos.keywords,
         };
-        this.mainPost = {
-            source: editParams.seteos.source,
-            slider: editParams.seteos.slider,
-            type: editParams.seteos.type,
-            desta: editParams.seteos.desta,
-            url: editParams.textos.url,
-            status: editParams.seteos.status,
-            iduser_ins: editParams.seteos.iduser_ins,
-            date_ini: editParams.seteos.date_ini,
-            date_end: editParams.seteos.date_end,
+        this.mainTable = {
+            fk_id: editParams.seteos.id,
             orderby: editParams.seteos.orderby,
-            id_userupd: editParams.seteos.iduser_upd ?? editParams.seteos.id_userupd,
-            url_ext: editParams.textos.url_ext,
+            section: editParams.seteos.section,
+            bgColor: editParams.seteos.bgColor,
+            fgColor: editParams.seteos.fgColor,
+            parentid: editParams.seteos.parentid,
+            url: editParams.textos.url,
+            desta: editParams.seteos.desta,
+            status: editParams.seteos.status,
+            fk_menuid: editParams.seteos.fk_menuid,
+            iduser_ins: editParams.seteos.iduser_ins,
+            date_ins: editParams.seteos.date_ins,
+            iduser_upd: editParams.seteos.iduser_upd,
+            date_upd: editParams.seteos.date_upd,
         };
-
-        const idcategoriesStr = String(editParams.seteos.idcategories || '');
-        const idsubcategoriesStr = String(editParams.seteos.idsubcategories || '');
-
-        const catIds = idcategoriesStr
-            .split(',')
-            .filter((c) => c.trim() !== '')
-            .map(Number);
-        const subcatIds = idsubcategoriesStr
-            .split(',')
-            .filter((c) => c.trim() !== '')
-            .map(Number);
-
-        this.mappedCategories = [
-            ...catIds.map((id) => ({
-                fk_idcategory: id,
-                fk_idsubcategoria: null,
-                fk_idcat: id,
-            })),
-            ...subcatIds.map((id) => ({
-                fk_idcategory: null,
-                fk_idsubcategoria: id,
-                fk_idcat: id,
-            })),
-        ];
     }
 }
 export default EditCategoriesDTO;

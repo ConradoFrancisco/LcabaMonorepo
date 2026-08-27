@@ -41,6 +41,7 @@ export type EditParams = {
     url: string;
     url_ext: string;
     description: string;
+    keywords?: string[]
   };
   seteos: { id: number;[key: string]: any };
   nuevasImagenes: File[];

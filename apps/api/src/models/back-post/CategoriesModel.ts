@@ -60,17 +60,17 @@ class CategoriesModel {
     public async editCategoryTitle({ id, title, table, id_user }: { id: number, title: string, table: string, id_user: number }) {
         try {
             const queryTranslation = `
-        UPDATE ${table}_translations
-        SET title = ?
-        WHERE fk_id = ?
-      `;
+                UPDATE ${table}_translations
+                SET title = ?
+                WHERE fk_id = ?
+            `;
             await pool.query(queryTranslation, [title, id]);
 
             const query = `
-        UPDATE ${table}
-        SET iduser_upd = ?
-        WHERE id = ?
-      `;
+                UPDATE ${table}
+                SET iduser_upd = ?
+                WHERE id = ?
+            `;
             await pool.query(query, [id_user, id]);
 
             return { id };
