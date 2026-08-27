@@ -35,5 +35,40 @@ class CategoriesService {
       throw error;
     }
   }
+
+  public async getCategoryById(id: string): Promise<{ id: number; titulo: string; status: number } | null> {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/categories/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching category by ID:', error);
+      return null;
+    }
+  }
+
+  public async editCategory({
+    id,
+    title,
+    id_user,
+    table,
+  }: {
+    id: number;
+    title: string;
+    id_user: number;
+    table: string;
+  }): Promise<unknown> {
+    try {
+      const response = await axios.patch(`${process.env.NEXT_PUBLIC_API}/categories/edit`, {
+        id,
+        title,
+        id_user,
+        table,
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error editing category:', error);
+      throw error;
+    }
+  }
 }
 export default new CategoriesService();

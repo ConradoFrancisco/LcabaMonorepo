@@ -41,6 +41,44 @@ class CategoriesModel {
         }
     }
 
+    public async getCategoryById(id: number) {
+        try {
+            const query = `
+        SELECT id, title as titulo, status
+        FROM magazine_categorias_vw
+        WHERE id = ?
+      `;
+            const [rows] = (await pool.query(query, [id])) as [any[], any];
+            return rows[0] ?? null;
+        } catch (error) {
+            console.error('Error en getCategoryById:', error);
+            throw new Error('Error al obtener la categoría');
+        }
+    }
+
+    public async editCategoryTitle({ id, title, table, id_user }: { id: number, title: string, table: string, id_user: number }) {
+        try {
+            const queryTranslation = `
+        UPDATE ${table}_translations
+        SET title = ?
+        WHERE fk_id = ?
+      `;
+            await pool.query(queryTranslation, [title, id]);
+
+            const query = `
+        UPDATE ${table}
+        SET iduser_upd = ?
+        WHERE id = ?
+      `;
+            await pool.query(query, [id_user, id]);
+
+            return { id };
+        } catch (error) {
+            console.error('Error en editCategoryTitle:', error);
+            throw new Error('Error al editar la categoría');
+        }
+    }
+
     public async editCategory(data: FormDataCategory) {
         try {
             const query = `

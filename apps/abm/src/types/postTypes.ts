@@ -106,6 +106,40 @@ export interface CulturaPost {
   audios: IAudio[];
 }
 
+export interface ISeteosCategoriasRevista {
+  titulo: string;
+  fk_id_category: number;
+  type: number;
+  banner: { type: string; data: number[] };
+  bgcolor: string | null;
+  categoria: string;
+  comments: number | null;
+  date_article: string | null;
+  date_ini: string | null;
+  date_end: string | null;
+  desta: { type: string; data: number[] };
+  id_entidad: number;
+  idpost: number;
+  imagen: string;
+  lang: number;
+  loadcontent: string | null;
+  menu: number | null;
+  menu_subtitle: string | null;
+  menu_title: string | null;
+  menu_url: string | null;
+  orderby: number;
+  pagina: number;
+  orden: number;
+  publicado: number;
+  remove: number | null;
+  tipo_post: string;
+  tipo_post_id: number;
+  title: string;
+  url: string;
+  urltype: string;
+  entidad: string;
+}
+
 export interface InfoParlamentariaData {
   proyectos: IProyecto[];
   legisladores: any[];
