@@ -3,6 +3,27 @@ interface BufferField {
   data: number[];
 }
 
+export interface ISeteosType {
+  id: number;
+  title?: string;
+  titulo?: string;
+  description?: string;
+  shortdesc?: string;
+  url?: string;
+  bgcolor?: string;
+  textcolor?: string;
+  status?: number | boolean | BufferField;
+  orderby?: number;
+  orden?: number;
+  banner?: number | boolean | BufferField;
+  parentid?: number;
+  solo_cultura?: number | boolean | BufferField;
+  gacetilla?: number | boolean | BufferField;
+  showincal?: number | boolean | BufferField;
+  iduser_upd?: number;
+  [key: string]: any;
+}
+
 export interface Post {
   id: number;
   fk_pageid: number;

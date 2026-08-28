@@ -32,6 +32,7 @@ import { postRouter } from './routes/back-post/PostRouter';
 import PagesRouter from './routes/back-post/general/PagesRouter';
 import CategoriesRouter from './routes/back-post/CategoriesRouter';
 import IssueRouter from './routes/back-post/IssueRouter';
+import TypesRouter from './routes/back-post/TypesRouter';
 
 const app = express();
 const PORT = Number(process.env.PORT || 3001);
@@ -79,6 +80,7 @@ app.use('/fileserver', fileServerRouter);
 app.use('/pages', authJwt, PagesRouter);
 app.use('/categories', authJwt, CategoriesRouter);
 app.use('/issue', authJwt, IssueRouter);
+app.use('/types', authJwt, TypesRouter);
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
