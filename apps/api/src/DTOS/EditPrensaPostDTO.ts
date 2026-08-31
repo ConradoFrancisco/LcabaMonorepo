@@ -15,10 +15,12 @@ export type EditPrensaParams = {
   nuevosArchivos: File[];
   newVideos: VideoItem[];
   newAudios: AudioItem[];
+  table?: string;
 };
 
 class EditPrensaPostDTO {
   public id: number;
+  public table: string;
   public videos: VideoItem[];
   public translations: {
     title: string;
@@ -49,6 +51,7 @@ class EditPrensaPostDTO {
     }
 
     this.id = parseInt(editParams.seteos.id as unknown as string, 10);
+    this.table = editParams.table || '';
 
     this.videos =
       editParams.newVideos?.map((video: any) => ({

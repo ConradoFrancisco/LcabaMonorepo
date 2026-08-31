@@ -169,9 +169,11 @@ class PostService {
   }
 
   public async create(data: {
-    typeId: string;
+    typeId?: string | number;
+    categoryId?: string | number;
     title: string;
     id_user: number;
+    table?: string;
   }): Promise<any | null> {
     console.log('PostService.create: Sending data to backend:', data);
     try {
@@ -332,6 +334,16 @@ class PostService {
       return response.data;
     } catch (error) {
       console.error('Error updating post type:', error);
+      throw error;
+    }
+  }
+
+  public async editOipPost(formData: any) {
+    try {
+      const response = await apiClient.patch('/posts/oip/edit', formData);
+      return response.data;
+    } catch (error) {
+      console.error('Error editing OIP Post:', error);
       throw error;
     }
   }

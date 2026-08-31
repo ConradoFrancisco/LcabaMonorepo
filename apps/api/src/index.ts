@@ -75,7 +75,12 @@ app.use('/taquigrafos', authJwt, TaquigrafosRouter);
 app.use('/general', authJwt, GeneralRouter);
 app.use('/upload', authJwt, docsRouter);
 app.use('/labor', authJwt, LaborservicesRouter);
-app.use('/posts', authJwt, postRouter);
+app.use('/posts', (req, res, next) => {
+  if (req.method === 'GET') {
+    return next();
+  }
+  return authJwt(req, res, next);
+}, postRouter);
 app.use('/fileserver', fileServerRouter);
 app.use('/pages', authJwt, PagesRouter);
 app.use('/categories', authJwt, CategoriesRouter);

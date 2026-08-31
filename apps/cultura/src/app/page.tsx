@@ -18,17 +18,25 @@ async function getPostsSlider() {
     }
 }
 
-async function getPosts() {
+export async function getPosts(limit = 8, offset = 0, images: boolean = true) {
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API}/posts?table=cultura_&limit=8&status=true&withImages=true`, {
+        const params = new URLSearchParams({
+            table: "cultura_",
+            limit: String(limit),
+            offset: String(offset),
+            status: "true",
+            withImages: String(images),
+        });
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API}/posts?${params.toString()}`, {
             next: { revalidate: 60 }
         });
         const data = await res.json();
-        const postArray = Array.isArray(data) ? data : (data.data || []);
-        return postArray;
+        const posts = Array.isArray(data) ? data : (data.data || []);
+        const total = data.total ?? data.Total ?? posts.length;
+        return { posts, total };
     } catch (e) {
         console.error("Failed to fetch posts:", e);
-        return [];
+        return { posts: [], total: 0 };
     }
 }
 
@@ -50,7 +58,7 @@ export default async function Home() {
     const menuItems = await getNavMenu();
     const socials = await getSocials();
     const postSlider = await getPostsSlider();
-    const posts = await getPosts();
+    const { posts } = await getPosts(8, 0, true);
     return (
         <>
             <Layout menuItems={menuItems} socials={socials}>

@@ -42,7 +42,7 @@ class BannerModel {
           ${orderby}
           ${txtlimit};
         `;
-    console.log(query);
+
     // Agregar langid como parámetro obligatorio
     params.unshift(langid);
 

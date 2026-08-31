@@ -15,6 +15,7 @@ import {
   MoreHorizontal,
   LogOut,
   Cog,
+  ShieldCheck,
 } from 'lucide-react';
 
 type NavItem = {
@@ -230,24 +231,15 @@ const AppSidebar: React.FC = () => {
         { title: 'Gacetillas', url: '/prensa/gacetillas', pro: false },
         { title: 'Suscriptores', url: '/prensa/suscriptores', pro: false },
       ],
-    } /* 
-
+    },
     {
       icon: <ShieldCheck />,
-      title: "OIP",
+      title: 'OIP',
       subItems: [
-        { title: "Informes", url: "/s", pro: false },
-        { title: "Tipo de Informes", url: "/s", pro: false },
-      ]
+        { title: 'Informes', url: '/oip/informes', pro: false },
+        { title: 'Tipo de Informes', url: '/oip/tipos', pro: false },
+      ],
     },
-
-    {
-      icon: <Landmark />,
-      title: "Parlamentaria",
-      subItems: [
-        { title: "Asesores Bloques", url: "/s", pro: false },
-      ]
-    }, */,
   ]);
 
   const pathname = usePathname();
@@ -296,20 +288,18 @@ const AppSidebar: React.FC = () => {
                     }
                   }}
                   onMouseLeave={() => collapsed && setHoveredItem(null)}
-                  className={`menu-item group ${
-                    openSubmenu?.type === menuType && openSubmenu?.index === index
-                      ? 'menu-item-active'
-                      : 'menu-item-inactive'
-                  } ${collapsed ? 'cursor-pointer lg:justify-center' : 'cursor-pointer lg:justify-start'}`}
+                  className={`menu-item group ${openSubmenu?.type === menuType && openSubmenu?.index === index
+                    ? 'menu-item-active'
+                    : 'menu-item-inactive'
+                    } ${collapsed ? 'cursor-pointer lg:justify-center' : 'cursor-pointer lg:justify-start'}`}
                 >
                   <span
-                    className={`${
-                      openSubmenu?.type === menuType && openSubmenu?.index === index
-                        ? 'menu-item-icon-active'
-                        : collapsed && isGroupActive
-                          ? 'text-brand-500'
-                          : 'menu-item-icon-inactive'
-                    }`}
+                    className={`${openSubmenu?.type === menuType && openSubmenu?.index === index
+                      ? 'menu-item-icon-active'
+                      : collapsed && isGroupActive
+                        ? 'text-brand-500'
+                        : 'menu-item-icon-inactive'
+                      }`}
                   >
                     {nav.icon}
                   </span>
@@ -318,11 +308,10 @@ const AppSidebar: React.FC = () => {
                   )}
                   {!collapsed && (
                     <ChevronDown
-                      className={`ml-auto h-5 w-5 transition-transform duration-200 ${
-                        openSubmenu?.type === menuType && openSubmenu?.index === index
-                          ? 'text-brand-500 rotate-180'
-                          : ''
-                      }`}
+                      className={`ml-auto h-5 w-5 transition-transform duration-200 ${openSubmenu?.type === menuType && openSubmenu?.index === index
+                        ? 'text-brand-500 rotate-180'
+                        : ''
+                        }`}
                     />
                   )}
                 </button>
@@ -330,14 +319,12 @@ const AppSidebar: React.FC = () => {
                 nav.url && (
                   <Link
                     href={nav.url}
-                    className={`menu-item group ${
-                      isActive(nav.url) ? 'menu-item-active' : 'menu-item-inactive'
-                    } ${collapsed ? 'pointer-events-none' : ''}`}
+                    className={`menu-item group ${isActive(nav.url) ? 'menu-item-active' : 'menu-item-inactive'
+                      } ${collapsed ? 'pointer-events-none' : ''}`}
                   >
                     <span
-                      className={`${
-                        isActive(nav.url) ? 'menu-item-icon-active' : 'menu-item-icon-inactive'
-                      }`}
+                      className={`${isActive(nav.url) ? 'menu-item-icon-active' : 'menu-item-icon-inactive'
+                        }`}
                     >
                       {nav.icon}
                     </span>
@@ -365,32 +352,29 @@ const AppSidebar: React.FC = () => {
                       <li key={subItem.title}>
                         <Link
                           href={subItem.url ? subItem.url : '/asset'}
-                          className={`menu-dropdown-item ${
-                            isActive(subItem.url)
-                              ? 'menu-dropdown-item-active'
-                              : 'menu-dropdown-item-inactive'
-                          }`}
+                          className={`menu-dropdown-item ${isActive(subItem.url)
+                            ? 'menu-dropdown-item-active'
+                            : 'menu-dropdown-item-inactive'
+                            }`}
                         >
                           {subItem.title}
                           <span className="ml-auto flex items-center gap-1">
                             {subItem.new && (
                               <span
-                                className={`ml-auto ${
-                                  isActive(subItem.url)
-                                    ? 'menu-dropdown-badge-active'
-                                    : 'menu-dropdown-badge-inactive'
-                                } menu-dropdown-badge`}
+                                className={`ml-auto ${isActive(subItem.url)
+                                  ? 'menu-dropdown-badge-active'
+                                  : 'menu-dropdown-badge-inactive'
+                                  } menu-dropdown-badge`}
                               >
                                 new
                               </span>
                             )}
                             {subItem.pro && (
                               <span
-                                className={`ml-auto ${
-                                  isActive(subItem.url)
-                                    ? 'menu-dropdown-badge-active'
-                                    : 'menu-dropdown-badge-inactive'
-                                } menu-dropdown-badge`}
+                                className={`ml-auto ${isActive(subItem.url)
+                                  ? 'menu-dropdown-badge-active'
+                                  : 'menu-dropdown-badge-inactive'
+                                  } menu-dropdown-badge`}
                               >
                                 pro
                               </span>
@@ -477,9 +461,8 @@ const AppSidebar: React.FC = () => {
   return (
     <aside
       ref={asideRef}
-      className={`fixed top-0 left-0 z-50 flex h-screen flex-col border-r border-gray-200 bg-white px-5 text-gray-900 transition-all duration-300 ease-in-out dark:border-gray-800 dark:bg-gray-900 ${
-        isExpanded || isMobileOpen ? 'w-[290px]' : isHovered ? 'w-[290px]' : 'w-[90px]'
-      } ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
+      className={`fixed top-0 left-0 z-50 flex h-screen flex-col border-r border-gray-200 bg-white px-5 text-gray-900 transition-all duration-300 ease-in-out dark:border-gray-800 dark:bg-gray-900 ${isExpanded || isMobileOpen ? 'w-[290px]' : isHovered ? 'w-[290px]' : 'w-[90px]'
+        } ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
     >
       <div
         className={`flex py-8 ${!isExpanded && !isHovered ? 'lg:justify-center' : 'justify-start'}`}
@@ -513,9 +496,8 @@ const AppSidebar: React.FC = () => {
             <div>
               <h2
                 ref={menuTitleRef}
-                className={`mb-4 flex text-xs leading-[20px] text-gray-400 uppercase ${
-                  !isExpanded && !isHovered ? 'lg:justify-center' : 'justify-start'
-                }`}
+                className={`mb-4 flex text-xs leading-[20px] text-gray-400 uppercase ${!isExpanded && !isHovered ? 'lg:justify-center' : 'justify-start'
+                  }`}
               >
                 {isExpanded || isHovered || isMobileOpen ? 'Menu' : <MoreHorizontal />}
               </h2>
@@ -524,9 +506,8 @@ const AppSidebar: React.FC = () => {
 
             <div className="hidden">
               <h2
-                className={`mb-4 flex text-xs leading-[20px] text-gray-400 uppercase ${
-                  !isExpanded && !isHovered ? 'lg:justify-center' : 'justify-start'
-                }`}
+                className={`mb-4 flex text-xs leading-[20px] text-gray-400 uppercase ${!isExpanded && !isHovered ? 'lg:justify-center' : 'justify-start'
+                  }`}
               >
                 {isExpanded || isHovered || isMobileOpen ? 'Others' : <MoreHorizontal />}
               </h2>
@@ -601,11 +582,10 @@ const AppSidebar: React.FC = () => {
                 <Link
                   href={item.url || '/asset'}
                   onClick={() => setFlyoutSubmenu(null)}
-                  className={`flex items-center border-l-2 px-4 py-2.5 text-sm transition-colors ${
-                    isActive(item.url)
-                      ? 'border-brand-500 bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 font-medium'
-                      : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:border-gray-600 dark:hover:bg-white/5 dark:hover:text-white'
-                  }`}
+                  className={`flex items-center border-l-2 px-4 py-2.5 text-sm transition-colors ${isActive(item.url)
+                    ? 'border-brand-500 bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 font-medium'
+                    : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:border-gray-600 dark:hover:bg-white/5 dark:hover:text-white'
+                    }`}
                 >
                   {item.title}
                 </Link>

@@ -175,10 +175,11 @@ class PrensaModel {
     }
   }
   public async editPost(dto: EditPrensaPostDTO) {
-    console.log('dto', dto);
+
+    const table = dto.table || '';
     try {
       // Query para translations
-      const translationQuery = `UPDATE posts_translations 
+      const translationQuery = `UPDATE ${table}posts_translations 
       SET title = ?, description = ?, extradesc = ?, shortdesc = ?, subtitle = ?
       WHERE fk_id = ?`;
       const translations = dto.getTranslations();
@@ -192,7 +193,7 @@ class PrensaModel {
       ]);
 
       // Query para main post
-      const mainPostQuery = `UPDATE posts 
+      const mainPostQuery = `UPDATE ${table}posts 
       SET source = ?, desta = ?, url = ?, status = ?, type = ?,date_efemerides = ?,
           date_article = ?, date_end = ?, orderby = ?, iduser_upd = ?
       WHERE ID = ?`;
@@ -217,7 +218,7 @@ class PrensaModel {
       if (videos.length > 0) {
         await Promise.all(
           videos.map(async (video) => {
-            const insertVideoQuery = `INSERT INTO posts_videos (fk_id, url, title, description, iduser_ins)
+            const insertVideoQuery = `INSERT INTO ${table}posts_videos (fk_id, url, title, description, iduser_ins)
           VALUES (?, ?, ?, ?, ?)`;
             await pool.query(insertVideoQuery, [
               dto.getId(),

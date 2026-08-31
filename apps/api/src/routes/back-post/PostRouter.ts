@@ -19,3 +19,4 @@ postRouter.delete('/post/:idPost/audiencia', PostController.deleteAudiencia);
 postRouter.delete('/post/:id', PostController.deletePost);
 postRouter.put('/post/:id', PostController.updateStatePost);
 postRouter.patch('/post/:id/status', PostController.updateStatePost);
+postRouter.patch('/oip/edit', PostController.editOipPost);

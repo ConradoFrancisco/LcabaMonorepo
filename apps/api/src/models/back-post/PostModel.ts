@@ -106,11 +106,16 @@ class PostModel {
       const [typeRows] = (await pool.query(typesQuery)) as [any[], any];
       types = typeRows;
 
-      if (params.table !== '') {
-        const [catRows] = (await pool.query(categoriasQuery)) as [any[], any];
-        categorias = catRows;
+      const hasCategorias = params.table !== '' && params.table !== 'evidencias_';
 
-        catQuery = `left JOIN ${params.table}categorias_translations b ON a.fk_idcat = b.fk_id`;
+      if (hasCategorias) {
+        try {
+          const [catRows] = (await pool.query(categoriasQuery)) as [any[], any];
+          categorias = catRows;
+          catQuery = `left JOIN ${params.table}categorias_translations b ON a.fk_idcat = b.fk_id`;
+        } catch (catErr) {
+          console.warn(`No se pudieron cargar categorías para ${params.table}:`, catErr);
+        }
       }
 
       const countQuery = `
@@ -126,9 +131,9 @@ class PostModel {
           a.id as id,
           a.date_ins as fecha,
           a.title as titulo,
-          ${params.table !== '' ? 'b.title as categoria,' : ''}
+          ${hasCategorias ? 'b.title as categoria,' : ''}
           a.status as status,
-          ${params.table !== '' ? 'a.fk_idcat as idcat,' : ''}
+          ${hasCategorias ? 'a.fk_idcat as idcat,' : ''}
           a.tipo_post as tipo,
           a.desta as destacado,
           a.url as url,
@@ -140,7 +145,9 @@ class PostModel {
         WHERE 1 = 1 ${search}${status}  ${slider} ${order} ${limit} 
         ;
       `;
-      console.log(dataQuery)
+      console.log('hola')
+      console.log(dataQuery, 'query');
+      console.log(arrayParamsData, 'arrayParamsData');
       const [countRows] = (await pool.query(countQuery, arrayParamsCount)) as [any[], any];
       const total = countRows[0]?.total ?? 0;
       const [data] = (await pool.query(dataQuery, arrayParamsData)) as [any[], any];
@@ -151,12 +158,12 @@ class PostModel {
       }
 
       if (params.withImages && finalData.length > 0) {
-        finalData = await Promise.all(
-          finalData.map(async (post: any) => {
-            const images = await this.getImages({ postId: post.id, table: params.table ?? '' });
-            return { ...post, images };
-          })
-        );
+        const newData = [];
+        for (const post of finalData) {
+          const images = await this.getImages({ postId: post.id, table: params.table ?? '' });
+          newData.push({ ...post, images });
+        }
+        finalData = newData;
       }
 
       return {
@@ -297,9 +304,13 @@ class PostModel {
   public async getPostByid(id: number, table: string) {
     let data = {};
     let audios = [];
-    if (table !== ' ') {
-      const dias = await this.getDays({ postId: id, table });
-      data = { dias };
+    if (table !== ' ' && table !== 'evidencias_' && table !== '') {
+      try {
+        const dias = await this.getDays({ postId: id, table });
+        data = { dias };
+      } catch (err) {
+        console.warn(`No se pudieron obtener días para la tabla ${table}:`, err);
+      }
     }
 
     try {
@@ -648,17 +659,29 @@ class PostModel {
       };
     }
   }
-  public async createPost(title: string, tipoId: number, idUser: number) {
+  public async createPost(
+    title: string,
+    tipoId: number,
+    idUser: number,
+    table: string = '',
+    categoryId?: number,
+  ) {
     const slug = normalizarTitulo(title);
-    const url = `posts/${slug}.html`;
-    const typeQuery = `INSERT INTO posts (type, iduser_ins, iduser_upd, url, status) VALUES (?, ?, ?, ?, 0)`;
-    const translationQuery = `INSERT INTO posts_translations (fk_id, title, description, extradesc, shortdesc, subtitle) VALUES (?, ?, ?, ?, ?, ?)`;
+    const url = `${table}posts/${slug}.html`;
+    const typeQuery = `INSERT INTO ${table}posts (type, iduser_ins, iduser_upd, url, status) VALUES (?, ?, ?, ?, 0)`;
+    const translationQuery = `INSERT INTO ${table}posts_translations (fk_id, title, description, extradesc, shortdesc, subtitle) VALUES (?, ?, ?, ?, ?, ?)`;
 
-    const [result] = (await pool.query(typeQuery, [tipoId, idUser, idUser, url])) as [
+    const [result] = (await pool.query(typeQuery, [tipoId || 0, idUser, idUser, url])) as [
       import('mysql2').ResultSetHeader,
       any,
     ];
     await pool.query(translationQuery, [result.insertId, title, '', '', '', '']);
+
+    if (categoryId) {
+      const categoryQuery = `INSERT INTO ${table}posts_categories (fk_idpost, fk_idcategory, fk_idcat, iduser_ins) VALUES (?, ?, ?, ?)`;
+      await pool.query(categoryQuery, [result.insertId, categoryId, categoryId, idUser]);
+    }
+
     return { id: result.insertId };
   }
   public async postAudiencia(idPost: number, idAudiencia: number, idUser: number, table: string) {
@@ -712,6 +735,67 @@ class PostModel {
         success: false,
         message: 'Error al eliminar el post',
       };
+    }
+  }
+  public async editOipPost(dto: import('../../DTOS/EditOipPostDTO').default) {
+    try {
+      const translationQuery = `UPDATE evidencias_posts_translations 
+      SET title = ?, description = ?, extradesc = ?, shortdesc = ?, subtitle = ?, keywords = ?
+      WHERE fk_id = ?`;
+      const translations = dto.getTranslations();
+      await pool.query(translationQuery, [
+        translations.title,
+        translations.description,
+        translations.extradesc,
+        translations.shortdesc,
+        translations.subtitle,
+        translations.keywords,
+        dto.getId(),
+      ]);
+
+      const mainPostQuery = `UPDATE evidencias_posts 
+      SET source = ?, desta = ?, fk_menuid = ?, url = ?, status = ?, comments = ?, loadcontent = ?, type = ?, removed = ?,
+          date_end = ?, date_article = ?, orderby = ?, iduser_upd = ?, date_upd = NOW()
+      WHERE id = ?`;
+      const mainPost = dto.getMainPost();
+      await pool.query(mainPostQuery, [
+        mainPost.source,
+        mainPost.desta,
+        mainPost.fk_menuid,
+        mainPost.url,
+        mainPost.status,
+        mainPost.comments,
+        mainPost.loadcontent,
+        mainPost.type,
+        mainPost.removed,
+        mainPost.date_end,
+        mainPost.date_article,
+        mainPost.orderby,
+        mainPost.iduser_upd,
+        dto.getId(),
+      ]);
+
+      const videos = dto.getVideos();
+      if (videos.length > 0) {
+        await Promise.all(
+          videos.map(async (video) => {
+            const insertVideoQuery = `INSERT INTO evidencias_posts_videos (fk_id, url, title, description, iduser_ins)
+            VALUES (?, ?, ?, ?, ?)`;
+            await pool.query(insertVideoQuery, [
+              dto.getId(),
+              video.url,
+              video.title,
+              video.description,
+              video.iduser_ins,
+            ]);
+          }),
+        );
+      }
+
+      return { success: true, message: 'Informe editado correctamente' };
+    } catch (error) {
+      console.error('Error en editOipPost:', error);
+      throw error;
     }
   }
   public async updateStatePost(id: number, status: number, table: string) {

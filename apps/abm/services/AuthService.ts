@@ -2,7 +2,6 @@ import axios from 'axios';
 
 class AuthService {
   public async login(username: string, password: string) {
-    console.log(process.env.NEXT_PUBLIC_API);
     try {
       // Usamos axios en lugar de fetch para mantener la consistencia con otros servicios
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API}/auth/login`, {

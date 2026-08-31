@@ -111,23 +111,30 @@ class PostController {
   public async createPost(req: Request, res: Response): Promise<void> {
     console.log('PostController.createPost: Received request body:', req.body);
     try {
-      const { title, typeId, id_user } = req.body;
-      const parsedTypeId = parseInt(typeId);
+      const { title, typeId, categoryId, id_user, table } = req.body;
+      const parsedTypeId = typeId !== undefined && typeId !== '' ? parseInt(typeId) : 0;
+      const parsedCategoryId = categoryId !== undefined && categoryId !== '' ? parseInt(categoryId) : undefined;
       const parsedIdUser = parseInt(id_user);
 
       console.log(
-        `PostController.createPost: Parsed data - title: "${title}", parsedTypeId: ${parsedTypeId}, parsedIdUser: ${parsedIdUser}`,
+        `PostController.createPost: Parsed data - title: "${title}", parsedTypeId: ${parsedTypeId}, parsedIdUser: ${parsedIdUser}, table: ${table}`,
       );
 
-      if (isNaN(parsedTypeId) || isNaN(parsedIdUser)) {
-        console.warn('PostController.createPost: Validation failed - typeId or id_user is NaN');
+      if (isNaN(parsedIdUser)) {
+        console.warn('PostController.createPost: Validation failed - id_user is NaN');
         res.status(400).json({
-          error: `typeId (${typeId}) e id_user (${id_user}) deben ser números válidos`,
+          error: `id_user (${id_user}) debe ser un número válido`,
         });
         return;
       }
 
-      const response = await PostModel.createPost(title, parsedTypeId, parsedIdUser);
+      const response = await PostModel.createPost(
+        title,
+        parsedTypeId,
+        parsedIdUser,
+        table || '',
+        parsedCategoryId,
+      );
       console.log('PostController.createPost: Model createPost successful, response:', response);
       res.status(200);
       res.json(response);
@@ -252,6 +259,19 @@ class PostController {
       res.json({ success: true, data: result });
     } catch (error) {
       res.status(500).json({ error: 'Error al actualizar el estado del post' });
+    }
+  }
+
+  public async editOipPost(req: Request, res: Response): Promise<void> {
+    try {
+      const EditOipPostDTO = (await import('../../DTOS/EditOipPostDTO')).default;
+      const edit = new EditOipPostDTO(req.body);
+      const response = await PostModel.editOipPost(edit);
+      res.status(200);
+      res.json(response);
+    } catch (error) {
+      console.error('Error en editOipPost Controller:', error);
+      res.status(500).json({ error: 'Error al editar el informe de OIP' });
     }
   }
 }

@@ -27,7 +27,7 @@ class IlcpService {
       const response = await apiClient.get('/ilcp/beneficios', {
         params: { limit, offset, input },
       });
-      console.log(response);
+
       return response.data;
     } catch (error: any) {
       console.log(error);

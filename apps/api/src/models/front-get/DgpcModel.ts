@@ -35,7 +35,7 @@ class DgpcModel {
   public async getInscripcionesFechaActual({ id = false }: { id: number | false }): Promise<any> {
     let params = [];
     let txtIdPropio = '';
-    console.log('aca:', id);
+
     if (id) {
       txtIdPropio = ' and fk_id_insc_tipo = ?';
       params.push(id);

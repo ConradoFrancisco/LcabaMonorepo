@@ -99,7 +99,7 @@ class LaborService {
     page: number,
     limit: number,
   ) {
-    console.log();
+
     try {
       const response = await apiClient.post(
         '/labor/GetSesionesAvanzado',
