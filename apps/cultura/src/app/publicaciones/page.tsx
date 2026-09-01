@@ -1,5 +1,5 @@
 import Layout from "@lcaba/ui/astrax/components/layout/Layout";
-import { getNavMenu } from "@/lib/navMenu";
+import { PageServices } from "@lcaba/services";
 import Link from "next/link";
 import { getPosts } from "../page";
 
@@ -246,7 +246,7 @@ export default async function PublicacionesPage({
   const currentPage = Math.max(1, parseInt(pageParam || "1", 10));
 
   const [menuItems, socials, { posts, total }] = await Promise.all([
-    getNavMenu(),
+    PageServices.getNavMenu(),
     getSocials(),
     getPosts(LIMIT, (currentPage - 1) * LIMIT, true)
   ]);

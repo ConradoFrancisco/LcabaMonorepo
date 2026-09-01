@@ -2,7 +2,7 @@ import Layout from "@lcaba/ui/astrax/components/layout/Layout";
 import HeroSlider from "@lcaba/ui/astrax/components/sections/home/HeroSlider";
 import MenuButtons from "@lcaba/ui/astrax/components/sections/home/MenuButtons";
 import NewsSection from "@lcaba/ui/astrax/components/sections/home/NewsSection";
-import { getNavMenu } from "@/lib/navMenu";
+import { PageServices } from "@lcaba/services";
 
 async function getPostsSlider() {
     try {
@@ -55,7 +55,7 @@ async function getSocials() {
 }
 
 export default async function Home() {
-    const menuItems = await getNavMenu();
+    const menuItems = await PageServices.getNavMenu();
     const socials = await getSocials();
     const postSlider = await getPostsSlider();
     const { posts } = await getPosts(8, 0, true);

@@ -72,7 +72,7 @@ app.use('/compras', authJwt, ComprasRouter);
 app.use('/prensa', authJwt, PrensaRouter);
 app.use('/gacetilla', authJwt, GacetillaRouter);
 app.use('/taquigrafos', authJwt, TaquigrafosRouter);
-app.use('/general', authJwt, GeneralRouter);
+app.use('/general', GeneralRouter);
 app.use('/upload', authJwt, docsRouter);
 app.use('/labor', authJwt, LaborservicesRouter);
 app.use('/posts', (req, res, next) => {

@@ -28,8 +28,13 @@ FROM cm_menu  where status = 1`;
     }
   }
 
-  public async fullMenuList(): Promise<any[]> {
-    const Query = `SELECT id, title from menu_vw`;
+  public async fullMenuList(pageId?: number): Promise<any[]> {
+    let Query = `SELECT id, title from menu_vw`;
+    if (pageId) {
+      Query += ` where fk_pageid = ${pageId}`;
+    }
+
+
     try {
       const [rows] = await pool.query(Query);
       return rows as any[];

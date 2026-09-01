@@ -2,7 +2,7 @@ import Layout from "@lcaba/ui/astrax/components/layout/Layout";
 import ImageGallery from "./ImageGallery";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getNavMenu } from "@/lib/navMenu";
+import { getNavMenu } from "@lcaba/services";
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 

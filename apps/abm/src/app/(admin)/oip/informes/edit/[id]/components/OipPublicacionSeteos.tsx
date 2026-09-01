@@ -44,7 +44,7 @@ export default function OipPublicacionSeteos({
 
   const fetchMenus = async () => {
     try {
-      const response = await MenuService.getAll();
+      const response = await MenuService.getAll(7);
       setMenues(response || []);
     } catch (error) {
       console.error('Error fetching menues:', error);
@@ -110,14 +110,12 @@ export default function OipPublicacionSeteos({
                     status: isPublicado ? 0 : 1,
                   })
                 }
-                className={`flex h-6 w-12 items-center rounded-full transition-colors ${
-                  isPublicado ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-700'
-                }`}
+                className={`flex h-6 w-12 items-center rounded-full transition-colors ${isPublicado ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-700'
+                  }`}
               >
                 <span
-                  className={`h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform ${
-                    isPublicado ? 'translate-x-[26px]' : 'translate-x-[2px]'
-                  }`}
+                  className={`h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform ${isPublicado ? 'translate-x-[26px]' : 'translate-x-[2px]'
+                    }`}
                 />
               </button>
               <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
@@ -161,14 +159,12 @@ export default function OipPublicacionSeteos({
                     desta: isDestacado ? 0 : 1,
                   })
                 }
-                className={`flex h-6 w-12 items-center rounded-full transition-colors ${
-                  isDestacado ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-700'
-                }`}
+                className={`flex h-6 w-12 items-center rounded-full transition-colors ${isDestacado ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-700'
+                  }`}
               >
                 <span
-                  className={`h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform ${
-                    isDestacado ? 'translate-x-[26px]' : 'translate-x-[2px]'
-                  }`}
+                  className={`h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform ${isDestacado ? 'translate-x-[26px]' : 'translate-x-[2px]'
+                    }`}
                 />
               </button>
               <span className="text-sm font-medium text-gray-600 dark:text-gray-400">

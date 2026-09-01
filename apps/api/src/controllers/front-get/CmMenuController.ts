@@ -17,8 +17,10 @@ class CmMenuController {
   }
 
   public async fullMenuList(req: Request, res: Response): Promise<void> {
+
     try {
-      const menu = await CmMenuModel.fullMenuList();
+      const pageId = req.query.pageId ? Number(req.query.pageId) : undefined;
+      const menu = await CmMenuModel.fullMenuList(pageId);
       if (menu) {
         res.json(menu);
       } else {

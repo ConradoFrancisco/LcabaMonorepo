@@ -152,7 +152,7 @@ class GeneralModel {
 
       const dataQuery = `
       SELECT 
-        a.id as ID,
+        a.id as id,
         a.title as Titulo,
         a.orderby as Orden,
         a.section as Ubicación, 
@@ -557,5 +557,7 @@ class GeneralModel {
       throw new Error('Error al editar la sección');
     }
   }
+
+
 }
 export default new GeneralModel();

@@ -2,7 +2,7 @@ import Link from "next/link";
 import Layout from "@lcaba/ui/astrax/components/layout/Layout";
 import NewsSection from "@lcaba/ui/astrax/components/sections/home/NewsSection";
 import ImageGallery from "../publicaciones/[id]/ImageGallery";
-import { getNavMenu } from "@/lib/navMenu";
+import { getNavMenu } from "@lcaba/services/page";
 import { notFound } from "next/navigation";
 
 const PAGE_ID = 3;

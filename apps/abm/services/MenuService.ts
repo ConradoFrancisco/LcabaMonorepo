@@ -9,9 +9,9 @@ class MenuService {
       console.error('Error fetching side menu:', error);
     }
   }
-  public async getAll(): Promise<any[]> {
+  public async getAll(pageId?: number): Promise<any[]> {
     try {
-      const response = await apiClient.get('/cmMenu/full');
+      const response = await apiClient.get('/cmMenu/full', { params: { pageId } });
       return response.data;
     } catch (error) {
       console.error('Error fetching menus', error);
