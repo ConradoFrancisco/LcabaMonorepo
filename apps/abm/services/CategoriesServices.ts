@@ -64,7 +64,10 @@ class CategoriesService {
     }
   }
 
-  public async getCategoryById(id: string, table: string): Promise<{ id: number; titulo: string; status: number, table: string } | null> {
+  public async getCategoryById(
+    id: string,
+    table: string,
+  ): Promise<{ id: number; titulo: string; status: number; table: string } | null> {
     try {
       const response = await apiClient.get(`/categories/${id}`, { params: { table } });
       return response.data;

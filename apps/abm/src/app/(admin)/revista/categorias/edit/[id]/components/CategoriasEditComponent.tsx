@@ -1,22 +1,9 @@
-'use cliente';
 'use client';
 import React, { useEffect, useState } from 'react';
 import EditComponent, { Itabs } from '@/components/my-components/wizard/EditComponent';
 import useHandlerChange from '@/hooks/useHandlerChange';
 import Textos, { textosSchema } from '../../../../../add-register/components/Textos';
-import FechaYHora from '@/components/my-components/wizard/FechaYhora';
-import Audios from '@/components/my-components/wizard/Audios';
-import {
-  Calendar,
-  File,
-  FileText,
-  ImageIcon,
-  QrCode,
-  Mic,
-  Settings,
-  Video,
-  Landmark,
-} from 'lucide-react';
+import { Calendar, File, FileText, ImageIcon, Settings, Video } from 'lucide-react';
 import DropzoneComponent from '@/components/form/form-elements/DropZone';
 import FileDropzone from '@/components/my-components/wizard/DropzoneFile';
 import Videos from '@/components/my-components/wizard/Videos';
@@ -24,11 +11,8 @@ import {
   Image,
   ISeteosCategoriasRevista,
   MagazinePost,
-  IDia,
   EditComponentState,
-  CulturaPost,
 } from '@/types/postTypes';
-import PostService from '../../../../../../../../services/PostService';
 import { useAuth } from '@/context/AuthContext';
 import CategoriasRevistaSeteos from './CategoriasRevistaSeteos';
 import CategoriesServices from '../../../../../../../../services/CategoriesServices';
@@ -70,6 +54,7 @@ export default function CategoriasEditComponent({ response }: { response: Catego
     url: url ?? '',
     url_ext: url_ext ?? '',
   };
+
   const [imagesFromDB, setImagesFromDB] = useState<Image[]>(images ?? []);
   const [nuevasImagenes, setNewImagenes] = useState<File[]>([]);
   const [videosDb, setVideosDb] = useState(videos ?? []);
@@ -90,6 +75,7 @@ export default function CategoriasEditComponent({ response }: { response: Catego
     newVideos: [],
     newAudios: [],
   });
+
   const handleEditChange = useHandlerChange({
     service: (payload) => {
       const currentUserId = auth.user?.id_user;
@@ -113,9 +99,11 @@ export default function CategoriasEditComponent({ response }: { response: Catego
       }));
     },
   });
+
   const setTextos = (newTextos: EditComponentState['textos']) => {
     setState((prev) => ({ ...prev, textos: newTextos }));
   };
+
   const tabs: Itabs[] = [
     {
       id: 'textos',
@@ -144,7 +132,7 @@ export default function CategoriasEditComponent({ response }: { response: Catego
           newImagenes={nuevasImagenes}
           setNewImagenes={setNewImagenes}
           seccion="magazine_categories"
-          postId={response.id as number}
+          postId={response.id}
           setImagesFromDB={setImagesFromDB}
         />
       ),
@@ -172,7 +160,7 @@ export default function CategoriasEditComponent({ response }: { response: Catego
           archivosFromDb={archivosFromDb}
           newArchivos={nuevosArchivos}
           setNewArchivos={setNuevosArchivos}
-          postId={response.id as number}
+          postId={response.id}
           seccion="magazine_categories"
           setArchivosFromDb={setArchivosFromDb}
         />
@@ -188,7 +176,7 @@ export default function CategoriasEditComponent({ response }: { response: Catego
       activeTab={activeTab}
       setActiveTab={setActiveTab}
       tituloPosteo={tituloHeader}
-      tituloCard="Editar Registro"
+      tituloCard="Editar categoría"
     />
   );
 }
