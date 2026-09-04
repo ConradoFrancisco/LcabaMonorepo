@@ -2,7 +2,7 @@ import Link from "next/link";
 import Layout from "@lcaba/ui/astrax/components/layout/Layout";
 import NewsSection from "@lcaba/ui/astrax/components/sections/home/NewsSection";
 import ImageGallery from "../publicaciones/[id]/ImageGallery";
-import { getNavMenu } from "@lcaba/services/page";
+import { PageServices } from "@lcaba/services";
 import { notFound } from "next/navigation";
 
 const PAGE_ID = 3;
@@ -29,36 +29,6 @@ function buildImageUrl(img: any): string | null {
     return `${base}/${img.location}/${img.filename}${key ? `?key=${key}` : ""}`;
 }
 
-// ── data fetchers ─────────────────────────────────────────────────────────────
-
-async function getSectionByUrl(slug: string) {
-    try {
-        const url = `/${slug}`;
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API}/nav-menu/by-url?url=${encodeURIComponent(url)}&pageId=${PAGE_ID}`,
-            { next: { revalidate: 60 } }
-        );
-        if (!res.ok) return null;
-        return res.json();
-    } catch {
-        return null;
-    }
-}
-
-async function getPostsBySection(section: any) {
-    try {
-        const catId = section?.fk_idcat || section?.id || section?.fk_menuid || null;
-        const query = catId
-            ? `${process.env.NEXT_PUBLIC_API}/posts?table=cultura_&status=true&withImages=true&categoria=${catId}`
-            : `${process.env.NEXT_PUBLIC_API}/posts?table=cultura_&status=true&withImages=true`;
-
-        const res = await fetch(query, { next: { revalidate: 60 } });
-        const data = await res.json();
-        return Array.isArray(data) ? data : data.data || [];
-    } catch {
-        return [];
-    }
-}
 
 async function getSocials() {
     try {
@@ -241,8 +211,8 @@ export default async function DynamicSectionPage({
     const slugStr = Array.isArray(slug) ? slug.join("/") : slug;
 
     const [section, menuItems, socials] = await Promise.all([
-        getSectionByUrl(slugStr),
-        getNavMenu(PAGE_ID),
+        PageServices.getSectionByUrl(slugStr, PAGE_ID),
+        PageServices.getNavMenu(PAGE_ID),
         getSocials(),
     ]);
 
@@ -259,7 +229,7 @@ export default async function DynamicSectionPage({
         (section?.section === 'cat' ? 'posts-list' : 'static-page');
 
     if (template === 'posts-list') {
-        const posts = await getPostsBySection(section);
+        const { data: posts } = await PageServices.getPosts('cultura_', false, 0, 9, true, false, section?.fk_idcat || section?.fk_menuid, 'true');
         return <PostsListTemplate section={section} posts={posts} menuItems={menuItems} socials={socials} />;
     }
 
@@ -275,7 +245,7 @@ export async function generateMetadata({
 }) {
     const { slug } = await params;
     const slugStr = Array.isArray(slug) ? slug.join("/") : slug;
-    const section = await getSectionByUrl(slugStr);
+    const section = await PageServices.getSectionByUrl(slugStr, PAGE_ID);
     const title = section?.title || "Sección";
     const description = section?.shortdesc || section?.description || "";
 

@@ -1,8 +1,0 @@
-.env
-node_modules/
-dist
-_pagedata/
-
-# Auditoría de seguridad
-AUDITORIA.md
-AUDITORIA.html
