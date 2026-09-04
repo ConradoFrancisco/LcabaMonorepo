@@ -53,7 +53,6 @@ export default function Layout({ headerStyle, footerStyle, breadcrumbTitle, chil
 		(window as any).wow = new WOW.WOW({
 			live: false
 		});
-
 		// Initialize WOW.js
 		(window as any).wow.init()
 		const handleScroll = (): void => {
@@ -89,7 +88,7 @@ export default function Layout({ headerStyle, footerStyle, breadcrumbTitle, chil
 				{children}
 			</main>
 
-			< Footer />
+			<Footer menuItems={menuItems} logo={logo} pageVw={pageVw} />
 
 			<BackToTop />
 		</>

@@ -26,10 +26,13 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu, menuIte
                 <div className="position-absolute top-0 start-0 w-100">
                     <nav className={`navbar navbar-expand-lg navbar-transparent-2 z-5 ${scroll ? "navbar-stick top-0 position-fixed w-100" : ""}`}>
                         <div className="container mt-3 mb-3">
-                            <Link className="navbar-brand" href="/">
-                                <img src={`${process.env.NEXT_PUBLIC_IMAGES}/${logo.location}/${logo.filename}?key=${process.env.NEXT_PUBLIC_FILESERVER_KEY}`} alt={logo?.alt} width={150} height={95} />
-
-                            </Link>
+                            {
+                                logo && (
+                                    <Link className="navbar-brand" href="/">
+                                        <img src={`${process.env.NEXT_PUBLIC_IMAGES}/${logo.location}/${logo.filename}?key=${process.env.NEXT_PUBLIC_FILESERVER_KEY}`} alt={logo?.alt} width={150} height={95} />
+                                    </Link>
+                                )
+                            }
                             <div className="d-none d-lg-flex">
                                 <ul className="navbar-nav mx-auto gap-4 align-items-lg-center">
                                     {menuItems.map((item: any) => {
