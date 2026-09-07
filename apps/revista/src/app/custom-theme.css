@@ -1,0 +1,429 @@
+/* Revista Custom Theme & Styles */
+:root {
+  --revista-bg: #f8fafc;
+  --revista-text: #1e293b;
+  --revista-dark: #1b1b1b;
+  --revista-primary: #8b5cf6;
+}
+
+body {
+  background-color: #ffffff;
+  color: #1e293b;
+  font-family: var(--font-rubik, 'Rubik', sans-serif);
+}
+
+/* Header La Casa */
+.revista-header {
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.revista-logo {
+  font-family: var(--font-franklin, 'Libre Franklin', sans-serif);
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: #111827;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.revista-date-badge {
+  background-color: #1e293b;
+  color: #f8fafc;
+  padding: 4px 16px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+.revista-digital-tag {
+  color: #7c3aed;
+  font-size: 1.0rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+
+/* Navbar */
+.revista-nav {
+  border-top: 1px solid #f1f5f9;
+}
+
+.revista-nav .navbar-nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.revista-nav-link {
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #334155;
+  padding: 10px 25px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.revista-nav-link:hover {
+  color: #7c3aed;
+}
+
+/* Template-style Dropdown on Hover */
+.revista-nav .nav-item.dropdown {
+  position: relative;
+}
+
+.revista-nav .dropdown-menu {
+  display: block;
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 220px;
+  background-color: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 8px 0;
+  margin-top: 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transform: translateY(10px);
+  transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.revista-nav .nav-item.dropdown:hover>.dropdown-menu {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.revista-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #475569;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid #f8fafc;
+}
+
+.revista-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.revista-dropdown-item:hover {
+  background-color: #f8fafc;
+  color: #7c3aed;
+  padding-left: 24px;
+}
+
+.revista-dropdown-item .arrow-icon {
+  font-size: 0.75rem;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: all 0.2s ease;
+}
+
+.revista-dropdown-item:hover .arrow-icon {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Featured Hero Slider */
+.revista-slider-card {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  height: 380px;
+  background-color: #0f172a;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.revista-slider-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+}
+
+.revista-slider-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.revista-slider-card:hover .revista-slider-img {
+  transform: scale(1.04);
+}
+
+.revista-category-badge {
+  position: absolute;
+  top: 14px;
+  left: 0;
+  z-index: 10;
+  color: #ffffff;
+  padding: 10px 28px;
+  border-radius: 0 30px 30px 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: capitalize;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.revista-slider-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 16px 20px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.6) 65%, transparent 100%);
+  z-index: 5;
+}
+
+.revista-slider-title {
+  color: #ffffff;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Post Cards Grid */
+.revista-card {
+  border: none;
+  background: transparent;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Image container with bottom colored wave / curve background */
+.revista-card-figure {
+  position: relative;
+  width: 100%;
+
+  overflow: hidden;
+  padding-bottom: 40px;
+  /* Espacio donde se asoma el color inferior */
+  transition: transform 0.3s ease;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 36px;
+  /* Curva característica inferior */
+}
+
+.revista-card:hover .revista-card-figure {
+  transform: translateY(-4px);
+}
+
+.revista-card-img-wrap {
+  width: 100%;
+  height: 220px;
+  position: relative;
+  overflow: hidden;
+
+  background-color: #f1f5f9;
+}
+
+.revista-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.revista-card:hover .revista-card-img {
+  transform: scale(1.05);
+}
+
+/* Badge con el nombre superpuesto arriba a la izquierda */
+.revista-card-badge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  color: #ffffff;
+  padding: 6px 18px;
+  border-bottom-right-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  background-color: rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Contenido / Textos */
+.revista-card-body {
+  padding: 16px 4px 8px 4px;
+  display: flex;
+  flex-direction: column;
+}
+
+.revista-card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.35;
+  margin-bottom: 8px;
+  transition: opacity 0.2s ease;
+}
+
+.revista-card:hover .revista-card-title {
+  opacity: 0.85;
+}
+
+.revista-card-desc {
+  color: #475569;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+}
+
+/* Otras Ediciones Carousel */
+.ediciones-section {
+  padding: 40px 0 60px 0;
+  border-top: 1px solid #f1f5f9;
+  background-color: #ffffff;
+}
+
+.ediciones-title {
+  font-family: var(--font-franklin, sans-serif);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #1e293b;
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.edicion-card {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.edicion-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+  border-color: #cbd5e1;
+}
+
+.edicion-card.active-issue {
+  border: 2px solid #7c3aed;
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.15);
+}
+
+.edicion-img-wrap {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background-color: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.edicion-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.edicion-card:hover .edicion-img {
+  transform: scale(1.04);
+}
+
+.edicion-number-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(15, 23, 42, 0.85);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  backdrop-filter: blur(4px);
+}
+
+.edicion-info {
+  padding: 12px 14px;
+  text-align: center;
+  background: #ffffff;
+  border-top: 1px solid #f1f5f9;
+}
+
+.edicion-item-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.edicion-arrows {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.edicion-arrow-btn {
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 4px 12px;
+  border-radius: 6px;
+  user-select: none;
+}
+
+.edicion-arrow-btn:hover {
+  color: #7c3aed;
+  transform: scale(1.2);
+}

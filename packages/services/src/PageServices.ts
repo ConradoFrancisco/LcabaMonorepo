@@ -52,7 +52,60 @@ class PageServices {
         }
     }
 
-    async getPosts(table: string, destacado: boolean = false, offset?: number, limit?: number, withImages?: boolean, front?: boolean, categoria?: number | string | null, status?: string) {
+    async getDynamicMenu(table: string, pageId: number | string): Promise<any[]> {
+        try {
+            const params = new URLSearchParams();
+            params.set("table", table);
+            params.set("pageId", String(pageId));
+
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_API}/general/dynamic-menu?${params.toString()}`,
+                { next: { revalidate: 60 } } as any
+            );
+            if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+            const data = await res.json();
+            console.log(data)
+            return Array.isArray(data) ? data : (data.data || []);
+        } catch (e) {
+            console.error("Failed to fetch dynamic menu:", e);
+            return [];
+        }
+    }
+
+    async getIssues(table: string = 'magazine'): Promise<{ data: any[]; total: number }> {
+        try {
+            const cleanTable = table.replace(/_$/, '');
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_API}/issue?table=${cleanTable}`,
+                { next: { revalidate: 60 } } as any
+            );
+            if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+            const json = await res.json();
+            return {
+                data: Array.isArray(json.data) ? json.data : (Array.isArray(json) ? json : []),
+                total: json.total ?? 0,
+            };
+        } catch (e) {
+            console.error("Failed to fetch issues:", e);
+            return { data: [], total: 0 };
+        }
+    }
+
+    async getIssueById(id: number | string): Promise<any> {
+        try {
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_API}/issue/${id}`,
+                { next: { revalidate: 60 } } as any
+            );
+            if (!res.ok) return null;
+            return await res.json();
+        } catch (e) {
+            console.error("Failed to fetch issue by id:", e);
+            return null;
+        }
+    }
+
+    async getPosts(table: string, destacado: boolean = false, offset?: number, limit?: number, withImages?: boolean, front?: boolean, categoria?: number | string | null, status?: string, slider?: boolean, issue?: string | number) {
         try {
             // Build query params
             const params = new URLSearchParams();
@@ -61,20 +114,21 @@ class PageServices {
             if (offset !== undefined) params.set('offset', String(offset));
             if (withImages) params.set('withImages', 'true');
             if (front) params.set('front', 'true');
-            if (destacado) params.set('filtros[destacado]', '1');
+            if (destacado) params.set('destacado', '1');
             if (categoria) params.set('categoria', String(categoria));
             if (status) params.set('status', status);
-
+            if (slider) params.set('slider', '1');
+            if (issue !== undefined && issue !== null) params.set('issue', String(issue));
             const res = await fetch(
                 `${process.env.NEXT_PUBLIC_API}/posts?${params.toString()}`,
                 { next: { revalidate: 60 }, method: 'GET' } as any
             );
             if (!res.ok) throw new Error(`HTTP error ${res.status}`);
-            
+
             const data = await res.json();
             const posts = Array.isArray(data) ? data : data.data || [];
             const total = data.total ?? posts.length;
-            
+
             return { data: posts, total };
         } catch (e) {
             console.error("Failed to fetch posts:", e);
@@ -94,7 +148,9 @@ class PageServices {
                 { next: { revalidate: 60 } } as any
             );
             if (!res.ok) return null;
-            return res.json();
+            const data = await res.json();
+
+            return data;
         } catch {
             return null;
         }

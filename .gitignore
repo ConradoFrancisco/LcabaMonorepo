@@ -38,3 +38,4 @@ yarn-error.log*
 *.pem
 _templates-preview
 drive-download-20260807T180255Z-1-001.zip
+temp_template/
