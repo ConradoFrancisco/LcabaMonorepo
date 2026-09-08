@@ -71,6 +71,7 @@ export default async function PostPage({
   ]);
 
   if (!post) notFound();
+  if (!post) notFound();
 
   const { textos, images = [], videos = [], archivos = [], seteos = {} } = post;
   const title = textos?.title || "";
