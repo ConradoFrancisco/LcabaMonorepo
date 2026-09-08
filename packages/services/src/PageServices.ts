@@ -115,7 +115,10 @@ class PageServices {
             if (withImages) params.set('withImages', 'true');
             if (front) params.set('front', 'true');
             if (destacado) params.set('destacado', '1');
-            if (categoria) params.set('categoria', String(categoria));
+            if (categoria) {
+
+                params.set('categoria', String(categoria));
+            }
             if (status) params.set('status', status);
             if (slider) params.set('slider', '1');
             if (issue !== undefined && issue !== null) params.set('issue', String(issue));

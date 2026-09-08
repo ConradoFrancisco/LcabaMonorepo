@@ -42,8 +42,10 @@ export default function IssueSelector({ issues = [], currentIssueNumber }: Issue
           className="pb-2"
         >
           {issues.map((issue) => {
-            const isCurrent = Number(issue.numero) === Number(currentIssueNumber);
-            const targetUrl = isCurrent ? "/" : `/?edicion=${issue.numero}`;
+            const isCurrent =
+              Number(issue.id) === Number(currentIssueNumber) ||
+              Number(issue.numero) === Number(currentIssueNumber);
+            const targetUrl = isCurrent ? "/" : `/?edicion=${issue.id}`;
 
             return (
               <SwiperSlide key={issue.id}>

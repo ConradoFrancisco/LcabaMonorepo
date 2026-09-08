@@ -2,6 +2,7 @@ import Header from "../components/Header";
 import HeroSlider from "../components/HeroSlider";
 import ArticleCard from "../components/ArticleCard";
 import IssueSelector from "../components/IssueSelector";
+import EnAccionGallery from "../components/EnAccionGallery";
 import { PageServices } from "@lcaba/services";
 
 // Helper para verificar si el status es 1 (soporta Buffer o número/boolean)
@@ -11,6 +12,15 @@ function isStatusActive(status: any): boolean {
     return status.data[0] === 1;
   }
   return false;
+}
+async function getPageVw(pageId: string = "6") {
+  try {
+    const res = await PageServices.getPageVw(pageId);
+    return res || null;
+  } catch (e) {
+    console.error("Error fetching page content:", e);
+    return null;
+  }
 }
 
 // Traer menú dinámico de Revista
@@ -33,7 +43,7 @@ async function getAllIssuesWithCovers() {
 
     // Solo issues activos para el carrusel de Otras Ediciones
     const activeIssues = issues.filter((iss: any) => isStatusActive(iss.status));
-
+    console.log("Active Issues", activeIssues);
     // Hidratar con imágenes llamando a getIssueById en paralelo
     const issuesWithImages = await Promise.all(
       activeIssues.map(async (iss: any) => {
@@ -110,16 +120,17 @@ async function getGridPosts(issueNumber: number | string, limit = 12, offset = 0
   }
 }
 
-async function getPageVw(pageId: string = "6") {
+//Traer listado de EN ACCION
+async function getEnAccion(issueNumber: number | string, limit = 1, offset = 0) {
   try {
-    const res = await PageServices.getPageVw(pageId);
-    return res || null;
+    const { data: posts } = await PageServices.getPosts("magazine_", false, offset, limit, true, true, 95, "1", false, issueNumber);
+    console.log("En Accion Posts", posts);
+    return posts;
   } catch (e) {
-    console.error("Error fetching page content:", e);
-    return null;
+    console.error("Error fetching en accion posts:", e);
+    return [];
   }
 }
-
 interface PageProps {
   searchParams: Promise<{ edicion?: string }>;
 }
@@ -139,15 +150,19 @@ export default async function HomePage({ searchParams }: PageProps) {
   // Si vino por query (?edicion=X) se usa ese.
   // Sino, se toma el último issue con status 1 (ordenados descendente por id).
   const latestActiveIssue = allIssues.find((iss: any) => isStatusActive(iss.status));
+  console.log('acaaaaaaa', latestActiveIssue);
   const currentIssueNumber = requestedEdicion
     ? Number(requestedEdicion)
-    : (latestActiveIssue ? latestActiveIssue.numero : 14);
+    : (latestActiveIssue ? latestActiveIssue.id : 21);
 
   // 3. Traer los posts correspondientes al issue actual
-  const [sliderPosts, gridPosts] = await Promise.all([
+  const [sliderPosts, gridPosts, enAccionPosts] = await Promise.all([
     getSliderPosts(currentIssueNumber),
     getGridPosts(currentIssueNumber, 12, 0),
+    getEnAccion(currentIssueNumber, 1, 0),
   ]);
+
+  const enAccionPost = Array.isArray(enAccionPosts) ? enAccionPosts[0] : enAccionPosts;
 
   // Logo
   const logo = pageVw?.images?.find((img: any) => img.image_type === "logo");
@@ -207,7 +222,13 @@ export default async function HomePage({ searchParams }: PageProps) {
             </div>
           )}
         </section>
+        <hr />
 
+        {/* Carrusel de Galería En Acción */}
+        {enAccionPost && <EnAccionGallery post={enAccionPost} />}
+        <hr />
+        <h2 className="text-center">LA REVISTA LA HACEMOS ENTRE TODOS</h2>
+        <hr />
         {/* Carrusel de Otras Ediciones */}
         {activeIssues.length > 0 && (
           <IssueSelector
