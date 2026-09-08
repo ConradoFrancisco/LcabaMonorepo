@@ -7,7 +7,6 @@ import PostSection from '@/components/sections/home/PostSection'
 import Section6 from '@/components/sections/home/Section6'
 import Section7 from '@/components/sections/home/Section7'
 import Section8 from '@/components/sections/home/Section8'
-import Section9 from '@/components/sections/home/Section9'
 import { PageServices } from '@lcaba/services'
 
 

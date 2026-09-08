@@ -38,7 +38,7 @@ export default function PostSection({ posts, logo }: { posts: any[], logo?: any 
                                     <div className="position-relative" style={{ height: '240px', overflow: 'hidden' }}>
                                         <Link href={`/novedades/${post.id}`}>
                                             <img
-                                                src={imageUrl}
+                                                src={imageUrl ?? undefined}
                                                 alt={post.title}
                                                 className="w-100 h-100 post-card-img"
                                                 style={{ objectFit: 'contain', boxShadow: '5px 5px 10px 0px rgba(0, 0, 0, 0.5)' }}

@@ -16,7 +16,7 @@ export default function Header({
           <nav
             className={`navbar navbar-expand-lg z-5 ${scroll ? "navbar-stick top-0 position-fixed w-100" : ""}`}
           >
-            <div className="container-fluid px-5 mt-2 mb-2">
+            <div className="container mt-3 mb-3">
               <Link className="navbar-brand" href="/">
                 <img
                   src="http://web.lcaba.test/_pagedata/page/images/jl58gsopll_1595522903.3196.png"
@@ -76,12 +76,13 @@ export default function Header({
                 </ul>
               </div>
               <div className="d-flex align-items-center gap-4">
-                <img
-                  height={50}
-                  src="http://web.lcaba.test/_pagedata/page/images/6lf3r7imj7_1664903744.8227.png"
-                  alt="Logo derecho"
-                  className="d-none d-md-block"
-                />
+                <a href="https://www.legislatura.gob.ar/" target="_blank" rel="noopener noreferrer">
+                  <img
+                    width={230}
+                    src="https://www.legislatura.gob.ar/_pagedata/page/images/6lf3r7imj7_1664903744.8227.png"
+                    alt="Logo derecho"
+                  />
+                </a>
 
                 <div
                   className="burger-icon burger-icon-white border rounded-3 top-0 end-0"
