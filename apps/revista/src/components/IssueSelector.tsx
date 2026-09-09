@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import Link from "next/link";
@@ -18,8 +19,45 @@ interface IssueSelectorProps {
   currentIssueNumber?: number;
 }
 
+function IssueSkeleton() {
+  return (
+    <div style={{ display: "flex", gap: "24px" }}>
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div
+          key={i}
+          style={{
+            flex: "0 0 calc(25% - 18px)",
+            borderRadius: "12px",
+            backgroundColor: "#f1f5f9",
+            height: "240px",
+            animation: "skeleton-pulse 1.6s ease-in-out infinite",
+            animationDelay: `${i * 0.15}s`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 export default function IssueSelector({ issues = [], currentIssueNumber }: IssueSelectorProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   if (!issues || issues.length === 0) return null;
+
+  if (!mounted) {
+    return (
+      <section className="ediciones-section">
+        <div className="container">
+          <h2 className="ediciones-title">Otras Ediciones</h2>
+          <IssueSkeleton />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="ediciones-section">
@@ -81,7 +119,7 @@ export default function IssueSelector({ issues = [], currentIssueNumber }: Issue
           })}
         </Swiper>
 
-        {/* Flechitas inferiores <  > estilo referencia */}
+        {/* Flechitas inferiores < > estilo referencia */}
         <div className="edicion-arrows">
           <button
             className="edicion-arrow-btn edicion-prev-btn"
@@ -100,3 +138,19 @@ export default function IssueSelector({ issues = [], currentIssueNumber }: Issue
     </section>
   );
 }
+
+
+interface IssueItem {
+  id: number;
+  numero: number;
+  titulo: string;
+  fecha?: string;
+  status: any;
+  imageUrl?: string;
+}
+
+interface IssueSelectorProps {
+  issues: IssueItem[];
+  currentIssueNumber?: number;
+}
+

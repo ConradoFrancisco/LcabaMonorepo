@@ -105,7 +105,7 @@ class PageServices {
         }
     }
 
-    async getPosts(table: string, destacado: boolean = false, offset?: number, limit?: number, withImages?: boolean, front?: boolean, categoria?: number | string | null, status?: string, slider?: boolean, issue?: string | number) {
+    async getPosts(table: string, destacado: boolean = false, offset?: number, limit?: number, withImages?: boolean, front?: boolean, categoria?: number | string | null, status?: string, slider?: boolean, issue?: string | number, notCategoria?: number | number[], order?: string) {
         try {
             // Build query params
             const params = new URLSearchParams();
@@ -118,6 +118,13 @@ class PageServices {
             if (categoria) {
 
                 params.set('categoria', String(categoria));
+            }
+            if (notCategoria) {
+
+                params.set('notCategoria', String(notCategoria));
+            }
+            if (order) {
+                params.set('order', order);
             }
             if (status) params.set('status', status);
             if (slider) params.set('slider', '1');

@@ -12,6 +12,12 @@ body {
   font-family: var(--font-rubik, 'Rubik', sans-serif);
 }
 
+/* Skeleton loading animation */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
 /* Header La Casa */
 .revista-header {
   background: #ffffff;

@@ -111,7 +111,9 @@ async function getGridPosts(issueNumber: number | string, limit = 12, offset = 0
       null,
       "1",
       false,
-      issueNumber
+      issueNumber,
+      [105, 95],
+      'orderby'
     );
     return Array.isArray(res) ? res : (res.data || []);
   } catch (e) {
@@ -150,7 +152,6 @@ export default async function HomePage({ searchParams }: PageProps) {
   // Si vino por query (?edicion=X) se usa ese.
   // Sino, se toma el último issue con status 1 (ordenados descendente por id).
   const latestActiveIssue = allIssues.find((iss: any) => isStatusActive(iss.status));
-  console.log('acaaaaaaa', latestActiveIssue);
   const currentIssueNumber = requestedEdicion
     ? Number(requestedEdicion)
     : (latestActiveIssue ? latestActiveIssue.id : 21);

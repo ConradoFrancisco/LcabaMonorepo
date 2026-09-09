@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules";
 import Link from "next/link";
@@ -10,8 +11,46 @@ interface HeroSliderProps {
   categoryColorMap?: Record<string, string>;
 }
 
+// Skeleton de una card del slider
+function SliderCardSkeleton() {
+  return (
+    <div
+      style={{
+        borderRadius: "12px",
+        overflow: "hidden",
+        backgroundColor: "#f1f5f9",
+        height: "320px",
+        animation: "skeleton-pulse 1.6s ease-in-out infinite",
+      }}
+    />
+  );
+}
+
 export default function HeroSlider({ posts = [], categoryColorMap = {} }: HeroSliderProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   if (!posts || posts.length === 0) return null;
+
+  // Mientras no hidrata: mostrar skeletons con el mismo layout que tendría Swiper
+  if (!mounted) {
+    return (
+      <section className="revista-hero-slider py-4">
+        <div className="container-fluid">
+          <div className="row g-4">
+            {Array.from({ length: Math.min(posts.length, 3) }).map((_, i) => (
+              <div className="col-12 col-md-6 col-lg-4" key={i}>
+                <SliderCardSkeleton />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="revista-hero-slider py-4">
@@ -100,3 +139,4 @@ export default function HeroSlider({ posts = [], categoryColorMap = {} }: HeroSl
     </section>
   );
 }
+
