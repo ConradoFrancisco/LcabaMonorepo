@@ -2,9 +2,13 @@
 
 import { useEffect, useState } from 'react';
 
+const BASE_OFFSET_PX = 24; // 1.5rem, matches .btn-scroll-top's default bottom offset
+const GAP_ABOVE_FOOTER_PX = 16;
+
 export default function ScrollToTop() {
 	const [isVisible, setIsVisible] = useState(false);
 	const [progress, setProgress] = useState(0);
+	const [bottomOffset, setBottomOffset] = useState(BASE_OFFSET_PX);
 
 	useEffect(() => {
 		const handleScroll = () => {
@@ -13,10 +17,21 @@ export default function ScrollToTop() {
 			const progress = (scrollTop / scrollHeight) * 139.988; // Tính toán progress cho stroke-dashoffset
 			setProgress(progress);
 			setIsVisible(scrollTop > 100);
+
+			const footer = document.querySelector('footer');
+			if (footer) {
+				const footerTop = footer.getBoundingClientRect().top;
+				const overlap = window.innerHeight - footerTop;
+				setBottomOffset(overlap > 0 ? BASE_OFFSET_PX + overlap + GAP_ABOVE_FOOTER_PX : BASE_OFFSET_PX);
+			}
 		};
 
 		window.addEventListener('scroll', handleScroll);
-		return () => window.removeEventListener('scroll', handleScroll);
+		window.addEventListener('resize', handleScroll);
+		return () => {
+			window.removeEventListener('scroll', handleScroll);
+			window.removeEventListener('resize', handleScroll);
+		};
 	}, []);
 
 	const scrollToTop = () => {
@@ -27,7 +42,7 @@ export default function ScrollToTop() {
 		<div
 			className={`btn-scroll-top ${isVisible ? 'active-progress' : ''}`}
 			onClick={scrollToTop}
-			style={{ display: isVisible ? 'flex' : 'none' }}
+			style={{ display: isVisible ? 'flex' : 'none', bottom: `${bottomOffset}px` }}
 		>
 			<svg className="progress-square svg-content" width="100%" height="100%" viewBox="0 0 40 40">
 				<path

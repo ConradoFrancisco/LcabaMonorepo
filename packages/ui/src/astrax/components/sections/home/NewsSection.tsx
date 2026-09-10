@@ -22,10 +22,13 @@ interface NewsPost {
   images?: { location: string; filename: string; image_type?: string }[];
 }
 
+const IMAGE_HEIGHT = 380;
+
 const swiperOptions = {
   modules: [Navigation],
   slidesPerView: 1,
   spaceBetween: 24,
+  loop: true,
   navigation: {
     nextEl: ".news-swiper-next",
     prevEl: ".news-swiper-prev",
@@ -87,7 +90,7 @@ function decodeHtmlEntities(text: string): string {
   });
 }
 
-function excerpt(html: string, maxLen = 130): string {
+function excerpt(html: string, maxLen = 220): string {
   const text = decodeHtmlEntities(html.replace(/<[^>]*>/g, " "))
     .replace(/\s+/g, " ")
     .trim();
@@ -108,10 +111,21 @@ function formatDate(dateStr?: string): string {
   }
 }
 
-function NewsCard({ post }: { post: NewsPost }) {
+function NewsCard({
+  post,
+  showDivider,
+}: {
+  post: NewsPost;
+  showDivider: boolean;
+}) {
   const title = post.title || post.titulo || "";
   const desc = excerpt(
-    post.shortdesc || post.copete || post.description || post.content || post.texto || "",
+    post.shortdesc ||
+      post.copete ||
+      post.description ||
+      post.content ||
+      post.texto ||
+      "",
   );
   const eyebrow =
     post.categoria ||
@@ -122,12 +136,18 @@ function NewsCard({ post }: { post: NewsPost }) {
   const url = `/publicaciones/${post.id}`;
 
   return (
-    <div className="h-100">
+    <div className="h-100 position-relative">
+      {showDivider && (
+        <div
+          className="d-none d-md-block position-absolute top-0 bottom-0"
+          style={{ right: "-12px", width: "1px", background: "#e0e0e0" }}
+        />
+      )}
       {/* Image */}
       <Link
         href={url}
         className="d-block overflow-hidden"
-        style={{ height: "260px", borderRadius: "14px" }}
+        style={{ height: `${IMAGE_HEIGHT}px`, borderRadius: "14px" }}
       >
         {imgUrl ? (
           <img
@@ -164,7 +184,11 @@ function NewsCard({ post }: { post: NewsPost }) {
         {eyebrow && (
           <span
             className="d-block fw-bold text-dark mb-1"
-            style={{ fontSize: "0.7rem", letterSpacing: "0.08em", textTransform: "uppercase" }}
+            style={{
+              fontSize: "0.7rem",
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+            }}
           >
             {eyebrow}
           </span>
@@ -173,8 +197,8 @@ function NewsCard({ post }: { post: NewsPost }) {
           <h5
             className="text-dark fw-bold mb-2"
             style={{
-              fontSize: "1.1rem",
-              lineHeight: 1.35,
+              fontSize: "1.5rem",
+              lineHeight: 1.3,
               display: "-webkit-box",
               WebkitLineClamp: 2,
               WebkitBoxOrient: "vertical",
@@ -188,10 +212,10 @@ function NewsCard({ post }: { post: NewsPost }) {
           <p
             className="mb-2"
             style={{
-              fontSize: "0.9rem",
+              fontSize: "0.95rem",
               color: "#4a4a4a",
               display: "-webkit-box",
-              WebkitLineClamp: 3,
+              WebkitLineClamp: 4,
               WebkitBoxOrient: "vertical",
               overflow: "hidden",
               lineHeight: 1.6,
@@ -227,10 +251,16 @@ export default function NewsSection({
 
   return (
     <section className="py-80">
-      <div className="container-fluid" style={{ maxWidth: "1680px", paddingInline: "clamp(1.25rem, 4vw, 4rem)" }}>
+      <div
+        className="container-fluid"
+        style={{
+          maxWidth: "1680px",
+          paddingInline: "clamp(1.25rem, 4vw, 4rem)",
+        }}
+      >
         {/* Section header */}
         <div className="row mb-4 mb-lg-5">
-          <div className="col-12">
+          <div className="col-12 text-center">
             <h2 className="text-dark fw-bold mb-0" style={{ fontSize: "2rem" }}>
               {title}
             </h2>
@@ -240,9 +270,9 @@ export default function NewsSection({
         {/* Cards carousel */}
         <div className="position-relative">
           <Swiper {...swiperOptions} className="swiper news-swiper">
-            {posts.map((post) => (
+            {posts.map((post, index) => (
               <SwiperSlide key={post.id}>
-                <NewsCard post={post} />
+                <NewsCard post={post} showDivider={index < posts.length - 1} />
               </SwiperSlide>
             ))}
           </Swiper>
@@ -250,46 +280,89 @@ export default function NewsSection({
           <button
             type="button"
             aria-label="Anterior"
-            className="news-swiper-prev d-none d-md-flex align-items-center justify-content-center position-absolute top-0"
+            className="news-swiper-prev d-none d-md-flex align-items-center justify-content-center position-absolute"
             style={{
-              left: "-22px",
+              left: "-20px",
+              top: `${IMAGE_HEIGHT / 2}px`,
+              transform: "translateY(-50%)",
               width: "44px",
-              height: "260px",
-              background: "transparent",
-              border: "none",
+              height: "44px",
+              borderRadius: "50%",
+              background: "#4fc1f0ff",
+              border: "1px solid #eee",
+              boxShadow: "0 4px 14px rgba(0,0,0,0.12)",
               zIndex: 5,
               cursor: "pointer",
             }}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width={26} height={26} viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="2.5">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width={18}
+              height={18}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#1a1a1a"
+              strokeWidth="2.5"
+            >
               <polyline points="15 18 9 12 15 6" />
             </svg>
           </button>
           <button
             type="button"
             aria-label="Siguiente"
-            className="news-swiper-next d-none d-md-flex align-items-center justify-content-center position-absolute top-0"
+            className="news-swiper-next d-none d-md-flex align-items-center justify-content-center position-absolute"
             style={{
-              right: "-22px",
+              right: "-20px",
+              top: `${IMAGE_HEIGHT / 2}px`,
+              transform: "translateY(-50%)",
               width: "44px",
-              height: "260px",
-              background: "transparent",
-              border: "none",
+              height: "44px",
+              borderRadius: "50%",
+              background: "#4fc1f0ff",
+              border: "1px solid #eee",
+              boxShadow: "0 4px 14px rgba(0,0,0,0.12)",
               zIndex: 5,
               cursor: "pointer",
             }}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width={26} height={26} viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="2.5">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width={18}
+              height={18}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#1a1a1a"
+              strokeWidth="2.5"
+            >
               <polyline points="9 18 15 12 9 6" />
             </svg>
           </button>
+        </div>
+
+        {/* Ver todas */}
+        <div className="row mt-3 mt-lg-4">
+          <div className="col-12 d-flex justify-content-end">
+            <Link
+              href="/publicaciones"
+              className="text-uppercase fw-bold"
+              style={{
+                fontSize: "0.85rem",
+                color: "#000000ff",
+                background: "#4fc1f0",
+                padding: "0.4rem 0.9rem",
+                boxShadow: "0 1px 4px rgba(0,0,0,0.12)",
+              }}
+            >
+              + Ver todas
+            </Link>
+          </div>
         </div>
       </div>
 
       <style>{`
         .news-swiper-prev.swiper-button-disabled,
         .news-swiper-next.swiper-button-disabled {
-          opacity: 0.25;
+          opacity: 0.3;
           pointer-events: none;
         }
       `}</style>

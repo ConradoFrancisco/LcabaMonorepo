@@ -68,13 +68,13 @@ export default async function Home() {
   const menuItems = await PageServices.getNavMenu();
   const socials = await getSocials();
   const postSlider = await getPostsSlider();
-  const { posts } = await getPosts(8, 0, true);
+  const { posts } = await getPosts(5, 0, true);
   return (
     <>
       <Layout menuItems={menuItems} socials={socials}>
         <HeroSlider posts={postSlider} />
-        {/* <MenuButtons /> */}
-        <NewsSection posts={posts} title="Noticias" />
+        <NewsSection posts={posts} title="NOTICIAS" />
+        <MenuButtons />
       </Layout>
     </>
   );
