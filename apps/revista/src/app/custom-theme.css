@@ -14,8 +14,15 @@ body {
 
 /* Skeleton loading animation */
 @keyframes skeleton-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
 }
 
 /* Header La Casa */
@@ -454,19 +461,19 @@ body {
 
 /* En Acción Gallery Section */
 .en-accion-section {
-  padding: 40px 0 20px 0;
+  padding: 20px 0 20px 0;
   background-color: #ffffff;
 }
 
 .en-accion-title {
   font-family: var(--font-franklin, sans-serif);
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 800;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: #0f172a;
   text-align: center;
-  margin-bottom: 28px;
+  margin-bottom: 35px;
 }
 
 .en-accion-img-wrap {
@@ -568,6 +575,7 @@ body {
     opacity: 0;
     transform: scale(0.98);
   }
+
   to {
     opacity: 1;
     transform: scale(1);

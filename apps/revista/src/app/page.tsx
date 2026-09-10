@@ -112,7 +112,7 @@ async function getGridPosts(issueNumber: number | string, limit = 12, offset = 0
       "1",
       false,
       issueNumber,
-      [105, 95],
+      [105, 95, 102, 103, 94, 99, 100, 101],
       'orderby'
     );
     return Array.isArray(res) ? res : (res.data || []);

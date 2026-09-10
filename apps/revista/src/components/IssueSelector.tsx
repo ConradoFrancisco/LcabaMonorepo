@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import Link from "next/link";
+import FallbackImage from "./FallbackImage";
 
 interface IssueItem {
   id: number;
@@ -90,18 +91,12 @@ export default function IssueSelector({ issues = [], currentIssueNumber }: Issue
                 <Link href={targetUrl} className="text-decoration-none">
                   <div className={`edicion-card ${isCurrent ? "active-issue" : ""}`}>
                     <div className="edicion-img-wrap">
-                      {issue.imageUrl ? (
-                        <img
-                          src={issue.imageUrl}
-                          alt={issue.titulo}
-                          className="edicion-img"
-                        />
-                      ) : (
-                        <div className="text-center p-3 text-muted">
-                          <i className="fa-regular fa-newspaper fa-2x mb-2 d-block opacity-50" />
-                          <span className="small fw-bold">#{issue.numero}</span>
-                        </div>
-                      )}
+                      <FallbackImage
+                        src={issue.imageUrl}
+                        alt={issue.titulo}
+                        withBackground
+                        className="edicion-img"
+                      />
                       <span className="edicion-number-badge">
                         #{issue.numero}
                       </span>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import FallbackImage from "../../../components/FallbackImage";
 
 interface ArticleGalleryProps {
   images: string[];
@@ -34,9 +35,10 @@ export default function ArticleGallery({
         style={{ cursor: "zoom-in" }}
         onClick={() => openLightbox(current)}
       >
-        <img
+        <FallbackImage
           src={images[current]}
           alt={`${title} - ${current + 1}`}
+          withBackground
           className="w-100"
           style={{ maxHeight: "480px", objectFit: "cover", display: "block" }}
         />
@@ -140,7 +142,7 @@ export default function ArticleGallery({
                 transition: "all 0.2s",
               }}
             >
-              <img
+              <FallbackImage
                 src={url}
                 alt={`thumb ${i + 1}`}
                 style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
@@ -175,9 +177,10 @@ export default function ArticleGallery({
           </button>
 
           {/* Main lightbox image */}
-          <img
+          <FallbackImage
             src={images[current]}
             alt={title}
+            withBackground
             onClick={(e) => e.stopPropagation()}
             style={{ maxWidth: "90vw", maxHeight: "78vh", objectFit: "contain", borderRadius: "8px" }}
           />
@@ -235,7 +238,7 @@ export default function ArticleGallery({
                       transition: "all 0.2s",
                     }}
                   >
-                    <img
+                    <FallbackImage
                       src={url}
                       alt={`thumb ${i + 1}`}
                       style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", borderRadius: "4px" }}

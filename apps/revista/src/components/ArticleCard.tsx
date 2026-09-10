@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getCategoryColor, buildImageUrl } from "../utils/categoryColors";
+import FallbackImage from "./FallbackImage";
 
 interface ArticleCardProps {
   post: any;
@@ -32,20 +33,12 @@ export default function ArticleCard({ post, categoryColorMap = {} }: ArticleCard
 
             {/* Recorte de la imagen con la curva inferior derecha */}
             <div className="revista-card-img-wrap">
-              {imgUrl ? (
-                <img
-                  src={imgUrl}
-                  alt={title}
-                  className="revista-card-img"
-                />
-              ) : (
-                <div
-                  className="w-100 h-100 d-flex align-items-center justify-content-center text-white"
-                  style={{ backgroundColor: categoryBg, opacity: 0.85 }}
-                >
-                  <span className="fw-bold fs-5 px-3 text-center">{title}</span>
-                </div>
-              )}
+              <FallbackImage
+                src={imgUrl}
+                alt={title}
+                withBackground
+                className="revista-card-img"
+              />
             </div>
           </div>
 

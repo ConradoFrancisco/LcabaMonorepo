@@ -64,7 +64,7 @@ class PageServices {
             );
             if (!res.ok) throw new Error(`HTTP error ${res.status}`);
             const data = await res.json();
-            console.log(data)
+
             return Array.isArray(data) ? data : (data.data || []);
         } catch (e) {
             console.error("Failed to fetch dynamic menu:", e);
@@ -105,7 +105,7 @@ class PageServices {
         }
     }
 
-    async getPosts(table: string, destacado: boolean = false, offset?: number, limit?: number, withImages?: boolean, front?: boolean, categoria?: number | string | null, status?: string, slider?: boolean, issue?: string | number, notCategoria?: number | number[], order?: string) {
+    async getPosts(table: string, destacado: boolean = false, offset?: number, limit?: number, withImages?: boolean, front?: boolean, categoria?: number | string | null, status?: string, slider?: boolean, issue?: string | number, notCategoria?: number | number[], order?: string, upcomingOnly?: boolean) {
         try {
             // Build query params
             const params = new URLSearchParams();
@@ -129,6 +129,7 @@ class PageServices {
             if (status) params.set('status', status);
             if (slider) params.set('slider', '1');
             if (issue !== undefined && issue !== null) params.set('issue', String(issue));
+            if (upcomingOnly) params.set('upcomingOnly', 'true');
             const res = await fetch(
                 `${process.env.NEXT_PUBLIC_API}/posts?${params.toString()}`,
                 { next: { revalidate: 60 }, method: 'GET' } as any

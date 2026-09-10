@@ -5,6 +5,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules";
 import Link from "next/link";
 import { getCategoryColor, buildImageUrl } from "../utils/categoryColors";
+import FallbackImage from "./FallbackImage";
 
 interface HeroSliderProps {
   posts: any[];
@@ -96,17 +97,12 @@ export default function HeroSlider({ posts = [], categoryColorMap = {} }: HeroSl
                     )}
 
                     {/* Imagen Principal */}
-                    {imgUrl ? (
-                      <img
-                        src={imgUrl}
-                        alt={title}
-                        className="revista-slider-img"
-                      />
-                    ) : (
-                      <div className="w-100 h-100 bg-secondary d-flex align-items-center justify-center text-white-50">
-                        Sin imagen
-                      </div>
-                    )}
+                    <FallbackImage
+                      src={imgUrl}
+                      alt={title}
+                      withBackground
+                      className="revista-slider-img"
+                    />
 
                     {/* Barra inferior oscura con título */}
                     <div className="revista-slider-overlay">

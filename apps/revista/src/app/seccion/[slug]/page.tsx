@@ -5,6 +5,10 @@ import { getCategoryColor } from "@/utils/categoryColors";
 import Header from "@/components/Header";
 import ArticleGallery from "@/app/publicaciones/[id]/ArticleGallery";
 import ArticleCard from "@/components/ArticleCard";
+import InfoCard from "@/components/InfoCard";
+import AuthorityCard from "@/components/AuthorityCard";
+import EnAccionGallery from "@/components/EnAccionGallery";
+import AgendaCard from "@/components/AgendaCard";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -57,12 +61,37 @@ const SINGLE_POST_CATEGORIES = [
   "nuestros logros",
   "iniciativas legislativas",
   "libro del mes",
-  "autoridades",
 ];
 
 // Categorías que siempre muestran TODO su histórico global (sin filtrar por edición de revista)
 const GLOBAL_ALL_POSTS_CATEGORIES = [
   "en casa",
+  "capacitaciones",
+  "beneficios en capacitaciones",
+  "autoridades",
+  "agenda",
+];
+
+// Categorías que usan InfoCard (logo + título + descripción completa)
+const INFO_CARD_CATEGORIES = [
+  "capacitaciones",
+  "beneficios en capacitaciones",
+];
+
+// Categorías que usan AuthorityCard (cards horizontales con foto a la izquierda)
+const AUTHORITY_CARD_CATEGORIES = [
+  "autoridades",
+];
+
+// Categorías que usan EnAccionGallery (carrusel con modal/lightbox de fotos)
+const EN_ACCION_CATEGORIES = [
+  "en acción",
+  "en accion",
+];
+
+// Categorías que usan AgendaCard
+const AGENDA_CATEGORIES = [
+  "agenda",
 ];
 
 function normalizeSlug(slug: string): string {
@@ -98,6 +127,8 @@ async function getAllActiveIssues() {
     return [];
   }
 }
+
+
 
 // Busca el item del menú que corresponda al slug (comparando URL o título)
 function findCategoryInMenu(menuItems: any[], targetSlug: string) {
@@ -643,32 +674,32 @@ export default async function SeccionPage({ params, searchParams }: SeccionPageP
                         audioFiles.length > 0 ||
                         (videos as any[]).length > 0 ||
                         regularFiles.length > 0) && (
-                        <>
-                          <hr style={{ borderColor: "#f1f5f9", margin: "14px 0" }} />
-                          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                            {allImages.length > 0 && (
-                              <span style={{ fontSize: "0.82rem", color: "#94a3b8" }}>
-                                🖼️ {allImages.length} imagen{allImages.length !== 1 ? "es" : ""}
-                              </span>
-                            )}
-                            {audioFiles.length > 0 && (
-                              <span style={{ fontSize: "0.82rem", color: "#94a3b8" }}>
-                                🎧 {audioFiles.length} audio{audioFiles.length !== 1 ? "s" : ""}
-                              </span>
-                            )}
-                            {(videos as any[]).length > 0 && (
-                              <span style={{ fontSize: "0.82rem", color: "#94a3b8" }}>
-                                ▶️ {(videos as any[]).length} video{(videos as any[]).length !== 1 ? "s" : ""}
-                              </span>
-                            )}
-                            {regularFiles.length > 0 && (
-                              <span style={{ fontSize: "0.82rem", color: "#94a3b8" }}>
-                                📎 {regularFiles.length} archivo{regularFiles.length !== 1 ? "s" : ""}
-                              </span>
-                            )}
-                          </div>
-                        </>
-                      )}
+                          <>
+                            <hr style={{ borderColor: "#f1f5f9", margin: "14px 0" }} />
+                            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                              {allImages.length > 0 && (
+                                <span style={{ fontSize: "0.82rem", color: "#94a3b8" }}>
+                                  🖼️ {allImages.length} imagen{allImages.length !== 1 ? "es" : ""}
+                                </span>
+                              )}
+                              {audioFiles.length > 0 && (
+                                <span style={{ fontSize: "0.82rem", color: "#94a3b8" }}>
+                                  🎧 {audioFiles.length} audio{audioFiles.length !== 1 ? "s" : ""}
+                                </span>
+                              )}
+                              {(videos as any[]).length > 0 && (
+                                <span style={{ fontSize: "0.82rem", color: "#94a3b8" }}>
+                                  ▶️ {(videos as any[]).length} video{(videos as any[]).length !== 1 ? "s" : ""}
+                                </span>
+                              )}
+                              {regularFiles.length > 0 && (
+                                <span style={{ fontSize: "0.82rem", color: "#94a3b8" }}>
+                                  📎 {regularFiles.length} archivo{regularFiles.length !== 1 ? "s" : ""}
+                                </span>
+                              )}
+                            </div>
+                          </>
+                        )}
                     </div>
                   </div>
 
@@ -691,6 +722,30 @@ export default async function SeccionPage({ params, searchParams }: SeccionPageP
                     }}
                   >
                     ← Volver a la Revista
+                  </Link>
+
+                  {/* Botón archivo histórico */}
+                  <Link
+                    href={`/seccion/${slug}/historico`}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "14px",
+                      backgroundColor: "transparent",
+                      color: categoryColor,
+                      textAlign: "center",
+                      borderRadius: "999px",
+                      textDecoration: "none",
+                      fontWeight: 700,
+                      fontSize: "0.85rem",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.06em",
+                      border: `2px solid ${categoryColor}`,
+                      marginTop: "10px",
+                      transition: "all 0.2s",
+                    }}
+                  >
+                    📂 Ver publicaciones históricas
                   </Link>
                 </div>
               </div>
@@ -719,12 +774,18 @@ export default async function SeccionPage({ params, searchParams }: SeccionPageP
     );
   }
 
-  // ── Modalidad 2: Sección con listado de artículos y Paginación (EN CASA, Capacitaciones, etc.) ──
+  // ── Modalidad 2: Sección con listado de artículos y Paginación (EN CASA, Capacitaciones, Autoridades, etc.) ──
   const currentPage = Math.max(1, parseInt(pagina || "1", 10) || 1);
-  const pageSize = 9;
-  const offset = (currentPage - 1) * pageSize;
+  const isInfoCardCategory = INFO_CARD_CATEGORIES.includes(normalizedCategoryTitle);
+  const isAuthorityCardCategory = AUTHORITY_CARD_CATEGORIES.includes(normalizedCategoryTitle);
+  const isEnAccionCategory = EN_ACCION_CATEGORIES.includes(normalizedCategoryTitle);
+  const isAgendaCategory = AGENDA_CATEGORIES.includes(normalizedCategoryTitle);
+  // InfoCard, AuthorityCard, EnAccion and Agenda categories show all/full content without pagination
+  const isSpecialCategory = isInfoCardCategory || isAuthorityCardCategory || isEnAccionCategory || isAgendaCategory;
+  const pageSize = isSpecialCategory ? 100 : 9;
+  const offset = isSpecialCategory ? 0 : (currentPage - 1) * pageSize;
 
-  // Si es una categoría global (como "En casa"), no filtramos por targetIssue (trae histórico completo)
+  // Si es una categoría global, no filtramos por targetIssue (trae histórico completo)
   const issueFilter = isGlobalAllCategory ? undefined : targetIssue;
 
   const postsRes = await PageServices.getPosts(
@@ -737,14 +798,74 @@ export default async function SeccionPage({ params, searchParams }: SeccionPageP
     catId,
     "1",
     false,
-    issueFilter
+    issueFilter,
+    undefined,   // notCategoria
+    undefined,   // order
+    isAgendaCategory // upcomingOnly: solo eventos futuros para agenda
   );
 
   const posts = Array.isArray(postsRes) ? postsRes : (postsRes?.data || []);
   const totalPosts = postsRes?.total ?? posts.length;
-  const totalPages = Math.ceil(totalPosts / pageSize);
+  const totalPages = isSpecialCategory ? 1 : Math.ceil(totalPosts / pageSize);
   const activePosts = posts.filter((p: any) => isStatusActive(p.status));
 
+  // Para categorías especiales, traemos el detalle completo de cada post (textos + imágenes + dias)
+  let postsWithDetail: any[] = activePosts;
+  if (isSpecialCategory && activePosts.length > 0) {
+    postsWithDetail = await Promise.all(
+      activePosts.map(async (p: any) => {
+        try {
+          const detail = await PageServices.getPostById(p.id, "magazine_");
+          return { ...p, detail };
+        } catch {
+          return { ...p, detail: null };
+        }
+      })
+    );
+
+    // Para autoridades, invertimos el orden
+    if (isAuthorityCardCategory) {
+      postsWithDetail = [...postsWithDetail].reverse();
+    }
+
+    // Para agenda: filtrar eventos ya pasados usando los días del detalle
+    if (isAgendaCategory) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      postsWithDetail = postsWithDetail.filter((p: any) => {
+        const detail = p.detail || p;
+        const dias: any[] = detail?.dias || [];
+
+        // Tiene días con info
+        if (dias.length > 0) {
+          return dias.some((dia: any) => {
+            // Día recurrente sin fecha específica (ej. "todos los lunes") → siempre mostrar
+            if (dia.day && !dia.date) return true;
+            // Día con fecha → mostrar solo si es hoy o futuro
+            if (dia.date) {
+              const diaDate = new Date(dia.date);
+              diaDate.setHours(0, 0, 0, 0);
+              return diaDate >= today;
+            }
+            return false;
+          });
+        }
+
+        // Sin días: buscar fecha directa en el post (campo date, no date_ins)
+        const directDate = detail?.seteos?.date || detail?.date || p?.fecha_evento;
+        if (directDate) {
+          const d = new Date(directDate);
+          d.setHours(0, 0, 0, 0);
+          return d >= today;
+        }
+
+        // Sin días ni fecha → ocultar (evento sin información de fecha = probablemente viejo)
+        return false;
+      });
+    }
+
+  }
   // Helper para armar links de paginación preservando edición
   const buildPageUrl = (pageNumber: number) => {
     const query = new URLSearchParams();
@@ -777,7 +898,7 @@ export default async function SeccionPage({ params, searchParams }: SeccionPageP
               <h1 className="fw-bold m-0 text-uppercase" style={{ fontSize: "2.3rem" }}>
                 {categoryTitle}
               </h1>
-              {totalPosts > 0 && (
+              {!isInfoCardCategory && !isAuthorityCardCategory && !isEnAccionCategory && !isAgendaCategory && totalPosts > 0 && (
                 <span className="badge bg-white text-dark rounded-pill px-3 py-2 fw-semibold" style={{ fontSize: "0.85rem" }}>
                   {totalPosts} {totalPosts === 1 ? "publicación" : "publicaciones"}
                 </span>
@@ -786,124 +907,246 @@ export default async function SeccionPage({ params, searchParams }: SeccionPageP
           </div>
         </div>
 
-        {/* Grilla de Publicaciones */}
-        <div className="container py-5">
-          {activePosts.length > 0 ? (
-            <>
-              <div className="row g-4">
-                {activePosts.map((p: any) => (
-                  <ArticleCard
-                    key={p.id}
-                    post={p}
-                    categoryColorMap={{ [categoryTitle.toLowerCase()]: categoryColor }}
-                  />
-                ))}
+        {/* Grilla / Contenido de Publicaciones */}
+        {isEnAccionCategory ? (
+
+          // Vista especial En Acción: carrusel con modal lightbox idéntico a la Home
+          <div className="py-5">
+            {postsWithDetail.length > 0 ? (
+              <>
+                {postsWithDetail.map((p: any) => {
+                  const galleryPost = {
+                    ...(p.detail || p),
+                    titulo: p.detail?.textos?.title || p.titulo || categoryTitle,
+                    images: p.detail?.images || p.images || [],
+                  };
+                  const galleryDescription = p.detail?.textos?.description || p.description || undefined;
+                  const galleryShortdesc = p.detail?.textos?.shortdesc || p.shortdesc || undefined;
+                  return (
+                    <div key={p.id} className="mb-5">
+                      <EnAccionGallery
+                        post={galleryPost}
+                        description={galleryDescription}
+                        shortdesc={galleryShortdesc}
+                      />
+                    </div>
+                  );
+                })}
+
+                {/* Botón al histórico */}
+                <div className="text-center mt-2 mb-4">
+                  <Link
+                    href={`/seccion/${slug}/historico`}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      padding: "14px 32px",
+                      backgroundColor: "transparent",
+                      color: categoryColor,
+                      border: `2px solid ${categoryColor}`,
+                      borderRadius: "999px",
+                      textDecoration: "none",
+                      fontWeight: 700,
+                      fontSize: "0.9rem",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.06em",
+                    }}
+                  >
+                    📂 Ver todas las galerías históricas
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <div className="container text-center py-5">
+                <p className="text-muted">No hay galerías disponibles para esta sección.</p>
+                <Link href={homeHref} className="btn btn-outline-secondary rounded-pill px-4">
+                  Volver al inicio
+                </Link>
               </div>
+            )}
+          </div>
+        ) : (
+          <div className="container py-5">
+            {postsWithDetail.length > 0 ? (
+              <>
+                <div className="row g-4">
+                  {isAuthorityCardCategory ? (
+                    // AuthorityCard: cards horizontales con foto, nombre, cargo y cita
+                    postsWithDetail.map((p: any) => {
+                      const detail = p.detail;
+                      const imgFile = detail?.images?.[0] || p?.images?.[0];
+                      const imgUrl = imgFile?.location && imgFile?.filename
+                        ? `${process.env.NEXT_PUBLIC_IMAGES}/${imgFile.location}${imgFile.filename}${process.env.NEXT_PUBLIC_FILESERVER_KEY ? `?key=${process.env.NEXT_PUBLIC_FILESERVER_KEY}` : ""}`
+                        : undefined;
+                      return (
+                        <AuthorityCard
+                          key={p.id}
+                          id={p.id}
+                          name={detail?.textos?.title || p.titulo || ""}
+                          role={detail?.textos?.subtitle || p.copete || ""}
+                          quote={detail?.textos?.shortdesc || p.cuerpo || ""}
+                          imageUrl={imgUrl}
+                          categoryColor={categoryColor}
+                        />
+                      );
+                    })
+                  ) : isInfoCardCategory ? (
+                    // InfoCard: logo + título + descripción completa para Capacitaciones / Beneficios
+                    postsWithDetail.map((p: any) => {
+                      const detail = p.detail;
+                      const imgFile = detail?.images?.[0];
+                      const imgUrl = imgFile?.location && imgFile?.filename
+                        ? `${process.env.NEXT_PUBLIC_IMAGES}/${imgFile.location}${imgFile.filename}${process.env.NEXT_PUBLIC_FILESERVER_KEY ? `?key=${process.env.NEXT_PUBLIC_FILESERVER_KEY}` : ""}`
+                        : undefined;
+                      const externalUrl = detail?.seteos?.loadcontent || detail?.textos?.url_ext || undefined;
+                      return (
+                        <InfoCard
+                          key={p.id}
+                          id={p.id}
+                          title={detail?.textos?.title || p.titulo || ""}
+                          description={detail?.textos?.description}
+                          shortdesc={detail?.textos?.shortdesc}
+                          imageUrl={imgUrl}
+                          categoryColor={categoryColor}
+                          externalUrl={externalUrl}
+                        />
+                      );
+                    })
+                  ) : isAgendaCategory ? (
+                    // AgendaCard: eventos con días, horarios y lugar
+                    postsWithDetail.length > 0 ? (
+                      postsWithDetail.map((p: any) => (
+                        <AgendaCard
+                          key={p.id}
+                          post={p.detail ? { ...p.detail, id: p.id } : p}
+                          categoryColor={categoryColor}
+                        />
+                      ))
+                    ) : (
+                      <div className="col-12 text-center py-5">
+                        <div style={{ fontSize: "3rem", marginBottom: "16px" }}>📅</div>
+                        <h3 style={{ color: "#334155", fontWeight: 700 }}>No hay eventos al día de la fecha</h3>
+                        <p className="text-muted">Próximamente publicaremos los próximos eventos.</p>
+                      </div>
+                    )
+                  ) : (
+                    // ArticleCard estándar para EN CASA y otras
+                    activePosts.map((p: any) => (
+                      <ArticleCard
+                        key={p.id}
+                        post={p}
+                        categoryColorMap={{ [categoryTitle.toLowerCase()]: categoryColor }}
+                      />
+                    ))
+                  )}
+                </div>
 
-              {/* Paginador */}
-              {totalPages > 1 && (
-                <nav aria-label="Paginación de publicaciones" className="mt-5 d-flex justify-content-center">
-                  <ul className="pagination pagination-md gap-1 flex-wrap justify-content-center m-0">
-                    {/* Botón Anterior */}
-                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                      <Link
-                        className="page-link rounded-circle d-flex align-items-center justify-content-center"
-                        style={{
-                          width: "42px",
-                          height: "42px",
-                          border: "1px solid #e2e8f0",
-                          color: currentPage === 1 ? "#94a3b8" : "#334155",
-                          backgroundColor: "#fff",
-                        }}
-                        href={currentPage > 1 ? buildPageUrl(currentPage - 1) : "#"}
-                        aria-label="Anterior"
-                      >
-                        <i className="fa-solid fa-chevron-left" style={{ fontSize: "0.8rem" }} />
-                      </Link>
-                    </li>
+                {/* Paginador */}
+                {totalPages > 1 && (
+                  <nav aria-label="Paginación de publicaciones" className="mt-5 d-flex justify-content-center">
+                    <ul className="pagination pagination-md gap-1 flex-wrap justify-content-center m-0">
+                      {/* Botón Anterior */}
+                      <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                        <Link
+                          className="page-link rounded-circle d-flex align-items-center justify-content-center"
+                          style={{
+                            width: "42px",
+                            height: "42px",
+                            border: "1px solid #e2e8f0",
+                            color: currentPage === 1 ? "#94a3b8" : "#334155",
+                            backgroundColor: "#fff",
+                          }}
+                          href={currentPage > 1 ? buildPageUrl(currentPage - 1) : "#"}
+                          aria-label="Anterior"
+                        >
+                          <i className="fa-solid fa-chevron-left" style={{ fontSize: "0.8rem" }} />
+                        </Link>
+                      </li>
 
-                    {/* Números de página */}
-                    {Array.from({ length: totalPages }, (_, idx) => idx + 1).map((pNum) => {
-                      const isActive = pNum === currentPage;
-                      // Mostrar página actual, primera, última, y vecinas inmediatas
-                      if (
-                        pNum === 1 ||
-                        pNum === totalPages ||
-                        (pNum >= currentPage - 2 && pNum <= currentPage + 2)
-                      ) {
-                        return (
-                          <li key={pNum} className={`page-item ${isActive ? "active" : ""}`}>
-                            <Link
-                              className="page-link rounded-circle d-flex align-items-center justify-content-center fw-bold"
-                              style={{
-                                width: "42px",
-                                height: "42px",
-                                border: "1px solid",
-                                borderColor: isActive ? categoryColor : "#e2e8f0",
-                                backgroundColor: isActive ? categoryColor : "#fff",
-                                color: isActive ? "#ffffff" : "#334155",
-                                textDecoration: "none",
-                              }}
-                              href={buildPageUrl(pNum)}
-                            >
-                              {pNum}
-                            </Link>
-                          </li>
-                        );
-                      }
+                      {/* Números de página */}
+                      {Array.from({ length: totalPages }, (_, idx) => idx + 1).map((pNum) => {
+                        const isActive = pNum === currentPage;
+                        // Mostrar página actual, primera, última, y vecinas inmediatas
+                        if (
+                          pNum === 1 ||
+                          pNum === totalPages ||
+                          (pNum >= currentPage - 2 && pNum <= currentPage + 2)
+                        ) {
+                          return (
+                            <li key={pNum} className={`page-item ${isActive ? "active" : ""}`}>
+                              <Link
+                                className="page-link rounded-circle d-flex align-items-center justify-content-center fw-bold"
+                                style={{
+                                  width: "42px",
+                                  height: "42px",
+                                  border: "1px solid",
+                                  borderColor: isActive ? categoryColor : "#e2e8f0",
+                                  backgroundColor: isActive ? categoryColor : "#fff",
+                                  color: isActive ? "#ffffff" : "#334155",
+                                  textDecoration: "none",
+                                }}
+                                href={buildPageUrl(pNum)}
+                              >
+                                {pNum}
+                              </Link>
+                            </li>
+                          );
+                        }
 
-                      // Puntos suspensivos
-                      if (pNum === currentPage - 3 || pNum === currentPage + 3) {
-                        return (
-                          <li key={pNum} className="page-item disabled">
-                            <span
-                              className="page-link border-0 bg-transparent text-muted d-flex align-items-center justify-content-center"
-                              style={{ width: "36px", height: "42px" }}
-                            >
-                              ...
-                            </span>
-                          </li>
-                        );
-                      }
+                        // Puntos suspensivos
+                        if (pNum === currentPage - 3 || pNum === currentPage + 3) {
+                          return (
+                            <li key={pNum} className="page-item disabled">
+                              <span
+                                className="page-link border-0 bg-transparent text-muted d-flex align-items-center justify-content-center"
+                                style={{ width: "36px", height: "42px" }}
+                              >
+                                ...
+                              </span>
+                            </li>
+                          );
+                        }
 
-                      return null;
-                    })}
+                        return null;
+                      })}
 
-                    {/* Botón Siguiente */}
-                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                      <Link
-                        className="page-link rounded-circle d-flex align-items-center justify-content-center"
-                        style={{
-                          width: "42px",
-                          height: "42px",
-                          border: "1px solid #e2e8f0",
-                          color: currentPage === totalPages ? "#94a3b8" : "#334155",
-                          backgroundColor: "#fff",
-                        }}
-                        href={currentPage < totalPages ? buildPageUrl(currentPage + 1) : "#"}
-                        aria-label="Siguiente"
-                      >
-                        <i className="fa-solid fa-chevron-right" style={{ fontSize: "0.8rem" }} />
-                      </Link>
-                    </li>
-                  </ul>
-                </nav>
-              )}
-            </>
-          ) : (
-            <div className="text-center py-5">
-              <h3 className="text-muted fw-bold">No hay publicaciones en esta sección</h3>
-              <p className="text-secondary">Pronto compartiremos novedades aquí.</p>
-              <Link
-                href={homeHref}
-                className="btn btn-primary rounded-pill px-4 mt-3"
-                style={{ backgroundColor: categoryColor, borderColor: categoryColor }}
-              >
-                Volver a la Revista
-              </Link>
-            </div>
-          )}
-        </div>
+                      {/* Botón Siguiente */}
+                      <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                        <Link
+                          className="page-link rounded-circle d-flex align-items-center justify-content-center"
+                          style={{
+                            width: "42px",
+                            height: "42px",
+                            border: "1px solid #e2e8f0",
+                            color: currentPage === totalPages ? "#94a3b8" : "#334155",
+                            backgroundColor: "#fff",
+                          }}
+                          href={currentPage < totalPages ? buildPageUrl(currentPage + 1) : "#"}
+                          aria-label="Siguiente"
+                        >
+                          <i className="fa-solid fa-chevron-right" style={{ fontSize: "0.8rem" }} />
+                        </Link>
+                      </li>
+                    </ul>
+                  </nav>
+                )}
+              </>
+            ) : (
+              <div className="text-center py-5">
+                <h3 className="text-muted fw-bold">No hay publicaciones en esta sección</h3>
+                <p className="text-secondary">Pronto compartiremos novedades aquí.</p>
+                <Link
+                  href={homeHref}
+                  className="btn btn-primary rounded-pill px-4 mt-3"
+                  style={{ backgroundColor: categoryColor, borderColor: categoryColor }}
+                >
+                  Volver a la Revista
+                </Link>
+              </div>
+            )}
+          </div>
+        )}
       </main>
 
       <footer className="py-5 mt-5" style={{ backgroundColor: "#232637", color: "#ffffff" }}>
