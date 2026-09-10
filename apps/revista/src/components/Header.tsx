@@ -3,9 +3,10 @@ import Link from "next/link";
 interface HeaderProps {
   menuItems?: any[];
   logo?: string;
+  currentEdicion?: string | number;
 }
 
-export default function Header({ menuItems = [], logo }: HeaderProps) {
+export default function Header({ menuItems = [], logo, currentEdicion }: HeaderProps) {
   // Fecha actual formateada: ej. LUNES 07 DE SEPTIEMBRE
   const currentDate = new Date().toLocaleDateString("es-AR", {
     weekday: "long",
@@ -46,7 +47,7 @@ export default function Header({ menuItems = [], logo }: HeaderProps) {
         <div className="container">
           <ul className="navbar-nav d-flex flex-row align-items-center flex-wrap py-1">
             <li className="nav-item">
-              <Link href="/" className="revista-nav-link text-dark">
+              <Link href={currentEdicion ? `/?edicion=${currentEdicion}` : "/"} className="revista-nav-link text-dark">
                 <i className="fa-solid fa-house" />
               </Link>
             </li>
@@ -55,7 +56,13 @@ export default function Header({ menuItems = [], logo }: HeaderProps) {
               const title = item.menu_title || item.title;
               const subItems = item.submenus || item.subItems || [];
               const hasSub = subItems.length > 0;
-              const href = item.url ? (item.url.startsWith("/") ? item.url : `/${item.url}`) : "#";
+              const formatHref = (urlStr?: string) => {
+                if (!urlStr || urlStr === "#") return "#";
+                let cleaned = urlStr.replace(/^\/+/, "").replace(/\.html$/, "");
+                const baseHref = `/${cleaned}`;
+                return currentEdicion ? `${baseHref}?edicion=${currentEdicion}` : baseHref;
+              };
+              const href = formatHref(item.url);
               const key = item.menu_id || item.id || title;
 
               if (hasSub) {
@@ -68,8 +75,7 @@ export default function Header({ menuItems = [], logo }: HeaderProps) {
                     <ul className="dropdown-menu">
                       {subItems.map((sub: any) => {
                         const subTitle = sub.submenu_title || sub.title;
-                        const rawUrl = sub.submenu_url || sub.url || "#";
-                        const subHref = rawUrl.startsWith("/") ? rawUrl : `/${rawUrl}`;
+                        const subHref = formatHref(sub.submenu_url || sub.url);
                         const subKey = sub.cat_id || sub.id || subTitle;
                         const subColor = sub.color || item.color;
 

@@ -126,7 +126,7 @@ async function getGridPosts(issueNumber: number | string, limit = 12, offset = 0
 async function getEnAccion(issueNumber: number | string, limit = 1, offset = 0) {
   try {
     const { data: posts } = await PageServices.getPosts("magazine_", false, offset, limit, true, true, 95, "1", false, issueNumber);
-    console.log("En Accion Posts", posts);
+
     return posts;
   } catch (e) {
     console.error("Error fetching en accion posts:", e);
@@ -192,7 +192,7 @@ export default async function HomePage({ searchParams }: PageProps) {
   return (
     <>
       {/* Header estilo La Casa con fecha y menú de navegación */}
-      <Header menuItems={menuItems} logo={logoUrl} />
+      <Header menuItems={menuItems} logo={logoUrl} currentEdicion={requestedEdicion || currentIssueNumber} />
 
       <main className="py-4">
         {/* Slider Superior de Destacados del Issue Actual */}
