@@ -54,15 +54,24 @@ export default function Header({ menuItems = [], logo, currentEdicion }: HeaderP
 
             {menuItems.map((item: any) => {
               const title = item.menu_title || item.title;
-              const subItems = item.submenus || item.subItems || [];
-              const hasSub = subItems.length > 0;
+              const subItems = (item.submenus || item.subItems || []).filter(
+                (sub: any) => !!(sub.submenu_title || sub.title)
+              );
+              // Si solo hay 1 subitem con el mismo nombre que el padre, no mostrar dropdown
+              const isDegenerate =
+                subItems.length === 1 &&
+                (sub => (sub.submenu_title || sub.title || "").trim().toLowerCase() === title.trim().toLowerCase())(subItems[0]);
+              const hasSub = subItems.length > 0 && !isDegenerate;
               const formatHref = (urlStr?: string) => {
                 if (!urlStr || urlStr === "#") return "#";
                 let cleaned = urlStr.replace(/^\/+/, "").replace(/\.html$/, "");
                 const baseHref = `/${cleaned}`;
                 return currentEdicion ? `${baseHref}?edicion=${currentEdicion}` : baseHref;
               };
-              const href = formatHref(item.url);
+              // Si es degenerado, usar la URL del único subitem (el padre suele ser "#")
+              const href = isDegenerate
+                ? formatHref(subItems[0].submenu_url || subItems[0].url || item.url)
+                : formatHref(item.url);
               const key = item.menu_id || item.id || title;
 
               if (hasSub) {

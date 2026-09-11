@@ -275,6 +275,99 @@ body {
   transform: scale(1.05);
 }
 
+/* Footer institucional */
+.revista-footer {
+  margin-top: 3rem;
+  background: #303143;
+  color: #fff;
+}
+
+.revista-footer__container {
+  min-height: 168px;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 3rem;
+}
+
+.revista-footer__brand {
+  padding: 16px 0 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.revista-footer__brand-row { display: flex; align-items: center; gap: 10px; }
+.revista-footer__mark {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  border: 2px solid #8965e8;
+  border-radius: 50%;
+  color: #8965e8;
+  font: 700 2.15rem/1 Georgia, serif;
+}
+.revista-footer__wordmark { display: block; font: 400 2.15rem/1 Georgia, serif; letter-spacing: -0.04em; }
+.revista-footer__subtitle { display: block; margin-top: 2px; font-size: .69rem; }
+.revista-footer__brand p { margin: 0; font-size: .74rem; font-weight: 600; }
+
+.revista-footer__contact { min-width: 416px; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; padding-bottom: 16px; font-size: .77rem; }
+.revista-footer__contact > a:not(.revista-footer__cta) { color: #fff; text-decoration: none; }
+.revista-footer__cta {
+  width: 100%;
+  min-height: 122px;
+  padding: 17px 21px 20px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+  background: #6c57c7;
+  border-radius: 0 0 44px 0;
+  transition: background .2s ease;
+}
+.revista-footer__cta small, .revista-footer__cta strong { display: block; }
+.revista-footer__cta small { margin-bottom: 5px; font-size: .82rem; }
+.revista-footer__cta strong { font-size: 1.34rem; line-height: 1.08; }
+.revista-footer__plus { width: 51px; height: 51px; display: grid; place-items: center; flex: 0 0 auto; border: 0; border-radius: 50%; background: #fff; color: #111; font-size: 2rem; font-weight: 400; cursor: pointer; transition: transform .2s ease, background .2s ease; }
+.revista-footer__plus:hover, .revista-footer__plus:focus-visible { transform: scale(1.08); background: #f3efff; }
+
+.revista-proposal-modal { position: fixed; z-index: 1050; inset: 0; display: grid; place-items: center; padding: 24px; background: rgba(26, 27, 37, .62); }
+.revista-proposal-modal__dialog { width: min(800px, 100%); max-height: calc(100vh - 48px); overflow: auto; background: #fff; box-shadow: 0 18px 60px rgba(0, 0, 0, .35); }
+.revista-proposal-modal__topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #eee; color: #777; font-size: 1.5rem; }
+.revista-proposal-modal__topbar button { border: 0; background: transparent; color: #111; font-size: 2rem; line-height: 1; cursor: pointer; }
+.revista-proposal-modal__body { padding: 38px 68px 42px; }
+.revista-proposal-modal__body h2 { margin: 0 0 48px; color: #25272e; text-align: center; font-size: 2rem; line-height: 1.25; font-weight: 400; }
+.revista-proposal-modal form { display: flex; flex-direction: column; gap: 10px; }
+.revista-proposal-modal label { display: flex; flex-direction: column; gap: 6px; color: #30323a; font-size: 1rem; }
+.revista-proposal-modal input, .revista-proposal-modal textarea { width: 100%; border: 1px solid #d8dde6; border-radius: 6px; padding: 9px 11px; color: #20242a; font: inherit; outline: none; }
+.revista-proposal-modal textarea { resize: vertical; min-height: 130px; }
+.revista-proposal-modal input:focus, .revista-proposal-modal textarea:focus { border-color: #6c57c7; box-shadow: 0 0 0 3px rgba(108, 87, 199, .16); }
+.revista-proposal-modal__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.revista-proposal-modal__submit { align-self: flex-start; margin-top: 14px; border: 0; border-radius: 6px; padding: 10px 17px; background: #1769e8; color: #fff; font-size: 1rem; cursor: pointer; }
+.revista-proposal-modal__submit:hover { background: #0e58c7; }
+.revista-proposal-modal__pending { padding: 20px; border-radius: 8px; background: #edf9f1; color: #17663b; text-align: center; }
+
+.revista-wellbeing-filters { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 34px; }
+.revista-wellbeing-filters button, .revista-wellbeing-pagination button { border: 0; border-radius: 6px; background: transparent; color: #334155; cursor: pointer; font-weight: 600; transition: background .2s ease, color .2s ease; }
+.revista-wellbeing-filters button { padding: 10px 18px; }
+.revista-wellbeing-filters button:hover, .revista-wellbeing-filters button.is-active { color: #fff; }
+.revista-wellbeing-pagination { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 42px; }
+.revista-wellbeing-pagination button { width: 38px; height: 38px; background: #e7edf3; }
+.revista-wellbeing-pagination button:hover, .revista-wellbeing-pagination button.is-active { color: #fff; }
+
+@media (max-width: 767.98px) {
+  .revista-footer__container { flex-direction: column; gap: 0; }
+  .revista-footer__brand { padding-bottom: 24px; }
+  .revista-footer__contact { min-width: 0; padding-bottom: 20px; gap: 12px; }
+  .revista-footer__cta { border-radius: 0 0 34px 0; }
+  .revista-proposal-modal { padding: 14px; }
+  .revista-proposal-modal__topbar { font-size: 1.15rem; }
+  .revista-proposal-modal__body { padding: 28px 24px; }
+  .revista-proposal-modal__body h2 { margin-bottom: 30px; font-size: 1.65rem; }
+  .revista-proposal-modal__grid { grid-template-columns: 1fr; gap: 10px; }
+}
+
 /* Badge con el nombre superpuesto arriba a la izquierda */
 .revista-card-badge {
   position: absolute;

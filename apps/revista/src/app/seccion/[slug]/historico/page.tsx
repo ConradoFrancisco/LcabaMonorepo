@@ -4,6 +4,7 @@ import { PageServices } from "@lcaba/services";
 import { getCategoryColor } from "@/utils/categoryColors";
 import Header from "@/components/Header";
 import ArticleCard from "@/components/ArticleCard";
+import Footer from "@/components/Footer";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -328,23 +329,7 @@ export default async function HistoricoPage({ params, searchParams }: HistoricoP
         </div>
       </main>
 
-      <footer className="py-5 mt-5" style={{ backgroundColor: "#232637", color: "#ffffff" }}>
-        <div className="container">
-          <div className="row align-items-center gy-4">
-            <div className="col-12 col-md-6">
-              <span className="fw-bold fs-4">Legislatura</span>
-              <p className="small text-white-50 m-0 mt-1">
-                Legislatura de la Ciudad Autónoma de Buenos Aires
-              </p>
-            </div>
-            <div className="col-12 col-md-6 text-md-end">
-              <div className="small text-white-50">
-                lacasa@legislatura.gob.ar © {new Date().getFullYear()}
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }

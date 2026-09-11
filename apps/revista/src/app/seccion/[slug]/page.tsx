@@ -9,6 +9,8 @@ import InfoCard from "@/components/InfoCard";
 import AuthorityCard from "@/components/AuthorityCard";
 import EnAccionGallery from "@/components/EnAccionGallery";
 import AgendaCard from "@/components/AgendaCard";
+import Footer from "@/components/Footer";
+import WellbeingPostGrid from "@/components/WellbeingPostGrid";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -223,6 +225,71 @@ export default async function SeccionPage({ params, searchParams }: SeccionPageP
   const isSinglePostCategory = SINGLE_POST_CATEGORIES.includes(normalizedCategoryTitle);
   const isGlobalAllCategory = GLOBAL_ALL_POSTS_CATEGORIES.includes(normalizedCategoryTitle);
   const homeHref = targetIssue ? `/?edicion=${targetIssue}` : "/";
+
+  // Bienestar agrupa el histórico del padre (98) y sus tres subcategorías.
+  if (String(catId) === "98") {
+    const wellbeingCategories = [
+      { id: "98", key: "general", label: "Bienestar" },
+      { id: "99", key: "emocional", label: "Emocional" },
+      { id: "100", key: "fisico", label: "Físico" },
+      { id: "101", key: "laboral", label: "Laboral" },
+    ] as const;
+
+    const wellbeingResponses = await Promise.all(
+      wellbeingCategories.map((wellbeingCategory) =>
+        PageServices.getPosts("magazine_", false, 0, 1000, true, false, wellbeingCategory.id, "1"),
+      ),
+    );
+
+    const categoryColorMap: Record<string, string> = { bienestar: categoryColor };
+    const getMenuColor = (id: string) => {
+      for (const item of menuItems) {
+        if (String(item.cat_id) === id && item.color) return item.color;
+        for (const sub of item.submenus || item.subItems || []) {
+          if (String(sub.cat_id) === id) return sub.color || item.color;
+        }
+      }
+      return categoryColor;
+    };
+
+    const wellbeingPosts = wellbeingResponses.flatMap((response, index) => {
+      const posts = Array.isArray(response) ? response : response?.data || [];
+      const wellbeingCategory = wellbeingCategories[index];
+      const postColor = getMenuColor(wellbeingCategory.id);
+      categoryColorMap[wellbeingCategory.label.toLowerCase()] = postColor;
+
+      return posts
+        .filter((post: any) => isStatusActive(post.status))
+        .map((post: any) => ({
+          ...post,
+          // La API puede devolver un nombre histórico; los IDs 99/100/101
+          // son la referencia para el badge y los filtros de Bienestar.
+          categoria: wellbeingCategory.label,
+          wellbeingCategory: wellbeingCategory.key,
+        }));
+    });
+
+    return (
+      <>
+        <Header menuItems={menuItems} logo={logoUrl} currentEdicion={targetIssue} />
+        <main style={{ backgroundColor: "#f8fafc", minHeight: "100vh" }}>
+          <div style={{ backgroundColor: categoryColor, padding: "36px 0", color: "#fff" }}>
+            <div className="container">
+              <div className="d-flex align-items-center gap-2 mb-2" style={{ fontSize: "0.85rem", opacity: 0.9 }}>
+                <Link href={homeHref} style={{ color: "#fff", textDecoration: "none" }}>INICIO</Link>
+                <span>/</span>
+                <span className="fw-bold text-uppercase">{categoryTitle}</span>
+              </div>
+              <h1 className="fw-bold m-0 text-uppercase" style={{ fontSize: "2.3rem" }}>{categoryTitle}</h1>
+              <p className="m-0 mt-2">Potenciá los hábitos saludables de cada día</p>
+            </div>
+          </div>
+          <WellbeingPostGrid posts={wellbeingPosts} categoryColor={categoryColor} categoryColorMap={categoryColorMap} />
+        </main>
+        <Footer />
+      </>
+    );
+  }
 
   // ── Modalidad 1: Categoría de publicación única (Historias de vida, Nuestros logros, etc.) ──
   if (isSinglePostCategory) {
@@ -753,23 +820,7 @@ export default async function SeccionPage({ params, searchParams }: SeccionPageP
           </div>
         </main>
 
-        <footer className="py-5 mt-5" style={{ backgroundColor: "#232637", color: "#ffffff" }}>
-          <div className="container">
-            <div className="row align-items-center gy-4">
-              <div className="col-12 col-md-6">
-                <span className="fw-bold fs-4">Legislatura</span>
-                <p className="small text-white-50 m-0 mt-1">
-                  Legislatura de la Ciudad Autónoma de Buenos Aires
-                </p>
-              </div>
-              <div className="col-12 col-md-6 text-md-end">
-                <div className="small text-white-50">
-                  lacasa@legislatura.gob.ar © {new Date().getFullYear()}
-                </div>
-              </div>
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </>
     );
   }
@@ -1149,23 +1200,7 @@ export default async function SeccionPage({ params, searchParams }: SeccionPageP
         )}
       </main>
 
-      <footer className="py-5 mt-5" style={{ backgroundColor: "#232637", color: "#ffffff" }}>
-        <div className="container">
-          <div className="row align-items-center gy-4">
-            <div className="col-12 col-md-6">
-              <span className="fw-bold fs-4">Legislatura</span>
-              <p className="small text-white-50 m-0 mt-1">
-                Legislatura de la Ciudad Autónoma de Buenos Aires
-              </p>
-            </div>
-            <div className="col-12 col-md-6 text-md-end">
-              <div className="small text-white-50">
-                lacasa@legislatura.gob.ar © {new Date().getFullYear()}
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }

@@ -3,6 +3,7 @@ import HeroSlider from "../components/HeroSlider";
 import ArticleCard from "../components/ArticleCard";
 import IssueSelector from "../components/IssueSelector";
 import EnAccionGallery from "../components/EnAccionGallery";
+import Footer from "../components/Footer";
 import { PageServices } from "@lcaba/services";
 
 // Helper para verificar si el status es 1 (soporta Buffer o número/boolean)
@@ -239,42 +240,7 @@ export default async function HomePage({ searchParams }: PageProps) {
         )}
       </main>
 
-      {/* Footer estilo institucional */}
-      <footer className="py-5 mt-5" style={{ backgroundColor: "#232637", color: "#ffffff" }}>
-        <div className="container">
-          <div className="row align-items-center gy-4">
-            <div className="col-12 col-md-6">
-              <div className="d-flex align-items-center gap-3 mb-2">
-                <span className="fw-bold fs-4">Legislatura</span>
-              </div>
-              <p className="small text-white-50 m-0">
-                Legislatura de la Ciudad Autónoma de Buenos Aires
-              </p>
-            </div>
-
-            <div className="col-12 col-md-6 text-md-end">
-              <div
-                className="d-inline-flex align-items-center justify-content-between p-3 rounded-4"
-                style={{ backgroundColor: "#635bbc", minWidth: "260px" }}
-              >
-                <div className="text-start me-3">
-                  <span className="d-block small text-white-50">#AlzáTuVoz</span>
-                  <span className="fw-bold">Dejanos tus propuestas.</span>
-                </div>
-                <div
-                  className="rounded-circle bg-white text-dark d-flex align-items-center justify-content-center fw-bold"
-                  style={{ width: "36px", height: "36px" }}
-                >
-                  +
-                </div>
-              </div>
-              <div className="small text-white-50 mt-2">
-                lacasa@legislatura.gob.ar &copy; {new Date().getFullYear()}
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }

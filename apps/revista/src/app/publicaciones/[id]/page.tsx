@@ -4,6 +4,7 @@ import { PageServices } from "@lcaba/services";
 import Header from "../../../components/Header";
 import ArticleGallery from "./ArticleGallery";
 import { getCategoryColor } from "../../../utils/categoryColors";
+import Footer from "../../../components/Footer";
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 
@@ -59,6 +60,57 @@ async function getRevistaMenu() {
   }
 }
 
+function normalizeCategory(value?: string): string {
+  return (value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase();
+}
+
+/**
+ * El menú es la fuente de verdad para los colores de categoría. Los posts no
+ * siempre incluyen ese color, por eso se busca primero por cat_id y luego por
+ * el nombre que devuelve el servicio de publicaciones.
+ */
+function getMenuCategoryColor(
+  menuItems: any[],
+  categoryName: string,
+  categoryId?: string | number,
+): string | undefined {
+  const normalizedName = normalizeCategory(categoryName);
+  const normalizedId = categoryId == null ? "" : String(categoryId);
+
+  for (const item of menuItems) {
+    const itemTitle = item.menu_title || item.title || "";
+    const itemMatches =
+      (normalizedId && String(item.cat_id || item.category_id || "") === normalizedId) ||
+      normalizeCategory(itemTitle) === normalizedName;
+
+    if (itemMatches && item.color) return item.color;
+
+    for (const sub of item.submenus || item.subItems || []) {
+      const subTitle = sub.submenu_title || sub.title || "";
+      const subMatches =
+        (normalizedId && String(sub.cat_id || sub.category_id || "") === normalizedId) ||
+        normalizeCategory(subTitle) === normalizedName;
+
+      if (subMatches) return sub.color || item.color;
+    }
+  }
+
+  // Los artículos históricos de Bienestar a veces llegan sin cat_id. En ese
+  // caso conservan el color configurado en su categoría padre dinámica.
+  if (["emocional", "fisico", "laboral"].includes(normalizedName)) {
+    const wellbeingParent = menuItems.find(
+      (item: any) => normalizeCategory(item.menu_title || item.title) === "bienestar",
+    );
+    if (wellbeingParent?.color) return wellbeingParent.color;
+  }
+
+  return undefined;
+}
+
 // ── page ──────────────────────────────────────────────────────────────────────
 
 export default async function ArticlePage({
@@ -82,6 +134,7 @@ export default async function ArticlePage({
   const shortdesc = textos?.shortdesc || textos?.copete || "";
   const date = formatDate(seteos?.date_ins || seteos?.date);
   const category: string = seteos?.cat_name || seteos?.categoria || "";
+  const categoryId = seteos?.cat_id || seteos?.category_id || post?.cat_id || post?.category_id;
 
   // Logo
   const logo = pageVw?.images?.find((img: any) => img.image_type === "logo");
@@ -92,8 +145,8 @@ export default async function ArticlePage({
       ? `${baseImg}/${logo.location}${logo.filename}${fileKey ? `?key=${fileKey}` : ""}`
       : "";
 
-  // Build category color
-  const categoryColor = getCategoryColor(category);
+  // El mismo color dinámico que se muestra en el menú, slider y grilla.
+  const categoryColor = getMenuCategoryColor(menuItems, category, categoryId) || getCategoryColor(category);
 
   // All valid images (excluye audios de archivos)
   const allImages = (images as any[])
@@ -538,24 +591,7 @@ export default async function ArticlePage({
         </div>
       </main>
 
-      {/* Footer inline (same as main page) */}
-      <footer className="py-5 mt-5" style={{ backgroundColor: "#232637", color: "#ffffff" }}>
-        <div className="container">
-          <div className="row align-items-center gy-4">
-            <div className="col-12 col-md-6">
-              <span className="fw-bold fs-4">Legislatura</span>
-              <p className="small text-white-50 m-0 mt-1">
-                Legislatura de la Ciudad Autónoma de Buenos Aires
-              </p>
-            </div>
-            <div className="col-12 col-md-6 text-md-end">
-              <div className="small text-white-50">
-                lacasa@legislatura.gob.ar © {new Date().getFullYear()}
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }
