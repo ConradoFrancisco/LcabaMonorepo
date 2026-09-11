@@ -34,7 +34,7 @@ export default function ArticleCard({ post, categoryColorMap = {} }: ArticleCard
             {/* Recorte de la imagen con la curva inferior derecha */}
             <div className="revista-card-img-wrap">
               <FallbackImage
-                src={imgUrl}
+                src={imgUrl || undefined}
                 alt={title}
                 withBackground
                 className="revista-card-img"

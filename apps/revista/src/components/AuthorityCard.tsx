@@ -82,7 +82,7 @@ export default function AuthorityCard({
             }}
           >
             <FallbackImage
-              src={imageUrl}
+              src={imageUrl || undefined}
               alt={name}
               withBackground
               style={{

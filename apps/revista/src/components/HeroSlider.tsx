@@ -98,7 +98,7 @@ export default function HeroSlider({ posts = [], categoryColorMap = {} }: HeroSl
 
                     {/* Imagen Principal */}
                     <FallbackImage
-                      src={imgUrl}
+                      src={imgUrl || undefined}
                       alt={title}
                       withBackground
                       className="revista-slider-img"
