@@ -21,7 +21,12 @@ async function getPostsSlider() {
   }
 }
 
-export async function getPosts(limit = 8, offset = 0, images: boolean = true) {
+export async function getPosts(
+  limit = 8,
+  offset = 0,
+  images: boolean = true,
+  filters?: { search?: string; fechaDesde?: string; fechaHasta?: string },
+) {
   try {
     const params = new URLSearchParams({
       table: "cultura_",
@@ -31,6 +36,9 @@ export async function getPosts(limit = 8, offset = 0, images: boolean = true) {
       withImages: String(images),
       front: "true",
     });
+    if (filters?.search) params.set("input", filters.search);
+    if (filters?.fechaDesde) params.set("filtros[fechaDesde]", filters.fechaDesde);
+    if (filters?.fechaHasta) params.set("filtros[fechaHasta]", filters.fechaHasta);
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API}/posts?${params.toString()}`,
       {
