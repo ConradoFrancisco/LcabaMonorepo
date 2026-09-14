@@ -16,7 +16,7 @@ async function fetchNavMenu(pageId: number): Promise<NavMenuItem[]> {
     try {
         const res = await fetch(
             `${process.env.NEXT_PUBLIC_API}/nav-menu/tree?pageId=${pageId}`,
-            { next: { revalidate: 60 } } as any
+            { next: { revalidate: 5 } } as any
         );
         const data = await res.json();
         const menuArray = Array.isArray(data) ? data : data.data || [];
@@ -32,7 +32,7 @@ async function fetchNavMenu(pageId: number): Promise<NavMenuItem[]> {
 const getCachedNavMenu = unstable_cache(
     fetchNavMenu,
     ["lcaba-nav-menu"],
-    { revalidate: 60 }
+    { revalidate: 5 }
 );
 
 // ── Public API ─────────────────────────────────────────────────────────────────
@@ -43,7 +43,7 @@ class PageServices {
         try {
             const res = await fetch(
                 `${process.env.NEXT_PUBLIC_API}/general/pages/${id}`,
-                { next: { revalidate: 60 } } as any
+                { next: { revalidate: 5 } } as any
             );
             return res.json();
         } catch (e) {
@@ -60,7 +60,7 @@ class PageServices {
 
             const res = await fetch(
                 `${process.env.NEXT_PUBLIC_API}/general/dynamic-menu?${params.toString()}`,
-                { next: { revalidate: 60 } } as any
+                { next: { revalidate: 5 } } as any
             );
             if (!res.ok) throw new Error(`HTTP error ${res.status}`);
             const data = await res.json();
@@ -77,7 +77,7 @@ class PageServices {
             const cleanTable = table.replace(/_$/, '');
             const res = await fetch(
                 `${process.env.NEXT_PUBLIC_API}/issue?table=${cleanTable}`,
-                { next: { revalidate: 60 } } as any
+                { next: { revalidate: 5 } } as any
             );
             if (!res.ok) throw new Error(`HTTP error ${res.status}`);
             const json = await res.json();
@@ -95,7 +95,7 @@ class PageServices {
         try {
             const res = await fetch(
                 `${process.env.NEXT_PUBLIC_API}/issue/${id}`,
-                { next: { revalidate: 60 } } as any
+                { next: { revalidate: 5 } } as any
             );
             if (!res.ok) return null;
             return await res.json();
@@ -132,7 +132,7 @@ class PageServices {
             if (upcomingOnly) params.set('upcomingOnly', 'true');
             const res = await fetch(
                 `${process.env.NEXT_PUBLIC_API}/posts?${params.toString()}`,
-                { next: { revalidate: 60 }, method: 'GET' } as any
+                { next: { revalidate: 5 }, method: 'GET' } as any
             );
             if (!res.ok) throw new Error(`HTTP error ${res.status}`);
 
@@ -156,7 +156,7 @@ class PageServices {
             const url = `/${slug}`;
             const res = await fetch(
                 `${process.env.NEXT_PUBLIC_API}/nav-menu/by-url?url=${encodeURIComponent(url)}&pageId=${pageId}`,
-                { next: { revalidate: 60 } } as any
+                { next: { revalidate: 5 } } as any
             );
             if (!res.ok) return null;
             const data = await res.json();
@@ -176,7 +176,7 @@ class PageServices {
         try {
             const res = await fetch(
                 `${process.env.NEXT_PUBLIC_API}/posts/post/${id}?table=${encodeURIComponent(table)}`,
-                { next: { revalidate: 60 } } as any
+                { next: { revalidate: 5 } } as any
             );
             if (!res.ok) return null;
             return res.json();

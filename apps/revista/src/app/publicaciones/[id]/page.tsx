@@ -130,9 +130,10 @@ export default async function ArticlePage({
 
   const { textos, images = [], videos = [], archivos = [], seteos = {} } = post;
   const title = textos?.title || textos?.titulo || "";
+  const subtitle = textos?.subtitle || textos?.subtitulo || "";
   const description = textos?.description || textos?.cuerpo || "";
   const shortdesc = textos?.shortdesc || textos?.copete || "";
-  const date = formatDate(seteos?.date_ins || seteos?.date);
+  const date = seteos?.date_article_parsed || formatDate(seteos?.date_article || seteos?.date_ins || seteos?.date);
   const category: string = seteos?.cat_name || seteos?.categoria || "";
   const categoryId = seteos?.cat_id || seteos?.category_id || post?.cat_id || post?.category_id;
 
@@ -265,8 +266,8 @@ export default async function ArticlePage({
                 }}
               />
 
-              {/* Short description / lead */}
-              {shortdesc && (
+              {/* Subtitle */}
+              {subtitle && (
                 <div
                   style={{
                     fontSize: "1.15rem",
@@ -277,7 +278,7 @@ export default async function ArticlePage({
                     borderLeft: `4px solid ${categoryColor}`,
                     paddingLeft: "16px",
                   }}
-                  dangerouslySetInnerHTML={{ __html: shortdesc }}
+                  dangerouslySetInnerHTML={{ __html: subtitle }}
                 />
               )}
 
@@ -287,6 +288,21 @@ export default async function ArticlePage({
                   images={allImages}
                   title={title}
                   categoryColor={categoryColor}
+                />
+              )}
+
+              {/* Short description / lead */}
+              {shortdesc && (
+                <div
+                  className="revista-article-lead"
+                  dangerouslySetInnerHTML={{ __html: shortdesc }}
+                  style={{
+                    fontSize: "1.1rem",
+                    fontWeight: 500,
+                    color: "#475569",
+                    lineHeight: 1.75,
+                    marginBottom: "24px",
+                  }}
                 />
               )}
 

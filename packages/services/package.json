@@ -8,7 +8,7 @@
     ".": "./src/index.ts",
     "./page": "./src/PageServices.ts"
   },
-  "dependencies": {
+  "peerDependencies": {
     "next": "*"
   },
   "devDependencies": {
