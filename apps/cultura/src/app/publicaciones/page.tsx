@@ -2,6 +2,8 @@ import Layout from "@lcaba/ui/astrax/components/layout/Layout";
 import { PageServices } from "@lcaba/services";
 import Link from "next/link";
 import { getPosts } from "../page";
+import { Paginator } from "./components/Paginator";
+import { FiltrosPublicacionesCultura } from "./components/FiltrosPublicacionesCultura";
 
 const LIMIT = 9; // 3 columnas × 3 filas
 
@@ -28,8 +30,6 @@ function formatDate(dateStr?: string): string {
 }
 
 // ── data fetchers ─────────────────────────────────────────────────────────────
-
-
 
 async function getSocials() {
   try {
@@ -58,7 +58,6 @@ function PostCard({ post }: { post: any }) {
   const postId = seteos?.id || post.id;
 
   console.log(post.titulo)
-
 
   return (
     <div className="col-lg-4 col-md-6 col-sm-12 mb-4">
@@ -143,112 +142,26 @@ function PostCard({ post }: { post: any }) {
   );
 }
 
-function Paginator({
-  currentPage,
-  totalPages,
-}: {
-  currentPage: number;
-  totalPages: number;
-}) {
-  if (totalPages <= 1) return null;
-
-  const pages: (number | "...")[] = [];
-  if (totalPages <= 7) {
-    for (let i = 1; i <= totalPages; i++) pages.push(i);
-  } else {
-    pages.push(1);
-    if (currentPage > 3) pages.push("...");
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
-      pages.push(i);
-    }
-    if (currentPage < totalPages - 2) pages.push("...");
-    pages.push(totalPages);
-  }
-
-  const btnBase: React.CSSProperties = {
-    borderRadius: "8px",
-    padding: "6px 14px",
-    fontSize: ".875rem",
-    fontWeight: 500,
-    border: "1px solid #dee2e6",
-    cursor: "pointer",
-    lineHeight: 1.5,
-    transition: "all .15s",
-    textDecoration: "none",
-  };
-
-  return (
-    <nav aria-label="Paginación de publicaciones" className="mt-5">
-      <ul className="pagination justify-content-center flex-wrap gap-1 list-unstyled d-flex">
-        {/* Anterior */}
-        {currentPage > 1 && (
-          <li>
-            <Link
-              href={`?page=${currentPage - 1}`}
-              style={{ ...btnBase, color: "primary", backgroundColor: "#fff" }}
-            >
-              ‹ Anterior
-            </Link>
-          </li>
-        )}
-
-        {/* Páginas */}
-        {pages.map((p, idx) =>
-          p === "..." ? (
-            <li key={`ellipsis-${idx}`}>
-              <span style={{ ...btnBase, cursor: "default", border: "none", color: "#6c757d" }}>…</span>
-            </li>
-          ) : (
-            <li key={p}>
-              <Link
-                href={`?page=${p}`}
-                style={{
-                  ...btnBase,
-                  backgroundColor: p === currentPage ? "primary" : "#fff",
-                  color: p === currentPage ? "#fff" : "#495057",
-                  borderColor: p === currentPage ? "primary" : "#dee2e6",
-                }}
-              >
-                {p}
-              </Link>
-            </li>
-          )
-        )}
-
-        {/* Siguiente */}
-        {currentPage < totalPages && (
-          <li>
-            <Link
-              href={`?page=${currentPage + 1}`}
-              style={{ ...btnBase, color: "primary", backgroundColor: "#fff" }}
-            >
-              Siguiente ›
-            </Link>
-          </li>
-        )}
-      </ul>
-
-      <p className="text-center text-muted mt-2" style={{ fontSize: ".8rem" }}>
-        Página {currentPage} de {totalPages}
-      </p>
-    </nav>
-  );
-}
-
 // ── page ──────────────────────────────────────────────────────────────────────
 
 export default async function PublicacionesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; categoria?: string }>;
+  searchParams: Promise<{
+    page?: string;
+    categoria?: string;
+    search?: string;
+    fechaDesde?: string;
+    fechaHasta?: string;
+  }>;
 }) {
-  const { page: pageParam } = await searchParams;
+  const { page: pageParam, search, fechaDesde, fechaHasta } = await searchParams;
   const currentPage = Math.max(1, parseInt(pageParam || "1", 10));
 
   const [menuItems, socials, { posts, total }] = await Promise.all([
     PageServices.getNavMenu(),
     getSocials(),
-    getPosts(LIMIT, (currentPage - 1) * LIMIT, true)
+    getPosts(LIMIT, (currentPage - 1) * LIMIT, true, { search, fechaDesde, fechaHasta })
   ]);
 
   const totalPages = Math.ceil(total / LIMIT) || 1;
@@ -262,21 +175,23 @@ export default async function PublicacionesPage({
       <section className="py-80">
         <div className="container">
           {/* Encabezado */}
-          <div className="row mb-5">
+          {/*<div className="row mb-5">
             <div className="col-12 text-center">
               <h2 className="fw-bold" style={{ color: "#1a1a2e" }}>
                 Publicaciones
               </h2>
-              <p className="text-muted">
-                {total > 0
-                  ? `Mostrando ${Math.min((currentPage - 1) * LIMIT + 1, total)}–${Math.min(currentPage * LIMIT, total)} de ${total} publicaciones`
-                  : "No se encontraron publicaciones."}
-              </p>
               <div
                 style={{ width: "60px", height: "4px", backgroundColor: "#c9003d", margin: "0 auto", borderRadius: "2px" }}
               />
             </div>
-          </div>
+          </div>*/}
+
+          {/* Filtros */}
+          <FiltrosPublicacionesCultura
+            initialSearch={search}
+            initialFechaDesde={fechaDesde}
+            initialFechaHasta={fechaHasta}
+          />
 
           {/* Grid de cards */}
           {posts.length > 0 ? (
@@ -291,9 +206,17 @@ export default async function PublicacionesPage({
               <p className="text-muted mt-3">No hay publicaciones disponibles en este momento.</p>
             </div>
           )}
-
           {/* Paginador */}
-          <Paginator currentPage={currentPage} totalPages={totalPages} />
+          <Paginator
+            currentPage={currentPage}
+            totalPages={totalPages}
+            extraParams={{ search, fechaDesde, fechaHasta }}
+          />
+          <p className="text-center text-muted mt-2">
+            {total > 0
+              ? `Mostrando ${Math.min((currentPage - 1) * LIMIT + 1, total)}–${Math.min(currentPage * LIMIT, total)} de ${total} publicaciones`
+              : "No se encontraron publicaciones."}
+          </p>
         </div>
       </section>
     </Layout>
