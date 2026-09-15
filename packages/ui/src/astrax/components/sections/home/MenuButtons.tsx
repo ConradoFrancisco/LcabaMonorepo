@@ -15,6 +15,7 @@ type MenuButton = {
   href: string;
   icon?: LucideIcon;
   color?: string;
+  image?: string;
 };
 
 const PALETTE = [
@@ -27,121 +28,209 @@ const PALETTE = [
   "#E08A2E",
 ];
 
+const IMG_BASE = "/assets/imgs/menu-buttons";
+
 const defaultButtons: MenuButton[] = [
-  { label: "Institucional", href: "/institucional", icon: Building2 },
-  { label: "Acción Cultural", href: "/accion-cultural", icon: HeartHandshake },
-  { label: "Biblioteca", href: "/biblioteca", icon: BookOpen },
-  { label: "Hemeroteca", href: "/hemeroteca", icon: Archive },
-  { label: "Museo", href: "/museo", icon: Dome },
-  { label: "Patrimonio", href: "/patrimonio", icon: Landmark },
-  { label: "Sitios Recomendados", href: "/sitios-recomendados", icon: MapPin },
+  {
+    label: "Institucional",
+    href: "/institucional",
+    icon: Building2,
+    image: `${IMG_BASE}/institucional.jpeg`,
+  },
+  {
+    label: "Acción Cultural",
+    href: "/accion-cultural",
+    icon: HeartHandshake,
+    image: `${IMG_BASE}/accion-cultural.jpg`,
+  },
+  {
+    label: "Biblioteca",
+    href: "/biblioteca",
+    icon: BookOpen,
+    image: `${IMG_BASE}/biblioteca.jpg`,
+  },
+  {
+    label: "Hemeroteca",
+    href: "/hemeroteca",
+    icon: Archive,
+    image: `${IMG_BASE}/hemeroteca.jpg`,
+  },
+  {
+    label: "Museo",
+    href: "/museo",
+    icon: Dome,
+    image: `${IMG_BASE}/museo.jpg`,
+  },
+  {
+    label: "Patrimonio",
+    href: "/patrimonio",
+    icon: Landmark,
+    image: `${IMG_BASE}/patrimonio.jpg`,
+  },
+  {
+    label: "Sitios Recomendados",
+    href: "/sitios-recomendados",
+    icon: MapPin,
+    image: `${IMG_BASE}/sitios-recomendados.jpg`,
+  },
 ];
 
 export default function MenuButtons({
   buttons = defaultButtons,
+  title = "CONOCÉ MÁS SOBRE NUESTRAS ÁREAS",
+  description = "Recorré cada una de nuestras áreas: cultura, patrimonio, memoria y participación ciudadana, todo en un mismo lugar.",
 }: {
   buttons?: MenuButton[];
+  title?: string;
+  description?: string;
 }) {
   return (
-    <div
-      className="py-5"
-      style={{
-        background:
-          "linear-gradient(120deg, #12A0D6 0%, #6B4FA0 20%, #E8622C 38%, #D6217A 52%, #8FC63A 68%, #1E9E8C 82%, #E08A2E 100%)",
-      }}
-    >
+    <div className="py-5" style={{ background: "#F1EFEA" }}>
       <div className="container">
-        <div className="row mb-4">
-          <div className="col-12 text-center">
+        <div className="row align-items-end mb-4 gy-3">
+          <div className="col-lg-7">
             <h2
-              className="text-white fw-bold mb-0"
-              style={{ fontSize: "2rem" }}
+              className="fw-bold mb-0"
+              style={{
+                fontSize: "2.25rem",
+                color: "#17171A",
+                letterSpacing: "-0.02em",
+              }}
             >
-              CONOCÉ MÁS SOBRE NUESTRAS ÁREAS
+              {title}
             </h2>
           </div>
+          <div className="col-lg-5">
+            <p
+              className="mb-0 text-lg-end"
+              style={{ color: "#6B6A66", fontSize: "0.95rem" }}
+            >
+              {description}
+            </p>
+          </div>
         </div>
-        <div className="row g-3 justify-content-center">
+
+        <div className="menu-bento">
           {buttons.map((btn, i) => {
             const Icon = btn.icon ?? Landmark;
             const color = btn.color ?? PALETTE[i % PALETTE.length];
-            const letter = btn.label.trim().charAt(0).toLowerCase();
+            const isLarge = i % 4 === 0;
+            const hasImage = Boolean(btn.image);
             return (
-              <div key={i} className="col-12 col-md-6 col-lg-4">
-                <Link
-                  href={btn.href}
-                  className="menu-btn-card d-flex align-items-center justify-content-between w-100 text-white text-decoration-none"
-                  style={{
-                    position: "relative",
-                    overflow: "hidden",
-                    background: color,
-                    borderRadius: "6px",
-                    minHeight: "110px",
-                    padding: "1.25rem 1.5rem",
-                  }}
+              <Link
+                key={i}
+                href={btn.href}
+                className={`menu-bento-card text-decoration-none${
+                  isLarge ? " menu-bento-card--lg" : ""
+                }${hasImage ? " menu-bento-card--photo" : ""}`}
+              >
+                {hasImage && (
+                  <>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={btn.image}
+                      alt=""
+                      aria-hidden="true"
+                      className="menu-bento-photo"
+                    />
+                    <span className="menu-bento-scrim" aria-hidden="true" />
+                  </>
+                )}
+                <span
+                  className="menu-bento-icon"
+                  style={
+                    hasImage
+                      ? { background: "rgba(255,255,255,0.2)", color: "#fff" }
+                      : { background: `${color}1F`, color }
+                  }
                 >
-                  <span
-                    aria-hidden="true"
-                    className="menu-letter"
-                    style={{
-                      position: "absolute",
-                      left: "-0.5rem",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      zIndex: 0,
-                      fontSize: "6rem",
-                      fontWeight: 800,
-                      lineHeight: 1,
-                      color: "rgba(255,255,255,0.18)",
-                      userSelect: "none",
-                      pointerEvents: "none",
-                    }}
-                  >
-                    {letter}
-                  </span>
-                  <span
-                    className="fw-bold"
-                    style={{
-                      position: "relative",
-                      zIndex: 1,
-                      fontSize: "1.15rem",
-                      paddingLeft: "2.5rem",
-                    }}
-                  >
-                    {btn.label}
-                  </span>
-                  <Icon
-                    aria-hidden="true"
-                    size={40}
-                    strokeWidth={1.5}
-                    style={{
-                      position: "relative",
-                      zIndex: 1,
-                      flexShrink: 0,
-                      color: "rgba(255,255,255,0.9)",
-                    }}
-                  />
-                </Link>
-              </div>
+                  <Icon size={isLarge ? 34 : 26} strokeWidth={1.6} />
+                </span>
+                <span className="menu-bento-label">{btn.label}</span>
+              </Link>
             );
           })}
         </div>
       </div>
 
       <style>{`
-                .menu-btn-card {
+                .menu-bento {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    grid-auto-rows: 150px;
+                    gap: 1rem;
+                }
+                .menu-bento-card {
+                    position: relative;
+                    background: #ffffff;
+                    border-radius: 1.25rem;
+                    border: 1px solid rgba(0, 0, 0, 0.06);
+                    padding: 1.5rem;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: flex-end;
+                    gap: 0.9rem;
+                    overflow: hidden;
                     transition: transform 0.25s ease, box-shadow 0.25s ease;
                 }
-                .menu-btn-card:hover,
-                .menu-btn-card:hover span {
-                    color: #fff !important;
+                .menu-bento-card--lg {
+                    grid-row: span 2;
+                    justify-content: space-between;
                 }
-                .menu-btn-card:hover .menu-letter {
-                    color: rgba(0, 0, 0, 0.35) !important;
+                .menu-bento-photo {
+                    position: absolute;
+                    inset: 0;
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    z-index: 0;
+                    transition: transform 0.4s ease;
                 }
-                .menu-btn-card:hover {
+                .menu-bento-scrim {
+                    position: absolute;
+                    inset: 0;
+                    z-index: 0;
+                    background: linear-gradient(
+                        180deg,
+                        rgba(10, 10, 12, 0) 35%,
+                        rgba(10, 10, 12, 0.78) 100%
+                    );
+                }
+                .menu-bento-card--photo:hover .menu-bento-photo {
+                    transform: scale(1.05);
+                }
+                .menu-bento-icon {
+                    position: relative;
+                    z-index: 1;
+                    width: 3.25rem;
+                    height: 3.25rem;
+                    border-radius: 0.9rem;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-shrink: 0;
+                }
+                .menu-bento-label {
+                    position: relative;
+                    z-index: 1;
+                    font-weight: 700;
+                    font-size: 1.05rem;
+                    color: #17171a;
+                }
+                .menu-bento-card--photo .menu-bento-label {
+                    color: #ffffff;
+                }
+                .menu-bento-card:hover {
                     transform: translateY(-4px);
-                    box-shadow: 0 10px 24px rgba(255, 255, 255, 0.2);
+                    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
+                }
+                @media (max-width: 767px) {
+                    .menu-bento {
+                        grid-template-columns: repeat(2, 1fr);
+                    }
+                    .menu-bento-card--lg {
+                        grid-row: span 1;
+                    }
                 }
             `}</style>
     </div>
