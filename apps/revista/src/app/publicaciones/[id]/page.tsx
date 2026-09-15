@@ -125,10 +125,10 @@ export default async function ArticlePage({
     getRevistaMenu(),
     getPageData("6"),
   ]);
-
+  console.log(post);
   if (!post) notFound();
 
-  const { textos, images = [], videos = [], archivos = [], seteos = {} } = post;
+  const { textos, images = [], videos = [], archivos = [], seteos = {}, infoParlamentaria } = post;
   const title = textos?.title || textos?.titulo || "";
   const subtitle = textos?.subtitle || textos?.subtitulo || "";
   const description = textos?.description || textos?.cuerpo || "";
@@ -136,6 +136,7 @@ export default async function ArticlePage({
   const date = seteos?.date_article_parsed || formatDate(seteos?.date_article || seteos?.date_ins || seteos?.date);
   const category: string = seteos?.cat_name || seteos?.categoria || "";
   const categoryId = seteos?.cat_id || seteos?.category_id || post?.cat_id || post?.category_id;
+  const proyectos: any[] = infoParlamentaria?.proyectos || [];
 
   // Logo
   const logo = pageVw?.images?.find((img: any) => img.image_type === "logo");
@@ -467,6 +468,130 @@ export default async function ArticlePage({
                   </div>
                 </div>
               )}
+
+              {/* Expedientes Relacionados */}
+              {proyectos.length > 0 && (
+                <div className="mt-5">
+                  <h5
+                    style={{
+                      fontWeight: 800,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                      fontSize: "0.85rem",
+                      color: categoryColor,
+                      marginBottom: "16px",
+                      borderBottom: `2px solid ${categoryColor}`,
+                      paddingBottom: "6px",
+                    }}
+                  >
+                    🏛️ Expedientes Relacionados
+                  </h5>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                    {proyectos.map((proyecto: any, i: number) => {
+                      const det = proyecto.detalleExpediente || proyecto;
+                      const expNro = det?.nro_de_expediente || proyecto.expediente_id || `Expediente ${i + 1}`;
+                      const sumario = det?.sumario || "";
+                      const autor = det?.autor_des || "";
+                      const tipo = det?.proyecto_tipo_des || "";
+                      const fechaInicio = det?.fch_inicio ? formatDate(det.fch_inicio) : "";
+                      const urlDoc = det?.urlDoc;
+
+                      return (
+                        <div
+                          key={proyecto.id || i}
+                          style={{
+                            backgroundColor: "#f8fafc",
+                            borderRadius: "12px",
+                            padding: "16px 20px",
+                            border: "1px solid #e2e8f0",
+                            borderLeft: `4px solid ${categoryColor}`,
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "8px",
+                          }}
+                        >
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "8px" }}>
+                            <span
+                              style={{
+                                fontWeight: 800,
+                                fontSize: "0.95rem",
+                                color: "#1e293b",
+                              }}
+                            >
+                              Expediente: {expNro}
+                            </span>
+                            {tipo && (
+                              <span
+                                style={{
+                                  fontSize: "0.75rem",
+                                  fontWeight: 700,
+                                  textTransform: "uppercase",
+                                  backgroundColor: "#e2e8f0",
+                                  color: "#475569",
+                                  padding: "3px 10px",
+                                  borderRadius: "999px",
+                                }}
+                              >
+                                {tipo}
+                              </span>
+                            )}
+                          </div>
+
+                          {sumario && (
+                            <p
+                              style={{
+                                margin: 0,
+                                fontSize: "0.9rem",
+                                color: "#334155",
+                                lineHeight: 1.6,
+                              }}
+                            >
+                              <strong style={{ color: "#1e293b" }}>Sumario: </strong>
+                              {sumario}
+                            </p>
+                          )}
+
+                          <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", fontSize: "0.82rem", color: "#64748b", marginTop: "4px" }}>
+                            {autor && (
+                              <span>
+                                <strong style={{ color: "#475569" }}>Autor/es: </strong>
+                                {autor}
+                              </span>
+                            )}
+                            {/*  {fechaInicio && (
+                              <span>
+                                <strong style={{ color: "#475569" }}>Fecha inicio: </strong>
+                                {fechaInicio}
+                              </span>
+                            )} */}
+                          </div>
+
+                          {/* {urlDoc && (
+                            <div style={{ marginTop: "6px" }}>
+                              <a
+                                href={urlDoc}
+                                target="_blank"
+                                rel="noreferrer"
+                                style={{
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  gap: "6px",
+                                  fontSize: "0.85rem",
+                                  fontWeight: 600,
+                                  color: categoryColor,
+                                  textDecoration: "none",
+                                }}
+                              >
+                                📄 Ver Documento Oficial →
+                              </a>
+                            </div>
+                          )} */}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Sidebar */}
@@ -550,7 +675,7 @@ export default async function ArticlePage({
                     )}
 
                     {/* Media counters */}
-                    {(allImages.length > 0 || audioFiles.length > 0 || (videos as any[]).length > 0 || regularFiles.length > 0) && (
+                    {(allImages.length > 0 || audioFiles.length > 0 || (videos as any[]).length > 0 || regularFiles.length > 0 || proyectos.length > 0) && (
                       <>
                         <hr style={{ borderColor: "#f1f5f9", margin: "14px 0" }} />
                         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -572,6 +697,11 @@ export default async function ArticlePage({
                           {regularFiles.length > 0 && (
                             <span style={{ fontSize: "0.82rem", color: "#94a3b8" }}>
                               📎 {regularFiles.length} archivo{regularFiles.length !== 1 ? "s" : ""}
+                            </span>
+                          )}
+                          {proyectos.length > 0 && (
+                            <span style={{ fontSize: "0.82rem", color: "#94a3b8" }}>
+                              🏛️ {proyectos.length} expediente{proyectos.length !== 1 ? "s" : ""}
                             </span>
                           )}
                         </div>

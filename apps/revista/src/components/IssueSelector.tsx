@@ -3,8 +3,10 @@
 import { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import FallbackImage from "./FallbackImage";
+import FullPageLoader from "./FullPageLoader";
+import Link from "next/link";
 
 interface IssueItem {
   id: number;
@@ -41,11 +43,28 @@ function IssueSkeleton() {
 }
 
 export default function IssueSelector({ issues = [], currentIssueNumber }: IssueSelectorProps) {
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
+  const [isChangingIssue, setIsChangingIssue] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Al actualizar el issue activo por props, apagamos el loader
+  useEffect(() => {
+    setIsChangingIssue(false);
+  }, [currentIssueNumber]);
+
+  const handleSelectIssue = (targetUrl: string, isCurrent: boolean) => {
+    if (isCurrent || isChangingIssue) return;
+
+    setIsChangingIssue(true);
+    // Timeout para que se aprecie la animación del spinner y logo
+    setTimeout(() => {
+      router.push(targetUrl);
+    }, 1500);
+  };
 
   if (!issues || issues.length === 0) return null;
 
@@ -88,7 +107,14 @@ export default function IssueSelector({ issues = [], currentIssueNumber }: Issue
 
             return (
               <SwiperSlide key={issue.id}>
-                <Link href={targetUrl} className="text-decoration-none">
+                <a
+                  href={targetUrl}
+                  className="text-decoration-none"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleSelectIssue(targetUrl, isCurrent);
+                  }}
+                >
                   <div className={`edicion-card ${isCurrent ? "active-issue" : ""}`}>
                     <div className="edicion-img-wrap">
                       <FallbackImage
@@ -108,7 +134,7 @@ export default function IssueSelector({ issues = [], currentIssueNumber }: Issue
                       </h4>
                     </div>
                   </div>
-                </Link>
+                </a>
               </SwiperSlide>
             );
           })}
@@ -130,6 +156,11 @@ export default function IssueSelector({ issues = [], currentIssueNumber }: Issue
           </button>
         </div>
       </div>
+
+      {/* Modal / Overlay Loader de pantalla completa con logo y spinner */}
+      {isChangingIssue && (
+        <FullPageLoader message="Cargando edición seleccionada..." />
+      )}
     </section>
   );
 }

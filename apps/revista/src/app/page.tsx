@@ -219,12 +219,14 @@ export default async function HomePage({ searchParams }: PageProps) {
           </div>
 
           {gridPosts.length === 0 && (
-            <div className="text-center py-5 text-muted">
-              No hay publicaciones disponibles para esta edición.
-            </div>
+            <>
+              <div className="text-center py-5 text-muted">
+                No hay publicaciones disponibles para esta edición.
+              </div>
+              <hr />
+            </>
           )}
         </section>
-        <hr />
 
         {/* Carrusel de Galería En Acción */}
         {enAccionPost && <EnAccionGallery post={enAccionPost} />}

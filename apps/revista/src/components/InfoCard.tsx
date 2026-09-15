@@ -155,7 +155,6 @@ export default function InfoCard({
             >
               {title}
             </h3>
-
             {/* Descripción completa o multilínea limpia */}
             {displayText && (
               <p
