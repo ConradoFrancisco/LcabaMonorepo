@@ -5,6 +5,9 @@ const CATEGORY_COLORS: Record<string, string> = {
   "en casa": "#2563eb",                // azul
   "iniciativas legislativas": "#84cc16",// verde oliva / lima
   "emocional": "#06b6d4",              // celeste / turquesa
+  "fisico": "#0ea5e9",                 // celeste / azul
+  "físico": "#0ea5e9",                 // celeste / azul
+  "laboral": "#14b8a6",                // teal / turquesa
   "libro del mes": "#0284c7",          // azul cian
   "somos": "#9333ea",                  // púrpura
   "proyectos": "#eab308",              // amarillo / dorado
@@ -13,6 +16,16 @@ const CATEGORY_COLORS: Record<string, string> = {
   "formación": "#f97316",              // naranja
   "agenda": "#ec4899",                 // rosa
 };
+
+export function resolvePostCategory(post: any): string {
+  if (!post) return "";
+  const subcat = post.subcategoria || post.sub_categoria || post.subCategory || post.seteos?.subcategoria;
+  if (subcat && String(subcat).trim()) {
+    return String(subcat).trim();
+  }
+  const cat = post.categoria || post.category || post.seteos?.categoria || post.seteos?.cat_name || "";
+  return String(cat).trim();
+}
 
 export function getCategoryColor(categoryName?: string, fallbackFromMenu?: string): string {
   if (fallbackFromMenu) return fallbackFromMenu;

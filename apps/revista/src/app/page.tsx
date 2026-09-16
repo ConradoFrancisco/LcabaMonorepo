@@ -207,27 +207,30 @@ export default async function HomePage({ searchParams }: PageProps) {
         </div>
 
         {/* Grilla de Artículos del Issue Actual */}
-        <section className="container py-2">
-          <div className="row g-4">
-            {gridPosts.map((post: any) => (
-              <ArticleCard
-                key={post.id}
-                post={post}
-                categoryColorMap={categoryColorMap}
-              />
-            ))}
-          </div>
+        <div className="">
+          <section className="container py-2">
+            <div className="row g-4">
+              {gridPosts.map((post: any) => (
+                <ArticleCard
+                  key={post.id}
+                  post={post}
+                  categoryColorMap={categoryColorMap}
+                />
+              ))}
+            </div>
 
-          {gridPosts.length === 0 && (
-            <>
-              <div className="text-center py-5 text-muted">
-                No hay publicaciones disponibles para esta edición.
-              </div>
-              <hr />
-            </>
-          )}
-        </section>
 
+            {gridPosts.length === 0 && (
+              <>
+                <div className="text-center py-5 text-muted">
+                  No hay publicaciones disponibles para esta edición.
+                </div>
+                <hr />
+              </>
+            )}
+          </section>
+          <hr />
+        </div>
         {/* Carrusel de Galería En Acción */}
         {enAccionPost && <EnAccionGallery post={enAccionPost} />}
         <hr />

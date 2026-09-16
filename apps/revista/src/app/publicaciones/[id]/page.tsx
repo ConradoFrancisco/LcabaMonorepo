@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { PageServices } from "@lcaba/services";
 import Header from "../../../components/Header";
 import ArticleGallery from "./ArticleGallery";
-import { getCategoryColor } from "../../../utils/categoryColors";
+import { getCategoryColor, resolvePostCategory } from "../../../utils/categoryColors";
 import Footer from "../../../components/Footer";
 
 // ── helpers ───────────────────────────────────────────────────────────────────
@@ -125,7 +125,7 @@ export default async function ArticlePage({
     getRevistaMenu(),
     getPageData("6"),
   ]);
-  console.log(post);
+
   if (!post) notFound();
 
   const { textos, images = [], videos = [], archivos = [], seteos = {}, infoParlamentaria } = post;
@@ -134,8 +134,8 @@ export default async function ArticlePage({
   const description = textos?.description || textos?.cuerpo || "";
   const shortdesc = textos?.shortdesc || textos?.copete || "";
   const date = seteos?.date_article_parsed || formatDate(seteos?.date_article || seteos?.date_ins || seteos?.date);
-  const category: string = seteos?.cat_name || seteos?.categoria || "";
-  const categoryId = seteos?.cat_id || seteos?.category_id || post?.cat_id || post?.category_id;
+  const category: string = resolvePostCategory(post) || seteos?.cat_name || seteos?.categoria || "";
+  const categoryId = seteos?.idsubcategories || seteos?.cat_id || seteos?.category_id || post?.cat_id || post?.category_id;
   const proyectos: any[] = infoParlamentaria?.proyectos || [];
 
   // Logo
