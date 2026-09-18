@@ -22,22 +22,24 @@ interface NewsPost {
   images?: { location: string; filename: string; image_type?: string }[];
 }
 
-const IMAGE_HEIGHT = 380;
-
-const swiperOptions = {
-  modules: [Navigation],
-  slidesPerView: 1,
-  spaceBetween: 24,
-  loop: true,
-  navigation: {
-    nextEl: ".news-swiper-next",
-    prevEl: ".news-swiper-prev",
-  },
-  breakpoints: {
-    768: { slidesPerView: 2 },
-    992: { slidesPerView: 3 },
-  },
-};
+function buildSwiperOptions(showNav: boolean) {
+  return {
+    modules: [Navigation],
+    slidesPerView: 1,
+    spaceBetween: 28,
+    loop: showNav,
+    navigation: showNav
+      ? {
+          nextEl: ".news-swiper-next",
+          prevEl: ".news-swiper-prev",
+        }
+      : false,
+    breakpoints: {
+      768: { slidesPerView: 2 },
+      992: { slidesPerView: 3 },
+    },
+  };
+}
 
 function buildImageUrl(images: any[]): string | null {
   if (!images || images.length === 0) return null;
@@ -90,7 +92,7 @@ function decodeHtmlEntities(text: string): string {
   });
 }
 
-function excerpt(html: string, maxLen = 220): string {
+function excerpt(html: string, maxLen = 170): string {
   const text = decodeHtmlEntities(html.replace(/<[^>]*>/g, " "))
     .replace(/\s+/g, " ")
     .trim();
@@ -98,26 +100,23 @@ function excerpt(html: string, maxLen = 220): string {
   return text.length > maxLen ? `${text.slice(0, maxLen).trim()}…` : text;
 }
 
-function formatDate(dateStr?: string): string {
-  if (!dateStr) return "";
+function formatDateParts(dateStr?: string): { day: string; month: string } | null {
+  if (!dateStr) return null;
   try {
-    return new Date(dateStr).toLocaleDateString("es-AR", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
+    const d = new Date(dateStr);
+    if (Number.isNaN(d.getTime())) return null;
+    const day = d.toLocaleDateString("es-AR", { day: "2-digit" });
+    const month = d
+      .toLocaleDateString("es-AR", { month: "short" })
+      .replace(".", "")
+      .toUpperCase();
+    return { day, month };
   } catch {
-    return "";
+    return null;
   }
 }
 
-function NewsCard({
-  post,
-  showDivider,
-}: {
-  post: NewsPost;
-  showDivider: boolean;
-}) {
+function NewsCard({ post }: { post: NewsPost }) {
   const title = post.title || post.titulo || "";
   const desc = excerpt(
     post.shortdesc ||
@@ -127,44 +126,22 @@ function NewsCard({
       post.texto ||
       "",
   );
-  const eyebrow =
-    post.categoria ||
-    post.cat_name ||
-    post.category ||
-    formatDate(post.fecha || post.date_ins);
+  const category = post.categoria || post.cat_name || post.category || "";
+  const dateParts = formatDateParts(post.fecha || post.date_ins);
   const imgUrl = buildImageUrl(post.images || []);
   const url = `/publicaciones/${post.id}`;
 
   return (
-    <div className="h-100 position-relative">
-      {showDivider && (
-        <div
-          className="d-none d-md-block position-absolute top-0 bottom-0"
-          style={{ right: "-12px", width: "1px", background: "#e0e0e0" }}
-        />
-      )}
-      {/* Image */}
-      <Link
-        href={url}
-        className="d-block overflow-hidden"
-        style={{ height: `${IMAGE_HEIGHT}px`, borderRadius: "14px" }}
-      >
+    <article className="news-card h-100">
+      <div className="news-card-media">
         {imgUrl ? (
-          <img
-            src={imgUrl}
-            alt={title}
-            className="w-100 h-100"
-            style={{ objectFit: "cover", transition: "transform 0.4s ease" }}
-          />
+          <img src={imgUrl} alt="" />
         ) : (
-          <div
-            className="w-100 h-100 d-flex align-items-center justify-content-center"
-            style={{ backgroundColor: "#f0f0f0" }}
-          >
+          <div className="news-card-placeholder">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width={48}
-              height={48}
+              width={40}
+              height={40}
               fill="none"
               viewBox="0 0 24 24"
               stroke="#ccc"
@@ -178,65 +155,44 @@ function NewsCard({
             </svg>
           </div>
         )}
-      </Link>
-
-      <div className="pt-3">
-        {eyebrow && (
-          <span
-            className="d-block fw-bold text-dark mb-1"
-            style={{
-              fontSize: "0.7rem",
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-            }}
-          >
-            {eyebrow}
+        {dateParts && (
+          <span className="news-card-date" aria-hidden="true">
+            <strong>{dateParts.day}</strong>
+            <em>{dateParts.month}</em>
           </span>
         )}
-        <Link href={url} className="d-block">
-          <h5
-            className="text-dark fw-bold mb-2"
-            style={{
-              fontSize: "1.5rem",
-              lineHeight: 1.3,
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-            }}
-          >
-            {title}
-          </h5>
-        </Link>
-        {desc && (
-          <p
-            className="mb-2"
-            style={{
-              fontSize: "0.95rem",
-              color: "#4a4a4a",
-              display: "-webkit-box",
-              WebkitLineClamp: 4,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-              lineHeight: 1.6,
-            }}
-          >
-            {desc}
-          </p>
-        )}
-        <Link
-          href={url}
-          className="fw-bold text-uppercase"
-          style={{
-            fontSize: "0.8rem",
-            letterSpacing: "0.03em",
-            color: "var(--tc-primary-color, #f6bd43)",
-          }}
-        >
-          + Leer más...
-        </Link>
       </div>
-    </div>
+
+      <div className="news-card-body">
+        {category && <span className="news-card-eyebrow">{category}</span>}
+        <h5 className="news-card-title">{title}</h5>
+        {desc && <p className="news-card-desc">{desc}</p>}
+        <span className="news-card-cta" aria-hidden="true">
+          Leer más
+          <span className="news-card-cta-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width={13}
+              height={13}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M7 17L17 7M7 7h10v10" />
+            </svg>
+          </span>
+        </span>
+      </div>
+
+      <Link
+        href={url}
+        className="news-card-link"
+        aria-label={title || "Ver publicación"}
+      >
+        {null}
+      </Link>
+    </article>
   );
 }
 
@@ -249,8 +205,11 @@ export default function NewsSection({
 }) {
   if (!posts || posts.length === 0) return null;
 
+  const showNav = posts.length > 3;
+  const swiperOptions = buildSwiperOptions(showNav);
+
   return (
-    <section className="py-80">
+    <section className="news-section py-80">
       <div
         className="container-fluid"
         style={{
@@ -259,111 +218,348 @@ export default function NewsSection({
         }}
       >
         {/* Section header */}
-        <div className="row mb-4 mb-lg-5">
-          <div className="col-12 text-center">
-            <h2 className="text-dark fw-bold mb-0" style={{ fontSize: "2rem" }}>
-              {title}
-            </h2>
+        <div className="news-section-header">
+          <div>
+            <h2 className="news-section-title">{title}</h2>
           </div>
+
+          {showNav && (
+            <div className="news-section-nav">
+              <button
+                type="button"
+                aria-label="Anterior"
+                className="news-swiper-prev news-nav-btn news-nav-btn--prev"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width={14}
+                  height={14}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                aria-label="Siguiente"
+                className="news-swiper-next news-nav-btn news-nav-btn--next"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width={14}
+                  height={14}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Cards carousel */}
-        <div className="position-relative">
-          <Swiper {...swiperOptions} className="swiper news-swiper">
-            {posts.map((post, index) => (
-              <SwiperSlide key={post.id}>
-                <NewsCard post={post} showDivider={index < posts.length - 1} />
-              </SwiperSlide>
-            ))}
-          </Swiper>
-
-          <button
-            type="button"
-            aria-label="Anterior"
-            className="news-swiper-prev d-none d-md-flex align-items-center justify-content-center position-absolute"
-            style={{
-              left: "-20px",
-              top: `${IMAGE_HEIGHT / 2}px`,
-              transform: "translateY(-50%)",
-              width: "44px",
-              height: "44px",
-              borderRadius: "50%",
-              background: "#4fc1f0ff",
-              border: "1px solid #eee",
-              boxShadow: "0 4px 14px rgba(0,0,0,0.12)",
-              zIndex: 5,
-              cursor: "pointer",
-            }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width={18}
-              height={18}
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#1a1a1a"
-              strokeWidth="2.5"
-            >
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
-          </button>
-          <button
-            type="button"
-            aria-label="Siguiente"
-            className="news-swiper-next d-none d-md-flex align-items-center justify-content-center position-absolute"
-            style={{
-              right: "-20px",
-              top: `${IMAGE_HEIGHT / 2}px`,
-              transform: "translateY(-50%)",
-              width: "44px",
-              height: "44px",
-              borderRadius: "50%",
-              background: "#4fc1f0ff",
-              border: "1px solid #eee",
-              boxShadow: "0 4px 14px rgba(0,0,0,0.12)",
-              zIndex: 5,
-              cursor: "pointer",
-            }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width={18}
-              height={18}
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#1a1a1a"
-              strokeWidth="2.5"
-            >
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </button>
-        </div>
+        <Swiper {...swiperOptions} className="swiper news-swiper">
+          {posts.map((post) => (
+            <SwiperSlide key={post.id}>
+              <NewsCard post={post} />
+            </SwiperSlide>
+          ))}
+        </Swiper>
 
         {/* Ver todas */}
-        <div className="row mt-3 mt-lg-4">
-          <div className="col-12 d-flex justify-content-end">
-            <Link
-              href="/publicaciones"
-              className="text-uppercase fw-bold"
-              style={{
-                fontSize: "0.85rem",
-                color: "#000000ff",
-                background: "#4fc1f0",
-                padding: "0.4rem 0.9rem",
-                boxShadow: "0 1px 4px rgba(0,0,0,0.12)",
-              }}
-            >
-              + Ver todas
-            </Link>
-          </div>
+        <div className="news-section-footer">
+          <Link href="/publicaciones" className="news-view-all">
+            Ver todas
+          </Link>
         </div>
       </div>
 
       <style>{`
-        .news-swiper-prev.swiper-button-disabled,
-        .news-swiper-next.swiper-button-disabled {
-          opacity: 0.3;
+        .news-section {
+          background: var(--news-bg, #f7e8d2);
+          margin: 0;
+          box-shadow: 0 1px 0 rgba(23, 20, 18, 0.04);
+        }
+
+        .news-section-header {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: flex-end;
+          justify-content: space-between;
+          gap: 1.5rem;
+          margin-bottom: 2.5rem;
+        }
+
+        .news-section-title {
+          font-family: var(--tc-heading-font-family, inherit);
+          font-size: clamp(1.75rem, 3vw, 2.5rem);
+          font-weight: 700;
+          color: #171412;
+          margin: 0;
+        }
+
+        .news-section-nav {
+          display: flex;
+          gap: 0.6rem;
+        }
+
+        .news-nav-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 44px;
+          height: 44px;
+          padding: 0;
+          border-radius: 50%;
+          cursor: pointer;
+          transition: transform 0.15s ease, background-color 0.15s ease, opacity 0.15s ease;
+        }
+
+        .news-nav-btn--prev {
+          background: #fff;
+          border: 1.5px solid #d8cdb9;
+          color: #171412;
+        }
+
+        .news-nav-btn--next {
+          background: #171412;
+          border: 1.5px solid #171412;
+          color: #fff;
+        }
+
+        .news-nav-btn:hover {
+          transform: translateY(-2px);
+        }
+
+        .news-nav-btn:focus-visible,
+        .news-view-all:focus-visible {
+          outline: 2.5px solid #171412;
+          outline-offset: 2px;
+        }
+
+        .news-nav-btn.swiper-button-disabled {
+          opacity: 0.35;
           pointer-events: none;
+          transform: none;
+        }
+
+        .news-swiper .swiper-wrapper {
+          align-items: stretch;
+        }
+
+        .news-swiper .swiper-slide {
+          height: auto;
+        }
+
+        .news-card {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+          background: #fff;
+          border-radius: 26px;
+          overflow: hidden;
+          box-shadow: 0 10px 28px rgba(23, 20, 18, 0.07);
+          transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .news-card:hover,
+        .news-card:focus-within {
+          transform: translateY(-5px);
+          box-shadow: 0 20px 36px rgba(23, 20, 18, 0.13);
+        }
+
+        .news-card-media {
+          position: relative;
+          overflow: hidden;
+          aspect-ratio: 4 / 3;
+          background: #efece5;
+        }
+
+        .news-card-media img {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.5s ease;
+        }
+
+        .news-card:hover .news-card-media img,
+        .news-card:focus-within .news-card-media img {
+          transform: scale(1.06);
+        }
+
+        .news-card-placeholder {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .news-card-date {
+          position: absolute;
+          top: 1rem;
+          left: 1rem;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          line-height: 1;
+          padding: 0.5rem 0.65rem 0.45rem;
+          border-radius: 12px;
+          background: #fff;
+          box-shadow: 0 6px 16px rgba(23, 20, 18, 0.18);
+        }
+
+        .news-card-date strong {
+          font-family: var(--tc-heading-font-family, inherit);
+          font-size: 1.1rem;
+          font-weight: 800;
+          color: #171412;
+        }
+
+        .news-card-date em {
+          margin-top: 0.2rem;
+          font-style: normal;
+          font-size: 0.62rem;
+          font-weight: 700;
+          letter-spacing: 0.05em;
+          color: var(--tc-primary-color, #b8862f);
+        }
+
+        .news-card-body {
+          padding: 1.6rem 1.6rem 1.4rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.6rem;
+          flex: 1 1 auto;
+        }
+
+        .news-card-eyebrow {
+          display: inline-block;
+          width: fit-content;
+          font-size: 0.7rem;
+          font-weight: 700;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          color: var(--tc-primary-color, #b8862f);
+        }
+
+        .news-card-title {
+          font-family: var(--tc-heading-font-family, inherit);
+          font-size: 1.2rem;
+          font-weight: 700;
+          line-height: 1.3;
+          color: #171412;
+          margin: 0;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .news-card-desc {
+          font-family: var(--tc-body-font-family, inherit);
+          font-size: 0.88rem;
+          line-height: 1.6;
+          color: #6b6259;
+          margin: 0;
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .news-card-cta {
+          margin-top: auto;
+          align-self: flex-end;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.6rem;
+          background: #171412;
+          color: #fff;
+          border-radius: 999px;
+          padding: 0.5rem 0.5rem 0.5rem 1.15rem;
+          font-size: 0.82rem;
+          font-weight: 700;
+        }
+
+        .news-card-cta-icon {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background: #fff;
+          color: #171412;
+          transition: transform 0.25s ease;
+        }
+
+        .news-card:hover .news-card-cta-icon,
+        .news-card:focus-within .news-card-cta-icon {
+          transform: translateX(3px);
+        }
+
+        .news-card-link {
+          position: absolute;
+          inset: 0;
+          border-radius: inherit;
+        }
+
+        .news-card-link:focus-visible {
+          outline: 2.5px solid #171412;
+          outline-offset: -2px;
+        }
+
+        @media (min-width: 768px) {
+          .news-card-body {
+            padding: 1.85rem 1.85rem 1.6rem;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .news-card,
+          .news-card-media img,
+          .news-card-cta-icon,
+          .news-nav-btn,
+          .news-view-all {
+            transition: none !important;
+            transform: none !important;
+          }
+        }
+
+        .news-section-footer {
+          display: flex;
+          justify-content: flex-end;
+          margin-top: 2rem;
+        }
+
+        .news-view-all {
+          display: inline-flex;
+          align-items: center;
+          padding: 0.65rem 1.4rem;
+          border-radius: 999px;
+          background: #fff;
+          border: 1.5px solid #171412;
+          color: #171412;
+          font-size: 0.85rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+          transition: transform 0.15s ease;
+        }
+
+        .news-view-all:hover {
+          transform: translateY(-1px);
+          color: #171412;
         }
       `}</style>
     </section>
