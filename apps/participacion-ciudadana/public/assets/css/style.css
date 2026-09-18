@@ -546,7 +546,10 @@
 }
 
 .login-visual-banner.theme-ext {
-    background: linear-gradient(145deg, #1a97d6 0%, #1d4ed8 100%, #1a97d6 100%);
+    background: url("/assets/imgs/register.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .login-visual-circles {
@@ -862,6 +865,7 @@
         opacity: 1;
     }
 }
+
 /* ── Aviso banner "no empleados" (paso 1) ── */
 .register-notice-banner {
     display: flex;

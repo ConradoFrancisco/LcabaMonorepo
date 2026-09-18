@@ -58,7 +58,7 @@ const PROVINCIAS = [
 ];
 
 // ─── Componente principal ────────────────────────────────────────────────────
-export default function RegisterComponent() {
+export default function RegisterComponent({ menuItems, logo }: any) {
     const [step, setStep] = useState(1);
     const [form, setForm] = useState<FormData>(INITIAL_FORM);
     const [submitted, setSubmitted] = useState(false);
@@ -343,178 +343,178 @@ export default function RegisterComponent() {
         );
     };
 
-        // ─── Pantalla de éxito ────────────────────────────────────────────────────
-        if (submitted) {
-            return (
-                <section className="login-page-wrapper">
-                    <div className="container">
-                        <div className="row justify-content-center">
-                            <div className="col-12 col-md-8 col-lg-6">
-                                <div className="register-success-card text-center">
-                                    <div className="register-success-icon mb-4">
-                                        <i className="ri-checkbox-circle-line" />
-                                    </div>
-                                    <h3 className="fw-bold text-dark mb-2">¡Registro completado!</h3>
-                                    <p className="text-muted mb-4">
-                                        Te enviamos un email a <strong className="text-dark">{form.email}</strong> para verificar tu cuenta.
-                                        Por favor revisá tu bandeja de entrada.
-                                    </p>
-                                    <Link href="/login/ext" className="btn btn-primary rounded-pill px-5 py-3 fw-semibold shadow-sm">
-                                        <i className="ri-login-circle-line me-2" />Ir al inicio de sesión
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            );
-        }
-
-        // ─── Layout principal ─────────────────────────────────────────────────────
+    // ─── Pantalla de éxito ────────────────────────────────────────────────────
+    if (submitted) {
         return (
             <section className="login-page-wrapper">
                 <div className="container">
                     <div className="row justify-content-center">
-                        <div className="col-12 col-xl-10">
-                            <div className="login-split-card row g-0 flex-lg-row">
-
-                                {/* ── BANNER LATERAL ── */}
-                                <div className="col-lg-5 col-12 login-visual-banner theme-ext">
-                                    <div className="login-visual-circles" />
-
-                                    {/* Header del banner */}
-                                    <div className="d-flex justify-content-between align-items-center position-relative z-2">
-                                        <div className="d-flex align-items-center gap-2">
-                                            <div
-                                                className="d-inline-flex align-items-center justify-content-center rounded-3 bg-white text-primary"
-                                                style={{ width: "36px", height: "36px" }}
-                                            >
-                                                <i className="ri-community-line" style={{ fontSize: "20px" }} />
-                                            </div>
-                                            <span className="fw-bold fs-6 text-white" style={{ letterSpacing: "0.05em" }}>
-                                                PARTICIPACIÓN CIUDADANA
-                                            </span>
-                                        </div>
-                                        <span className="badge bg-white bg-opacity-25 rounded-pill px-3 py-2 text-white small">
-                                            Registro
-                                        </span>
-                                    </div>
-
-                                    {/* Indicador de pasos vertical */}
-                                    <div className="register-steps-visual position-relative z-2">
-                                        {STEPS.map((s, idx) => (
-                                            <div key={s.id} className="register-step-row">
-                                                <div className={`register-step-indicator ${step === s.id ? "active" : ""} ${step > s.id ? "done" : ""}`}>
-                                                    <div className="register-step-dot">
-                                                        {step > s.id
-                                                            ? <i className="ri-check-line" />
-                                                            : <i className={s.icon} />
-                                                        }
-                                                    </div>
-                                                    <div className="register-step-text">
-                                                        <span className="register-step-num">Paso {s.id}</span>
-                                                        <span className="register-step-name">{s.label}</span>
-                                                    </div>
-                                                </div>
-                                                {idx < STEPS.length - 1 && (
-                                                    <div className={`register-step-connector ${step > s.id ? "done" : ""}`} />
-                                                )}
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    {/* Footer del banner */}
-                                    <div className="d-flex justify-content-between align-items-center position-relative z-2 text-white text-opacity-75 small pt-3 border-top border-white border-opacity-10 mt-auto">
-                                        <span>© 2026 Legislatura CABA</span>
-                                        <div className="d-flex gap-2 align-items-center">
-                                            <i className="ri-lock-2-line" />
-                                            <span>Conexión Segura SSL</span>
-                                        </div>
-                                    </div>
+                        <div className="col-12 col-md-8 col-lg-6">
+                            <div className="register-success-card text-center">
+                                <div className="register-success-icon mb-4">
+                                    <i className="ri-checkbox-circle-line" />
                                 </div>
-
-                                {/* ── FORMULARIO ── */}
-                                <div className="col-lg-7 col-12 p-4 p-md-5 d-flex flex-column justify-content-between bg-white">
-                                    <div>
-                                        {/* Header del formulario */}
-                                        <div className="d-flex align-items-center justify-content-between mb-4">
-                                            <Link href="/login/ext" className="register-back-link">
-                                                <i className="ri-arrow-left-line me-1" /> Volver al login
-                                            </Link>
-                                            <span className="small text-muted">Paso {step} de {totalSteps}</span>
-                                        </div>
-
-                                        {/* Progress bar */}
-                                        <div className="register-progress-bar mb-4">
-                                            <div className="register-progress-fill" style={{ width: `${progress}%` }} />
-                                        </div>
-
-                                        {/* Ícono + Título del paso */}
-                                        <div className="mb-4">
-                                            <div className="register-step-icon-header mb-2">
-                                                <i className={currentStep.icon} />
-                                            </div>
-                                            <h3 className="fw-bold text-dark mb-1">{currentStep.title}</h3>
-                                            <p className="text-muted small">{currentStep.subtitle}</p>
-                                        </div>
-
-                                        {/* Contenido del paso */}
-                                        <form onSubmit={goNext}>
-                                            {step === 1 && renderStep1()}
-                                            {step === 2 && renderStep2()}
-                                            {step === 3 && renderStep3()}
-                                            {step === 4 && renderStep4()}
-
-                                            {/* Navegación */}
-                                            <div className="d-flex justify-content-between align-items-center mt-4 pt-3 border-top gap-3">
-                                                <button
-                                                    type="button"
-                                                    onClick={goPrev}
-                                                    disabled={step === 1}
-                                                    className="btn register-btn-outline rounded-pill px-4 py-2 fw-semibold"
-                                                >
-                                                    <i className="ri-arrow-left-s-line me-1" /> Anterior
-                                                </button>
-
-                                                {/* Dots para mobile */}
-                                                <div className="d-flex gap-2 d-lg-none">
-                                                    {STEPS.map(s => (
-                                                        <div key={s.id} className={`register-dot-indicator ${step >= s.id ? "active" : ""}`} />
-                                                    ))}
-                                                </div>
-
-                                                <button
-                                                    type="submit"
-                                                    className="btn btn-primary rounded-pill px-4 py-2 fw-semibold shadow-sm register-btn-next"
-                                                >
-                                                    {step === totalSteps ? (
-                                                        <><i className="ri-check-double-line me-1" />Crear mi cuenta</>
-                                                    ) : (
-                                                        <>Siguiente <i className="ri-arrow-right-s-line ms-1" /></>
-                                                    )}
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-
-                                    {/* Footer */}
-                                    <div className="mt-4 pt-3 border-top d-flex justify-content-between align-items-center text-muted small">
-                                        <div className="d-flex gap-3">
-                                            <a href="#" className="text-muted"><i className="ri-facebook-circle-line fs-5" /></a>
-                                            <a href="#" className="text-muted"><i className="ri-twitter-x-line fs-5" /></a>
-                                            <a href="#" className="text-muted"><i className="ri-instagram-line fs-5" /></a>
-                                        </div>
-                                        <Link href="/contacto" className="text-muted text-decoration-none">
-                                            <i className="ri-mail-line me-1" /> Soporte
-                                        </Link>
-                                    </div>
-                                </div>
-
+                                <h3 className="fw-bold text-dark mb-2">¡Registro completado!</h3>
+                                <p className="text-muted mb-4">
+                                    Te enviamos un email a <strong className="text-dark">{form.email}</strong> para verificar tu cuenta.
+                                    Por favor revisá tu bandeja de entrada.
+                                </p>
+                                <Link href="/login/ext" className="btn btn-primary rounded-pill px-5 py-3 fw-semibold shadow-sm">
+                                    <i className="ri-login-circle-line me-2" />Ir al inicio de sesión
+                                </Link>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
         );
+    }
+
+    // ─── Layout principal ─────────────────────────────────────────────────────
+    return (
+        <section className="login-page-wrapper">
+            <div className="container">
+                <div className="row justify-content-center">
+                    <div className="col-12 col-xl-10">
+                        <div className="login-split-card row g-0 flex-lg-row">
+
+                            {/* ── BANNER LATERAL ── */}
+                            <div className="col-lg-5 col-12 login-visual-banner theme-ext">
+                                <div className="login-visual-circles" />
+
+                                {/* Header del banner */}
+                                <div className="d-flex justify-content-between align-items-center position-relative z-2">
+                                    <div className="d-flex align-items-center gap-2">
+                                        <div
+                                            className="d-inline-flex align-items-center justify-content-center rounded-3 bg-white text-primary"
+                                            style={{ width: "36px", height: "36px" }}
+                                        >
+                                            <i className="ri-community-line" style={{ fontSize: "20px" }} />
+                                        </div>
+                                        <span className="fw-bold fs-6 text-white" style={{ letterSpacing: "0.05em" }}>
+                                            PARTICIPACIÓN CIUDADANA
+                                        </span>
+                                    </div>
+                                    <span className="badge bg-white bg-opacity-25 rounded-pill px-3 py-2 text-white small">
+                                        Registro
+                                    </span>
+                                </div>
+
+                                {/* Indicador de pasos vertical */}
+                                <div className="register-steps-visual position-relative z-2">
+                                    {STEPS.map((s, idx) => (
+                                        <div key={s.id} className="register-step-row">
+                                            <div className={`register-step-indicator ${step === s.id ? "active" : ""} ${step > s.id ? "done" : ""}`}>
+                                                <div className="register-step-dot">
+                                                    {step > s.id
+                                                        ? <i className="ri-check-line" />
+                                                        : <i className={s.icon} />
+                                                    }
+                                                </div>
+                                                <div className="register-step-text">
+                                                    <span className="register-step-num">Paso {s.id}</span>
+                                                    <span className="register-step-name">{s.label}</span>
+                                                </div>
+                                            </div>
+                                            {idx < STEPS.length - 1 && (
+                                                <div className={`register-step-connector ${step > s.id ? "done" : ""}`} />
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Footer del banner */}
+                                <div className="d-flex justify-content-between align-items-center position-relative z-2 text-white text-opacity-75 small pt-3 border-top border-white border-opacity-10 mt-auto">
+                                    <span>© 2026 Legislatura CABA</span>
+                                    <div className="d-flex gap-2 align-items-center">
+                                        <i className="ri-lock-2-line" />
+                                        <span>Conexión Segura SSL</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* ── FORMULARIO ── */}
+                            <div className="col-lg-7 col-12 p-4 p-md-5 d-flex flex-column justify-content-between bg-white">
+                                <div>
+                                    {/* Header del formulario */}
+                                    <div className="d-flex align-items-center justify-content-between mb-4">
+                                        <Link href="/login/ext" className="register-back-link">
+                                            <i className="ri-arrow-left-line me-1" /> Volver al login
+                                        </Link>
+                                        <span className="small text-muted">Paso {step} de {totalSteps}</span>
+                                    </div>
+
+                                    {/* Progress bar */}
+                                    <div className="register-progress-bar mb-4">
+                                        <div className="register-progress-fill" style={{ width: `${progress}%` }} />
+                                    </div>
+
+                                    {/* Ícono + Título del paso */}
+                                    <div className="mb-4">
+                                        <div className="register-step-icon-header mb-2">
+                                            <i className={currentStep.icon} />
+                                        </div>
+                                        <h3 className="fw-bold text-dark mb-1">{currentStep.title}</h3>
+                                        <p className="text-muted small">{currentStep.subtitle}</p>
+                                    </div>
+
+                                    {/* Contenido del paso */}
+                                    <form onSubmit={goNext}>
+                                        {step === 1 && renderStep1()}
+                                        {step === 2 && renderStep2()}
+                                        {step === 3 && renderStep3()}
+                                        {step === 4 && renderStep4()}
+
+                                        {/* Navegación */}
+                                        <div className="d-flex justify-content-between align-items-center mt-4 pt-3 border-top gap-3">
+                                            <button
+                                                type="button"
+                                                onClick={goPrev}
+                                                disabled={step === 1}
+                                                className="btn register-btn-outline rounded-pill px-4 py-2 fw-semibold"
+                                            >
+                                                <i className="ri-arrow-left-s-line me-1" /> Anterior
+                                            </button>
+
+                                            {/* Dots para mobile */}
+                                            <div className="d-flex gap-2 d-lg-none">
+                                                {STEPS.map(s => (
+                                                    <div key={s.id} className={`register-dot-indicator ${step >= s.id ? "active" : ""}`} />
+                                                ))}
+                                            </div>
+
+                                            <button
+                                                type="submit"
+                                                className="btn btn-primary rounded-pill px-4 py-2 fw-semibold shadow-sm register-btn-next"
+                                            >
+                                                {step === totalSteps ? (
+                                                    <><i className="ri-check-double-line me-1" />Crear mi cuenta</>
+                                                ) : (
+                                                    <>Siguiente <i className="ri-arrow-right-s-line ms-1" /></>
+                                                )}
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                {/* Footer */}
+                                <div className="mt-4 pt-3 border-top d-flex justify-content-between align-items-center text-muted small">
+                                    <div className="d-flex gap-3">
+                                        <a href="#" className="text-muted"><i className="ri-facebook-circle-line fs-5" /></a>
+                                        <a href="#" className="text-muted"><i className="ri-twitter-x-line fs-5" /></a>
+                                        <a href="#" className="text-muted"><i className="ri-instagram-line fs-5" /></a>
+                                    </div>
+                                    <Link href="/contacto" className="text-muted text-decoration-none">
+                                        <i className="ri-mail-line me-1" /> Soporte
+                                    </Link>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
 }
 
