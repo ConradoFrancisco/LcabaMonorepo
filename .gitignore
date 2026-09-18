@@ -36,6 +36,15 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+
+# MCP local config
+.mcp.json
 _templates-preview
 drive-download-20260807T180255Z-1-001.zip
 temp_template/
+
+# Claude
+.claude/
+.agent/
+.cursor/
+.serena/

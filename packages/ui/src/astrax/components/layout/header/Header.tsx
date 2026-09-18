@@ -76,7 +76,11 @@ export default function Header({
                 </ul>
               </div>
               <div className="d-flex align-items-center gap-4">
-                <a href="https://www.legislatura.gob.ar/" target="_blank" rel="noopener noreferrer">
+                <a
+                  href="https://www.legislatura.gob.ar/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <img
                     width={230}
                     src="https://www.legislatura.gob.ar/_pagedata/page/images/6lf3r7imj7_1664903744.8227.png"
@@ -109,39 +113,6 @@ export default function Header({
                   alt="Cultura - Legislatura CABA"
                   height={40}
                 />
-              </Link>
-            </div>
-            <div className="offCanvas__side-info mb-30">
-              <div className="contact-list mb-30">
-                <h4>Office Address</h4>
-                <p>
-                  123/A, Miranda City Likaoli <br />
-                  Prikano, Dope
-                </p>
-              </div>
-              <div className="contact-list mb-30">
-                <h4>Phone Number</h4>
-                <p>+0989 7876 9865 9</p>
-                <p>+(090) 8765 86543 85</p>
-              </div>
-              <div className="contact-list mb-30">
-                <h4>Email Address</h4>
-                <p>info@example.com</p>
-                <p>example.mail@hum.com</p>
-              </div>
-            </div>
-            <div className="offCanvas__social-icon mt-30">
-              <Link href="/javascript:void(0)">
-                <i className="bi bi-facebook" />
-              </Link>
-              <Link href="/javascript:void(0)">
-                <i className="bi bi-twitter-x" />
-              </Link>
-              <Link href="/javascript:void(0)">
-                <i className="bi bi-linkedin" />
-              </Link>
-              <Link href="/javascript:void(0)">
-                <i className="bi bi-behance" />
               </Link>
             </div>
           </div>

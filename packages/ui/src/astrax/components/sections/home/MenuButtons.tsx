@@ -45,13 +45,13 @@ const defaultButtons: MenuButton[] = [
   },
   {
     label: "Biblioteca",
-    href: "/biblioteca",
+    href: "https://biblioteca.legislatura.gob.ar/",
     icon: BookOpen,
     image: `${IMG_BASE}/biblioteca.jpg`,
   },
   {
     label: "Hemeroteca",
-    href: "/hemeroteca",
+    href: "https://hemeroteca.legislatura.gob.ar/",
     icon: Archive,
     image: `${IMG_BASE}/hemeroteca.jpg`,
   },

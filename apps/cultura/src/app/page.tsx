@@ -2,6 +2,7 @@ import Layout from "@lcaba/ui/astrax/components/layout/Layout";
 import HeroSlider from "@lcaba/ui/astrax/components/sections/home/HeroSlider";
 import MenuButtons from "@lcaba/ui/astrax/components/sections/home/MenuButtons";
 import NewsSection from "@lcaba/ui/astrax/components/sections/home/NewsSection";
+import SectionWave from "@lcaba/ui/astrax/components/elements/SectionWave";
 import { PageServices } from "@lcaba/services";
 
 async function getPostsSlider() {
@@ -37,8 +38,10 @@ export async function getPosts(
       front: "true",
     });
     if (filters?.search) params.set("input", filters.search);
-    if (filters?.fechaDesde) params.set("filtros[fechaDesde]", filters.fechaDesde);
-    if (filters?.fechaHasta) params.set("filtros[fechaHasta]", filters.fechaHasta);
+    if (filters?.fechaDesde)
+      params.set("filtros[fechaDesde]", filters.fechaDesde);
+    if (filters?.fechaHasta)
+      params.set("filtros[fechaHasta]", filters.fechaHasta);
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API}/posts?${params.toString()}`,
       {
@@ -76,12 +79,12 @@ export default async function Home() {
   const menuItems = await PageServices.getNavMenu();
   const socials = await getSocials();
   const postSlider = await getPostsSlider();
-  const { posts } = await getPosts(5, 0, true);
+  const { posts } = await getPosts(3, 0, true);
   return (
     <>
       <Layout menuItems={menuItems} socials={socials}>
         <HeroSlider posts={postSlider} />
-        <NewsSection posts={posts} title="NOTICIAS" />
+        <NewsSection posts={posts} title="NOVEDADES" />
         <MenuButtons />
       </Layout>
     </>
