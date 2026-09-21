@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { formatNavUrl } from "../MainMenu";
 
-export default function Footer() {
+export default function Footer({ menuItems, logo }: any) {
     return (
         <>
             {/* Footer */}
@@ -57,32 +58,21 @@ export default function Footer() {
                                     </div>
                                 </div>
                                 <div className="col-lg-4 col-md-6 ps-lg-8 col-6">
-                                    <h6 className="pb-3 text-white pb-4 mb-4 border-white border-opacity-25">Company</h6>
+                                    <h6 className="pb-3 text-white pb-4 mb-4 border-white border-opacity-25">Menú</h6>
                                     <div className="row">
                                         <div className="col-6 d-flex flex-column align-items-start">
-                                            <Link href="#">
-                                                <p className="hover-effect text-white text-opacity-50 text-capitalize text-nowrap">About</p>
-                                            </Link>
-                                            <Link href="#">
-                                                <p className="hover-effect text-white text-opacity-50 text-capitalize text-nowrap">Services</p>
-                                            </Link>
-                                            <Link href="#">
-                                                <p className="hover-effect text-white text-opacity-50 text-capitalize text-nowrap">Works</p>
-                                            </Link>
-                                            <Link href="#">
-                                                <p className="hover-effect text-white text-opacity-50 text-capitalize text-nowrap">Get In Touch</p>
-                                            </Link>
+                                            {menuItems?.slice(0, Math.ceil((menuItems?.length || 0) / 2)).map((item: any) => (
+                                                <Link href={formatNavUrl(item)} key={item.id}>
+                                                    <p className="hover-effect text-white text-opacity-50 text-capitalize text-nowrap">{item.title}</p>
+                                                </Link>
+                                            ))}
                                         </div>
                                         <div className="col-lg-6 col-md-5 d-flex flex-column align-items-start">
-                                            <Link href="#">
-                                                <p className="hover-effect text-white text-opacity-50 text-capitalize text-nowrap">How It Works</p>
-                                            </Link>
-                                            <Link href="#">
-                                                <p className="hover-effect text-white text-opacity-50 text-capitalize text-nowrap">Terms &amp; Conditions</p>
-                                            </Link>
-                                            <Link href="#">
-                                                <p className="hover-effect text-white text-opacity-50 text-capitalize text-nowrap">Refund Policy</p>
-                                            </Link>
+                                            {menuItems?.slice(Math.ceil((menuItems?.length || 0) / 2)).map((item: any) => (
+                                                <Link href={formatNavUrl(item)} key={item.id}>
+                                                    <p className="hover-effect text-white text-opacity-50 text-capitalize text-nowrap">{item.title}</p>
+                                                </Link>
+                                            ))}
                                         </div>
                                     </div>
                                 </div>
