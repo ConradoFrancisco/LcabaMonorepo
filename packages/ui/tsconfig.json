@@ -1,10 +1,13 @@
 {
   "extends": "@lcaba/typescript-config/react-library.json",
   "compilerOptions": {
-    "outDir": "dist",
+    "outDir": "./dist",
+    "rootDir": "./src",
     "strictNullChecks": true,
     "module": "ESNext",
-    "moduleResolution": "Bundler"
+    "moduleResolution": "Bundler",
+    "types": ["node"],
+    "noUncheckedSideEffectImports": false
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]
