@@ -13,9 +13,12 @@ import "/public/assets/fonts/fontawesome/regular.min.css";
 import "/public/assets/css/main.css";
 
 import "/public/assets/css/style.css";
+import "react-toastify/dist/ReactToastify.css";
 
 import type { Metadata } from "next";
 import { Sora } from "next/font/google";
+import { AuthProvider } from "@/context/AuthContext";
+import { ToastContainer } from "react-toastify";
 
 const soraHeading = Sora({
     weight: "700", // Only bold for headings
@@ -43,7 +46,21 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={`${soraHeading.variable} ${sora.variable}`}>{children}</body>
+            <body className={`${soraHeading.variable} ${sora.variable}`}>
+                <AuthProvider>
+                    {children}
+                    <ToastContainer
+                        position="top-right"
+                        autoClose={3000}
+                        hideProgressBar={false}
+                        newestOnTop
+                        closeOnClick
+                        pauseOnHover
+                        theme="colored"
+                    />
+                </AuthProvider>
+            </body>
         </html>
     );
 }
+

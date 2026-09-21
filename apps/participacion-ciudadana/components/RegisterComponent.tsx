@@ -1,7 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "react-toastify";
 
 // ─── Tipos ───────────────────────────────────────────────────────────────────
 interface FormData {
@@ -50,18 +53,88 @@ const STEPS = [
 ];
 
 // Provincias argentinas
-const PROVINCIAS = [
-    "Buenos Aires", "Catamarca", "Chaco", "Chubut", "Ciudad Autónoma de Buenos Aires",
-    "Córdoba", "Corrientes", "Entre Ríos", "Formosa", "Jujuy", "La Pampa", "La Rioja",
-    "Mendoza", "Misiones", "Neuquén", "Río Negro", "Salta", "San Juan", "San Luis",
-    "Santa Cruz", "Santa Fe", "Santiago del Estero", "Tierra del Fuego", "Tucumán",
-];
+
+interface Provincia {
+    id: number;
+    nombre: string;
+    nombre_completo: string;
+    categoria: string;
+    centroide_lat: number | null;
+    centroide_lon: number | null;
+    fuente: string;
+    iso_id: string | null;
+    iso_nombre: string | null;
+    pais: string;
+}
+
+interface Departamento {
+    id: number;
+    nombre: string;
+    provincia_id: number;
+    centroide_lat: number | null;
+    centroide_lon: number | null;
+    poblacion: number | null;
+}
 
 // ─── Componente principal ────────────────────────────────────────────────────
 export default function RegisterComponent({ menuItems, logo }: any) {
-    const [step, setStep] = useState(1);
+    const router = useRouter();
+    const { registerExt } = useAuth();
+
+    const [provincias, setProvincias] = useState<Provincia[]>([]);
+    const [departamentos, setDepartamentos] = useState<Departamento[]>([]);
+    const [loadingProvincias, setLoadingProvincias] = useState(false);
+    const [loadingDepartamentos, setLoadingDepartamentos] = useState(false);
+
+    const apiBase = process.env.NEXT_PUBLIC_API || "http://localhost:3000";
+
+    const fetchProvincias = async () => {
+        setLoadingProvincias(true);
+        try {
+            const res = await fetch(`${apiBase}/provincias`);
+            const data = await res.json();
+            if (Array.isArray(data)) {
+                setProvincias(data);
+            }
+        } catch (error) {
+            console.error('Error al obtener provincias:', error);
+        } finally {
+            setLoadingProvincias(false);
+        }
+    };
+
+    const fetchDepartamentos = async (provinciaId: number) => {
+        setLoadingDepartamentos(true);
+        try {
+            const res = await fetch(`${apiBase}/provincias/${provinciaId}/departamentos`);
+            const data = await res.json();
+            if (Array.isArray(data)) {
+                setDepartamentos(data);
+            }
+        } catch (error) {
+            console.error('Error al obtener departamentos:', error);
+        } finally {
+            setLoadingDepartamentos(false);
+        }
+    };
     const [form, setForm] = useState<FormData>(INITIAL_FORM);
+
+    useEffect(() => {
+        fetchProvincias();
+    }, []);
+
+    useEffect(() => {
+        if (form.provincia) {
+            fetchDepartamentos(Number(form.provincia));
+        } else {
+            setDepartamentos([]);
+        }
+    }, [form.provincia]);
+
+    const [step, setStep] = useState(1);
     const [submitted, setSubmitted] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const totalSteps = STEPS.length;
     const currentStep = STEPS[step - 1];
@@ -73,13 +146,51 @@ export default function RegisterComponent({ menuItems, logo }: any) {
         setForm(prev => ({ ...prev, [target.name]: value }));
     };
 
-    const goNext = (e: React.FormEvent) => {
+    const goNext = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (step < totalSteps) setStep(s => s + 1);
-        else setSubmitted(true);
+        setErrorMessage(null);
+
+        if (step < totalSteps) {
+            setStep(s => s + 1);
+            return;
+        }
+
+        // Validación final
+        if (form.password !== form.passwordConfirm) {
+            setErrorMessage("Las contraseñas no coinciden");
+            return;
+        }
+        if (!form.aceptaTerminos) {
+            setErrorMessage("Debés aceptar los términos y condiciones");
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            // Resolver el nombre de la provincia a partir de su ID si fue seleccionado
+            const selectedProv = provincias.find(p => String(p.id) === String(form.provincia));
+            const payload = {
+                ...form,
+                provincia: selectedProv?.nombre || selectedProv?.nombre_completo || form.provincia,
+            };
+            const result = await registerExt(payload);
+            if (result.ok) {
+                toast.success(`¡Registro iniciado! Te enviamos un email de confirmación a ${form.email}`, { position: "bottom-right", autoClose: 5000 });
+                setSubmitted(true);
+            } else {
+                setErrorMessage(result.message);
+            }
+        } catch {
+            setErrorMessage("Error de conexión al procesar el registro.");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
-    const goPrev = () => { if (step > 1) setStep(s => s - 1); };
+    const goPrev = () => {
+        setErrorMessage(null);
+        if (step > 1) setStep(s => s - 1);
+    };
 
     // ─── PASO 1: Datos Personales ─────────────────────────────────────────────
     const renderStep1 = () => (
@@ -169,16 +280,50 @@ export default function RegisterComponent({ menuItems, logo }: any) {
                 </div>
                 <div className="col-12 col-md-4">
                     <label className="register-label">Provincia</label>
-                    <select name="provincia" className="form-select login-input-clean"
-                        value={form.provincia} onChange={handleChange}>
-                        <option value="">Seleccioná...</option>
-                        {PROVINCIAS.map(p => <option key={p} value={p}>{p}</option>)}
+                    <select
+                        name="provincia"
+                        className="form-select login-input-clean"
+                        value={form.provincia}
+                        onChange={(e) => {
+                            handleChange(e);
+                            setForm(prev => ({ ...prev, comunaPartido: "" }));
+                        }}
+                    >
+                        <option value="">{loadingProvincias ? "Cargando provincias..." : "Seleccioná..."}</option>
+                        {provincias.map((p) => (
+                            <option key={p.id} value={p.id}>
+                                {p.nombre || p.nombre_completo}
+                            </option>
+                        ))}
                     </select>
                 </div>
                 <div className="col-12 col-md-4">
                     <label className="register-label">Comuna/Partido/Departamento</label>
-                    <input name="comunaPartido" type="text" className="form-control login-input-clean"
-                        placeholder="Comuna/Partido/Departamento" value={form.comunaPartido} onChange={handleChange} />
+                    {departamentos.length > 0 ? (
+                        <select
+                            name="comunaPartido"
+                            className="form-select login-input-clean"
+                            value={form.comunaPartido}
+                            onChange={handleChange}
+                        >
+                            <option value="">{loadingDepartamentos ? "Cargando..." : "Seleccioná departamento..."}</option>
+                            {departamentos.map((d: any) => (
+                                <option key={d.id} value={d.nombre || d.nombre_completo}>
+                                    {d.nombre || d.nombre_completo}
+                                </option>
+                            ))}
+                        </select>
+                    ) : (
+                        <input
+                            name="comunaPartido"
+                            type="text"
+                            className="form-control login-input-clean"
+                            placeholder={form.provincia ? (loadingDepartamentos ? "Cargando..." : "Comuna / Partido") : "Seleccioná provincia primero"}
+                            value={form.comunaPartido}
+                            onChange={handleChange}
+                            disabled={loadingDepartamentos}
+                        />
+                    )}
                 </div>
             </div>
 
@@ -460,6 +605,13 @@ export default function RegisterComponent({ menuItems, logo }: any) {
 
                                     {/* Contenido del paso */}
                                     <form onSubmit={goNext}>
+                                        {errorMessage && (
+                                            <div className="alert alert-danger py-2 px-3 small rounded-3 d-flex align-items-center gap-2 mb-3">
+                                                <i className="ri-error-warning-line fs-5 flex-shrink-0" />
+                                                <span>{errorMessage}</span>
+                                            </div>
+                                        )}
+
                                         {step === 1 && renderStep1()}
                                         {step === 2 && renderStep2()}
                                         {step === 3 && renderStep3()}
@@ -470,7 +622,7 @@ export default function RegisterComponent({ menuItems, logo }: any) {
                                             <button
                                                 type="button"
                                                 onClick={goPrev}
-                                                disabled={step === 1}
+                                                disabled={step === 1 || isSubmitting}
                                                 className="btn register-btn-outline rounded-pill px-4 py-2 fw-semibold"
                                             >
                                                 <i className="ri-arrow-left-s-line me-1" /> Anterior
@@ -485,9 +637,15 @@ export default function RegisterComponent({ menuItems, logo }: any) {
 
                                             <button
                                                 type="submit"
-                                                className="btn btn-primary rounded-pill px-4 py-2 fw-semibold shadow-sm register-btn-next"
+                                                disabled={isSubmitting}
+                                                className="btn btn-primary rounded-pill px-4 py-2 fw-semibold shadow-sm register-btn-next d-flex align-items-center gap-2"
                                             >
-                                                {step === totalSteps ? (
+                                                {isSubmitting ? (
+                                                    <>
+                                                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
+                                                        <span>Registrando...</span>
+                                                    </>
+                                                ) : step === totalSteps ? (
                                                     <><i className="ri-check-double-line me-1" />Crear mi cuenta</>
                                                 ) : (
                                                     <>Siguiente <i className="ri-arrow-right-s-line ms-1" /></>
