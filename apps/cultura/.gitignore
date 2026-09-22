@@ -42,3 +42,4 @@ next-env.d.ts
 
 # docs locales (contexto para herramientas de diseño)
 readmeV2.md
+stitch/
