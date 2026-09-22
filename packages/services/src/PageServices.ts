@@ -20,7 +20,7 @@ async function fetchNavMenu(pageId: number): Promise<NavMenuItem[]> {
         );
         const data = await res.json();
         const menuArray = Array.isArray(data) ? data : data.data || [];
-        return menuArray.length > 2 ? menuArray.slice(1, -1) : menuArray;
+        return menuArray;
     } catch (e) {
         console.error("Failed to fetch nav menu:", e);
         return [];

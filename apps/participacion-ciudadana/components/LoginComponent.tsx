@@ -3,16 +3,34 @@
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "react-toastify";
 
 interface LoginComponentProps {
   type?: string;
 }
 
 export default function LoginComponent({ type }: LoginComponentProps) {
+  const [seePass, setSeePass] = useState('password');
+
   const router = useRouter();
+  const { login, loginExt, isAuthenticated } = useAuth();
+
   // Determinamos si es lcaba o externo. Por defecto si no viene o es ext, es externo.
   const isLcaba = type === "lcaba";
   const [authMode, setAuthMode] = useState<"signin" | "signup">("signin");
+
+  // Estados para formulario LCABA
+  const [lcabaUser, setLcabaUser] = useState("");
+  const [lcabaPass, setLcabaPass] = useState("");
+
+  // Estados para formulario Externo (Ciudadano)
+  const [extEmail, setExtEmail] = useState("");
+  const [extPass, setExtPass] = useState("");
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [pendingActivation, setPendingActivation] = useState(false);
 
   // Transición entre /login/lcaba y /login/ext: la card gira sobre su eje
   // vertical (efecto "swap"), a mitad de giro se navega y cambia el
@@ -74,8 +92,71 @@ export default function LoginComponent({ type }: LoginComponentProps) {
     const current = isLcaba ? "/login/lcaba" : "/login/ext";
     if (href === current || flipPhase !== "idle") return;
     e.preventDefault();
+    setErrorMessage(null);
+    setSeePass("password");
     pendingHrefRef.current = href;
     setFlipPhase("exiting");
+  };
+
+  const handleLcabaSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMessage(null);
+
+    if (!lcabaUser.trim() || !lcabaPass.trim()) {
+      setErrorMessage("Por favor completá todos los campos");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const result = await login(lcabaUser.trim(), lcabaPass);
+      if (result.ok) {
+        const displayName = result.user?.name || result.user?.username || lcabaUser.trim();
+        toast.success(`¡Bienvenido/a, ${displayName}!`, { position: "bottom-right" });
+        router.push("/");
+      } else {
+        setErrorMessage(result.message);
+      }
+    } catch {
+      setErrorMessage("Ocurrió un error inesperado al iniciar sesión.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleExtSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("[LOGIN_EXT] handleExtSubmit triggered:", { extEmail, extPass: extPass ? "***" : "" });
+    setErrorMessage(null);
+    setPendingActivation(false);
+
+    if (!extEmail.trim() || !extPass.trim()) {
+      setErrorMessage("Por favor completá tu correo y contraseña");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const result = await loginExt(extEmail.trim(), extPass);
+      console.log("[LOGIN_EXT] result:", result);
+      if (result.ok) {
+        const displayName = result.user?.name || result.user?.username || extEmail.trim();
+        toast.success(`¡Bienvenido/a, ${displayName}!`, { position: "bottom-right" });
+        router.push("/");
+      } else {
+        // Si el error es cuenta sin activar, mostramos un banner especial
+        if (!result.ok && result.message?.includes("activada")) {
+          setPendingActivation(true);
+        } else {
+          setErrorMessage(result.message);
+        }
+      }
+    } catch (err) {
+      console.error("[LOGIN_EXT] catch error:", err);
+      setErrorMessage("Ocurrió un error inesperado al iniciar sesión.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -158,9 +239,16 @@ export default function LoginComponent({ type }: LoginComponentProps) {
                   {isLcaba ? (
                     /* Formulario LCABA */
                     <form
-                      onSubmit={(e) => e.preventDefault()}
+                      onSubmit={handleLcabaSubmit}
                       className="d-flex flex-column gap-3"
                     >
+                      {errorMessage && (
+                        <div className="alert alert-danger py-2 px-3 small rounded-3 d-flex align-items-center gap-2 mb-0">
+                          <i className="ri-error-warning-line fs-5 flex-shrink-0" />
+                          <span>{errorMessage}</span>
+                        </div>
+                      )}
+
                       <div>
                         <label className="form-label small text-muted text-uppercase fw-semibold mb-1">
                           Usuario de red
@@ -169,6 +257,11 @@ export default function LoginComponent({ type }: LoginComponentProps) {
                           type="text"
                           className="form-control login-input-clean"
                           placeholder="Usuario"
+                          value={lcabaUser}
+                          onChange={(e) => setLcabaUser(e.target.value)}
+                          disabled={isSubmitting}
+                          required
+                          autoFocus
                         />
                       </div>
 
@@ -176,23 +269,47 @@ export default function LoginComponent({ type }: LoginComponentProps) {
                         <label className="form-label small text-muted text-uppercase fw-semibold mb-1">
                           Contraseña
                         </label>
-                        <input
-                          type="password"
-                          className="form-control login-input-clean"
-                          placeholder="••••••••"
-                        />
+                        <div className="position-relative">
+                          <input
+                            type={seePass}
+                            className="form-control login-input-clean pe-5"
+                            placeholder="Contraseña"
+                            value={lcabaPass}
+                            onChange={(e) => setLcabaPass(e.target.value)}
+                            disabled={isSubmitting}
+                            required
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setSeePass((prev) => (prev === "password" ? "text" : "password"))}
+                            className="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent text-muted p-0 me-3"
+                            style={{ boxShadow: "none", zIndex: 5 }}
+                            title={seePass === "password" ? "Mostrar contraseña" : "Ocultar contraseña"}
+                            tabIndex={-1}
+                          >
+                            <i className={seePass === "password" ? "ri-eye-line fs-5" : "ri-eye-off-line fs-5 text-primary"} />
+                          </button>
+                        </div>
                       </div>
 
                       <div className="pt-3">
                         <button
                           type="submit"
-                          className="btn btn-primary w-100 py-3 rounded-pill fw-semibold shadow-sm"
+                          className="btn btn-primary w-100 py-3 rounded-pill fw-semibold shadow-sm d-flex align-items-center justify-content-center gap-2"
                           style={{
                             backgroundColor: "#0284c7",
                             borderColor: "#0284c7",
                           }}
+                          disabled={isSubmitting}
                         >
-                          Ingresar
+                          {isSubmitting ? (
+                            <>
+                              <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
+                              <span>Iniciando sesión...</span>
+                            </>
+                          ) : (
+                            <span>Ingresar</span>
+                          )}
                         </button>
                       </div>
 
@@ -212,19 +329,24 @@ export default function LoginComponent({ type }: LoginComponentProps) {
                   ) : (
                     /* Formulario Externo (Sign In / Sign Up) */
                     <form
-                      onSubmit={(e) => e.preventDefault()}
+                      onSubmit={handleExtSubmit}
                       className="d-flex flex-column gap-3"
                     >
-                      {authMode === "signup" && (
-                        <div>
-                          <label className="form-label small text-muted text-uppercase fw-semibold mb-1">
-                            Nombre Completo
-                          </label>
-                          <input
-                            type="text"
-                            className="form-control login-input-clean"
-                            placeholder="Tu nombre y apellido"
-                          />
+                      {pendingActivation && (
+                        <div className="alert alert-warning py-3 px-3 small rounded-3 mb-0">
+                          <div className="d-flex align-items-center gap-2 mb-1">
+                            <i className="ri-mail-send-line fs-5 flex-shrink-0 text-warning-emphasis" />
+                            <strong>Cuenta pendiente de activación</strong>
+                          </div>
+                          <p className="mb-0">
+                            Revisá tu casilla de correo <strong>{extEmail}</strong> y hacé clic en el enlace de confirmación que te enviamos al registrarte.
+                          </p>
+                        </div>
+                      )}
+                      {errorMessage && !pendingActivation && (
+                        <div className="alert alert-danger py-2 px-3 small rounded-3 d-flex align-items-center gap-2 mb-0">
+                          <i className="ri-error-warning-line fs-5 flex-shrink-0" />
+                          <span>{errorMessage}</span>
                         </div>
                       )}
 
@@ -236,6 +358,11 @@ export default function LoginComponent({ type }: LoginComponentProps) {
                           type="email"
                           className="form-control login-input-clean"
                           placeholder="usuario@correo.com"
+                          value={extEmail}
+                          onChange={(e) => setExtEmail(e.target.value)}
+                          disabled={isSubmitting}
+                          required
+                          autoFocus
                         />
                       </div>
 
@@ -244,30 +371,50 @@ export default function LoginComponent({ type }: LoginComponentProps) {
                           <label className="form-label small text-muted text-uppercase fw-semibold mb-1">
                             Contraseña
                           </label>
-                          {authMode === "signin" && (
-                            <Link
-                              href="/recuperar-password"
-                              className="small text-primary text-decoration-none"
-                            >
-                              ¿Olvidaste tu contraseña?
-                            </Link>
-                          )}
+                          <Link
+                            href="/recuperar-password"
+                            className="small text-primary text-decoration-none"
+                          >
+                            ¿Olvidaste tu contraseña?
+                          </Link>
                         </div>
-                        <input
-                          type="password"
-                          className="form-control login-input-clean"
-                          placeholder="••••••••"
-                        />
+                        <div className="position-relative">
+                          <input
+                            type={seePass}
+                            className="form-control login-input-clean pe-5"
+                            placeholder="••••••••"
+                            value={extPass}
+                            onChange={(e) => setExtPass(e.target.value)}
+                            disabled={isSubmitting}
+                            required
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setSeePass((prev) => (prev === "password" ? "text" : "password"))}
+                            className="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent text-muted p-0 me-3"
+                            style={{ boxShadow: "none", zIndex: 5 }}
+                            title={seePass === "password" ? "Mostrar contraseña" : "Ocultar contraseña"}
+                            tabIndex={-1}
+                          >
+                            <i className={seePass === "password" ? "ri-eye-line fs-5" : "ri-eye-off-line fs-5 text-primary"} />
+                          </button>
+                        </div>
                       </div>
 
                       <div className="pt-3">
                         <button
                           type="submit"
-                          className="btn btn-primary w-100 py-3 rounded-pill fw-semibold shadow-sm"
+                          className="btn btn-primary w-100 py-3 rounded-pill fw-semibold shadow-sm d-flex align-items-center justify-content-center gap-2"
+                          disabled={isSubmitting}
                         >
-                          {authMode === "signin"
-                            ? "Iniciar Sesión"
-                            : "Crear Mi Cuenta"}
+                          {isSubmitting ? (
+                            <>
+                              <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
+                              <span>Iniciando sesión...</span>
+                            </>
+                          ) : (
+                            <span>Iniciar Sesión</span>
+                          )}
                         </button>
                       </div>
 

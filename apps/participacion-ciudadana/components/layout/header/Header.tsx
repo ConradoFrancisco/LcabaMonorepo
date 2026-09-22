@@ -50,7 +50,7 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu, menuIte
                         </div>
                     </div>
                 </nav>
-                <MobileMenu isMobileMenu={isMobileMenu} handleMobileMenu={handleMobileMenu} />
+                <MobileMenu isMobileMenu={isMobileMenu} handleMobileMenu={handleMobileMenu} menuItems={menuItems || []} logo={logo} />
             </header>
         </>
     );
