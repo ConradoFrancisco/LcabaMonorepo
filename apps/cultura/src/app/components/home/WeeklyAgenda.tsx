@@ -1,89 +1,123 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import { useState } from "react";
+import Link from 'next/link'
+import { useMemo, useState } from 'react'
+import {
+  postCategory,
+  postExcerpt,
+  postHref,
+  postTitle,
+  type HomePost
+} from './utils'
 
-// Contenido estático tomado del diseño de Stitch (no viene de la API).
-const FILTERS = ["Todas las áreas", "Música", "Artes Visuales", "Letras"] as const;
+const ALL_AREAS = 'Todas las áreas'
+const TONES = ['gold', 'teal', 'crimson'] as const
 
-const EVENTS = [
-  {
-    month: "ABR",
-    day: "03",
-    tone: "gold",
-    kicker: "Música Clásica • Salón Dorado",
-    title: "Ensamble Porteño de Cuerdas: Bach y Piazzolla",
-    detail: "Jueves 19:00 hs • Entrada libre por orden de llegada hasta colmar capacidad.",
-    area: "Música",
-  },
-  {
-    month: "ABR",
-    day: "05",
-    tone: "teal",
-    kicker: "Letras • Sala de Lectura Biblioteca",
-    title: 'Presentación del libro: "Arquitectura e Historia de las Leyes Porteñas"',
-    detail: "Sábado 17:30 hs • Panel de autores y firma de ejemplares.",
-    area: "Letras",
-  },
-  {
-    month: "ABR",
-    day: "08",
-    tone: "crimson",
-    kicker: "Artes Plásticas • Galería Central",
-    title: 'Inauguración de Muestra Colectiva: "Cartografías Urbanas 2025"',
-    detail: "Martes 18:00 hs • Artistas visuales contemporáneos de los 48 barrios porteños.",
-    area: "Artes Visuales",
-  },
-] as const;
+// Acepta "DD/MM/AAAA" o cualquier fecha que entienda Date (ISO, "AAAA-MM-DD hh:mm:ss").
+function parseEventDate (post: HomePost): Date | null {
+  const value = post.fecha || post.date_ins
+  if (!value) return null
+  const text = value.trim()
+  const dmy = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(text)
+  const date = dmy
+    ? new Date(Number(dmy[3]), Number(dmy[2]) - 1, Number(dmy[1]))
+    : new Date(text)
+  return Number.isNaN(date.getTime()) ? null : date
+}
 
-export default function WeeklyAgenda() {
-  const [filter, setFilter] = useState<(typeof FILTERS)[number]>(FILTERS[0]);
-  const events = EVENTS.filter((e) => filter === FILTERS[0] || e.area === filter);
+export default function WeeklyAgenda ({ posts = [] }: { posts?: HomePost[] }) {
+  const areas = useMemo(() => {
+    const found = new Set<string>()
+    posts.forEach(p => {
+      const area = postCategory(p)
+      if (area) found.add(area)
+    })
+    return [ALL_AREAS, ...Array.from(found)]
+  }, [posts])
+
+  const [filter, setFilter] = useState<string>(ALL_AREAS)
+
+  if (posts.length === 0) return null
+
+  const events = posts.filter(
+    p => filter === ALL_AREAS || postCategory(p) === filter
+  )
 
   return (
-    <section className="cl-section cl-agenda" id="agenda">
-      <div className="cl-agenda__panel">
-        <div className="cl-agenda__head">
+    <section className='cl-section cl-agenda' id='agenda'>
+      <div className='cl-agenda__panel'>
+        <div className='cl-agenda__head'>
           <div>
-            <span className="cl-agenda__eyebrow">PROGRAMACIÓN ABIERTA</span>
-            <h3 className="cl-agenda__title">Agenda de la Semana</h3>
+            <span className='cl-agenda__eyebrow'>PROGRAMACIÓN ABIERTA</span>
+            <h3 className='cl-agenda__title'>Agenda de la Semana</h3>
           </div>
-          <div className="cl-agenda__filters" role="group" aria-label="Filtrar por área">
-            {FILTERS.map((f) => (
-              <button
-                key={f}
-                type="button"
-                className={`cl-chip ${f === filter ? "is-active" : ""}`}
-                aria-pressed={f === filter}
-                onClick={() => setFilter(f)}
-              >
-                {f}
-              </button>
-            ))}
-          </div>
+          {areas.length > 1 && (
+            <div
+              className='cl-agenda__filters'
+              role='group'
+              aria-label='Filtrar por área'
+            >
+              {areas.map(f => (
+                <button
+                  key={f}
+                  type='button'
+                  className={`cl-chip ${f === filter ? 'is-active' : ''}`}
+                  aria-pressed={f === filter}
+                  onClick={() => setFilter(f)}
+                >
+                  {f}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        <div className="cl-agenda__list">
-          {events.map((e) => (
-            <div className="cl-event" key={e.day}>
-              <div className="cl-event__main">
-                <div className="cl-event__date">
-                  <span className="cl-event__month">{e.month}</span>
-                  <span className="cl-event__day">{e.day}</span>
+        <div className='cl-agenda__list'>
+          {events.length === 0 ? (
+            <p className='cl-event__detail'>
+              No hay eventos programados para esta área por el momento.
+            </p>
+          ) : (
+            events.map((post, i) => {
+              const date = parseEventDate(post)
+              const month = date
+                ? date
+                    .toLocaleDateString('es-AR', { month: 'short' })
+                    .replace('.', '')
+                    .toUpperCase()
+                : ''
+              const day = date ? String(date.getDate()).padStart(2, '0') : ''
+              const category = postCategory(post)
+              const tone = TONES[i % TONES.length]
+
+              return (
+                <div className='cl-event' key={post.id}>
+                  <div className='cl-event__main'>
+                    <div className='cl-event__date'>
+                      <span className='cl-event__month'>{month}</span>
+                      <span className='cl-event__day'>{day}</span>
+                    </div>
+                    <div>
+                      {category && (
+                        <span
+                          className={`cl-event__kicker cl-event__kicker--${tone}`}
+                        >
+                          {category}
+                        </span>
+                      )}
+                      <h4 className='cl-event__title'>{postTitle(post)}</h4>
+                      <p className='cl-event__detail'>{postExcerpt(post)}</p>
+                    </div>
+                  </div>
+                  <Link href={postHref(post)} className='cl-outline-btn'>
+                    Más información
+                  </Link>
                 </div>
-                <div>
-                  <span className={`cl-event__kicker cl-event__kicker--${e.tone}`}>{e.kicker}</span>
-                  <h4 className="cl-event__title">{e.title}</h4>
-                  <p className="cl-event__detail">{e.detail}</p>
-                </div>
-              </div>
-              <Link href="/publicaciones" className="cl-outline-btn">
-                Más información
-              </Link>
-            </div>
-          ))}
+              )
+            })
+          )}
         </div>
       </div>
     </section>
-  );
+  )
 }
