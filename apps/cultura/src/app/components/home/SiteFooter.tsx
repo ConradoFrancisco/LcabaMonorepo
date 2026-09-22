@@ -1,6 +1,12 @@
 import Link from "next/link";
 import Icon from "./Icon";
-import { formatNavUrl, isExternal, showInFooter, type NavItem, type Social } from "./utils";
+import {
+  formatNavUrl,
+  isExternal,
+  showInFooter,
+  type NavItem,
+  type Social,
+} from "./utils";
 
 const SOCIAL_LABELS: Record<string, string> = {
   "fa-facebook-f": "Facebook",
@@ -42,7 +48,13 @@ const LEGAL_LINKS = [
   "Declaraciones Juradas",
 ];
 
-function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
+function FooterLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
   return isExternal(href) ? (
     <a href={href} target="_blank" rel="noopener noreferrer">
       {children}
@@ -75,8 +87,8 @@ export default function SiteFooter({
           <p className="cl-footer__blurb">
             Dirección General de Asuntos Culturales y Patrimoniales de la
             Legislatura de la Ciudad Autónoma de Buenos Aires. Promovemos el
-            acceso democrático a la cultura, la conservación del patrimonio y
-            la memoria colectiva.
+            acceso democrático a la cultura, la conservación del patrimonio y la
+            memoria colectiva.
           </p>
           {socials.length > 0 && (
             <ul className="cl-footer__social">
@@ -124,11 +136,17 @@ export default function SiteFooter({
           <h4 className="cl-footer__heading">Contacto y Visitas</h4>
           <div className="cl-footer__contact">
             <div>
-              <Icon name="pin_drop" size={16} className="cl-footer__contact-icon" />
+              <Icon
+                name="pin_drop"
+                size={16}
+                className="cl-footer__contact-icon"
+              />
               <span>
                 Perú 160, C1067AAD, CABA
                 <br />
-                <span className="cl-footer__muted">Palacio de la Legislatura Porteña</span>
+                <span className="cl-footer__muted">
+                  Palacio de la Legislatura Porteña
+                </span>
               </span>
             </div>
             <div>
@@ -136,14 +154,22 @@ export default function SiteFooter({
               <a href="tel:+5491143384059">+54 9 11 4338-4059</a>
             </div>
             <div>
-              <Icon name="schedule" size={16} className="cl-footer__contact-icon" />
+              <Icon
+                name="schedule"
+                size={16}
+                className="cl-footer__contact-icon"
+              />
               <span>Lunes a Viernes de 10:00 a 19:00 hs</span>
             </div>
             {contact && (
               <div>
                 <FooterLink href={formatNavUrl(contact)}>
                   <span className="cl-footer__accent">Contacto</span>
-                  <Icon name="arrow_forward" size={12} className="cl-footer__accent" />
+                  <Icon
+                    name="arrow_forward"
+                    size={12}
+                    className="cl-footer__accent"
+                  />
                 </FooterLink>
               </div>
             )}
@@ -171,13 +197,13 @@ export default function SiteFooter({
             derechos reservados.
           </p>
           <div className="cl-footer__bar-links">
-            <a href="https://www.legislatura.gob.ar" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://www.legislatura.gob.ar"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               www.legislatura.gob.ar
             </a>
-            <span aria-hidden="true">•</span>
-            <span className="cl-footer__official">
-              <Icon name="verified" size={14} /> Sitio Oficial
-            </span>
           </div>
         </div>
       </div>
