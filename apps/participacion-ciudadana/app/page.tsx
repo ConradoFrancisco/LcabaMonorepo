@@ -6,6 +6,7 @@ export default async function Home() {
     const pageVw = await PageServices.getPageVw("4");
     const logo = pageVw?.images?.find((img: any) => img.image_type === "logo");
 
+
     return (
         <>
             <Layout menuItems={menuItems} pageVw={pageVw} logo={logo}>

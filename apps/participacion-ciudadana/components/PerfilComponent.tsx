@@ -17,6 +17,17 @@ interface Departamento {
     provincia_id: number;
 }
 
+const revistaOptions = [
+    "Legislador/a",
+    "Secretario/a",
+    "Subsecretario/a",
+    "Director/a General",
+    "Planta Permanente",
+    "Planta SSAS",
+    "Planta Transitoria",
+    "Adscripto/a | Comisión de Servicio",
+    "Otros"
+];
 export default function PerfilComponent({ menuItems, pageVw, logo }: any) {
     const router = useRouter();
     const { user, isAuthenticated, isLoading: authLoading, getProfile, updateProfile, changePassword, logout } = useAuth();
@@ -55,6 +66,11 @@ export default function PerfilComponent({ menuItems, pageVw, logo }: any) {
         emailLaboral: "",
         telefonoLaboral: "",
         nivelEducativo: "",
+        dependencia: "",
+        cargo: "",
+        estadoRevista: "",
+        legajo: "",
+        informacionAdicional: "",
     });
 
     // Formulario de contraseña
@@ -65,7 +81,7 @@ export default function PerfilComponent({ menuItems, pageVw, logo }: any) {
     });
     const [passSaving, setPassSaving] = useState(false);
 
-    const apiBase = process.env.NEXT_PUBLIC_API || "http://localhost:3000";
+    const apiBase = process.env.NEXT_PUBLIC_API;
 
     // Cargar provincias
     useEffect(() => {
@@ -109,7 +125,7 @@ export default function PerfilComponent({ menuItems, pageVw, logo }: any) {
                         if (!isNaN(d.getTime())) {
                             fNac = d.toISOString().split("T")[0];
                         }
-                    } catch {}
+                    } catch { }
                 }
 
                 // Helper para decodificar entidades HTML como &Atilde;&shy;
@@ -133,7 +149,7 @@ export default function PerfilComponent({ menuItems, pageVw, logo }: any) {
                     dni: m.dni || user?.dni || "",
                     tramiteDni: m.dni_tramite || m.legajo || "",
                     fechaNacimiento: fNac,
-                    pais: m.country || "Argentina",
+                    pais: (m.country === "AR" || !m.country) ? "Argentina" : m.country,
                     provincia: m.province || "",
                     provinciaId: m.fk_provincia_id ? String(m.fk_provincia_id) : "",
                     comunaPartido: m.city || "",
@@ -151,6 +167,11 @@ export default function PerfilComponent({ menuItems, pageVw, logo }: any) {
                     emailLaboral: m.emailwork || "",
                     telefonoLaboral: m.telephone || "",
                     nivelEducativo: nivel,
+                    dependencia: m.office || "",
+                    cargo: m.cargo || m.position || "",
+                    estadoRevista: m.planta || "",
+                    legajo: m.legajo || "",
+                    informacionAdicional: m.info || "",
                 });
 
                 // Si tiene provincia, cargar automáticamente sus departamentos
@@ -158,7 +179,7 @@ export default function PerfilComponent({ menuItems, pageVw, logo }: any) {
                     fetch(`${apiBase}/provincias/${m.fk_provincia_id}/departamentos`)
                         .then(r => r.json())
                         .then(d => Array.isArray(d) && setDepartamentos(d))
-                        .catch(() => {});
+                        .catch(() => { });
                 }
             } else if (user) {
                 setFormData(prev => ({
@@ -235,6 +256,13 @@ export default function PerfilComponent({ menuItems, pageVw, logo }: any) {
                 telefonoFijo: formData.telefonoFijo,
                 ocupacion: formData.ocupacion || formData.cargoPuesto,
                 nivelEducativo: formData.nivelEducativo,
+                dependencia: formData.dependencia,
+                cargo: formData.cargo || formData.cargoPuesto,
+                estadoRevista: formData.estadoRevista,
+                legajo: formData.legajo,
+                emailLaboral: formData.emailLaboral,
+                telefonoLaboral: formData.telefonoLaboral,
+                informacionAdicional: formData.informacionAdicional,
             });
 
             if (res.ok) {
@@ -304,7 +332,7 @@ export default function PerfilComponent({ menuItems, pageVw, logo }: any) {
                             {(formData.nombre?.[0] || user?.name?.[0] || "U").toUpperCase()}
                         </div>
                         <div>
-                            <h4 className="mb-0 text-white fw-bold">Mi Menú</h4>
+                            <h4 className="mb-0 text-white fw-bold">Mi Perfil</h4>
                             <span className="badge bg-white bg-opacity-25 text-white small" style={{ fontSize: "11px" }}>
                                 {user?.tipo === "ext" ? "Ciudadano" : "Personal LCABA"}
                             </span>
@@ -316,11 +344,10 @@ export default function PerfilComponent({ menuItems, pageVw, logo }: any) {
                         <button
                             type="button"
                             onClick={() => setActiveTab("datos")}
-                            className={`btn btn-sm rounded-pill px-3 py-2 fw-semibold transition-all ${
-                                activeTab === "datos"
-                                    ? "btn-light text-primary shadow-sm"
-                                    : "btn-outline-light border-0 text-white text-opacity-85"
-                            }`}
+                            className={`btn btn-sm rounded-pill px-3 py-2 fw-semibold transition-all ${activeTab === "datos"
+                                ? "btn-light text-primary shadow-sm"
+                                : "btn-outline-light border-0 text-white text-opacity-85"
+                                }`}
                         >
                             <i className="ri-user-settings-line me-1" /> Datos Personales
                         </button>
@@ -328,11 +355,10 @@ export default function PerfilComponent({ menuItems, pageVw, logo }: any) {
                         <button
                             type="button"
                             onClick={() => setActiveTab("password")}
-                            className={`btn btn-sm rounded-pill px-3 py-2 fw-semibold transition-all ${
-                                activeTab === "password"
-                                    ? "btn-light text-primary shadow-sm"
-                                    : "btn-outline-light border-0 text-white text-opacity-85"
-                            }`}
+                            className={`btn btn-sm rounded-pill px-3 py-2 fw-semibold transition-all ${activeTab === "password"
+                                ? "btn-light text-primary shadow-sm"
+                                : "btn-outline-light border-0 text-white text-opacity-85"
+                                }`}
                         >
                             <i className="ri-lock-line me-1" /> Contraseña
                         </button>
@@ -340,11 +366,10 @@ export default function PerfilComponent({ menuItems, pageVw, logo }: any) {
                         <button
                             type="button"
                             onClick={() => setActiveTab("dni")}
-                            className={`btn btn-sm rounded-pill px-3 py-2 fw-semibold transition-all ${
-                                activeTab === "dni"
-                                    ? "btn-light text-primary shadow-sm"
-                                    : "btn-outline-light border-0 text-white text-opacity-85"
-                            }`}
+                            className={`btn btn-sm rounded-pill px-3 py-2 fw-semibold transition-all ${activeTab === "dni"
+                                ? "btn-light text-primary shadow-sm"
+                                : "btn-outline-light border-0 text-white text-opacity-85"
+                                }`}
                         >
                             <i className="ri-id-card-line me-1" /> MI DNI
                         </button>
@@ -352,11 +377,10 @@ export default function PerfilComponent({ menuItems, pageVw, logo }: any) {
                         <button
                             type="button"
                             onClick={() => setActiveTab("participacion")}
-                            className={`btn btn-sm rounded-pill px-3 py-2 fw-semibold transition-all ${
-                                activeTab === "participacion"
-                                    ? "btn-light text-primary shadow-sm"
-                                    : "btn-outline-light border-0 text-white text-opacity-85"
-                            }`}
+                            className={`btn btn-sm rounded-pill px-3 py-2 fw-semibold transition-all ${activeTab === "participacion"
+                                ? "btn-light text-primary shadow-sm"
+                                : "btn-outline-light border-0 text-white text-opacity-85"
+                                }`}
                         >
                             <i className="ri-community-line me-1" /> Participación Ciudadana
                         </button>
@@ -364,11 +388,10 @@ export default function PerfilComponent({ menuItems, pageVw, logo }: any) {
                         <button
                             type="button"
                             onClick={() => setActiveTab("capacitacion")}
-                            className={`btn btn-sm rounded-pill px-3 py-2 fw-semibold transition-all ${
-                                activeTab === "capacitacion"
-                                    ? "btn-light text-primary shadow-sm"
-                                    : "btn-outline-light border-0 text-white text-opacity-85"
-                            }`}
+                            className={`btn btn-sm rounded-pill px-3 py-2 fw-semibold transition-all ${activeTab === "capacitacion"
+                                ? "btn-light text-primary shadow-sm"
+                                : "btn-outline-light border-0 text-white text-opacity-85"
+                                }`}
                         >
                             <i className="ri-graduation-cap-line me-1" /> Capacitación
                         </button>
@@ -443,11 +466,12 @@ export default function PerfilComponent({ menuItems, pageVw, logo }: any) {
                                                 Nombre
                                             </label>
                                             <input
+                                                readOnly
                                                 type="text"
                                                 name="nombre"
                                                 value={formData.nombre}
                                                 onChange={handleInputChange}
-                                                className="form-control rounded-3 py-2 bg-light"
+                                                className="form-control readonly rounded-3 py-2 bg-light"
                                                 placeholder="Nombre"
                                                 required
                                             />
@@ -458,6 +482,7 @@ export default function PerfilComponent({ menuItems, pageVw, logo }: any) {
                                                 Apellido
                                             </label>
                                             <input
+                                                readOnly
                                                 type="text"
                                                 name="apellido"
                                                 value={formData.apellido}
@@ -473,6 +498,7 @@ export default function PerfilComponent({ menuItems, pageVw, logo }: any) {
                                                 DNI
                                             </label>
                                             <input
+                                                readOnly
                                                 type="text"
                                                 name="dni"
                                                 value={formData.dni}
@@ -502,6 +528,7 @@ export default function PerfilComponent({ menuItems, pageVw, logo }: any) {
                                             </label>
                                             <div className="input-group">
                                                 <input
+                                                    readOnly
                                                     type="date"
                                                     name="fechaNacimiento"
                                                     value={formData.fechaNacimiento}
@@ -708,106 +735,210 @@ export default function PerfilComponent({ menuItems, pageVw, logo }: any) {
                                         </h6>
                                     </div>
 
-                                    <div className="row g-3">
-                                        <div className="col-12">
-                                            <label className="form-label text-muted fw-bold text-uppercase small" style={{ fontSize: "11px" }}>
-                                                ¿A qué te dedicas?
-                                            </label>
-                                            <select
-                                                name="dedicacionOpcion"
-                                                value={formData.dedicacionOpcion}
-                                                onChange={handleInputChange}
-                                                className="form-select rounded-3 py-2 bg-light mb-2"
-                                            >
-                                                <option value="">Seleccione una opción</option>
-                                                <option value="empleado_publico">Empleado Público</option>
-                                                <option value="empleado_privado">Empleado Privado</option>
-                                                <option value="autonomo_independiente">Autónomo / Independiente</option>
-                                                <option value="estudiante">Estudiante</option>
-                                                <option value="docente">Docente</option>
-                                                <option value="otro">Otro</option>
-                                            </select>
+                                    {/* CAMPOS PARA PERSONAL LCABA */}
+                                    {user?.tipo !== "ext" ? (
+                                        <div className="row g-3">
+                                            <div className="col-12 col-md-6">
+                                                <label className="form-label text-muted fw-bold text-uppercase small" style={{ fontSize: "11px" }}>
+                                                    Dependencia
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    name="dependencia"
+                                                    value={formData.dependencia}
+                                                    onChange={handleInputChange}
+                                                    className="form-control rounded-3 py-2 bg-light"
+                                                    placeholder="Dependencia / Área"
+                                                />
+                                            </div>
 
-                                            <input
-                                                type="text"
-                                                name="ocupacion"
-                                                value={formData.ocupacion}
-                                                onChange={handleInputChange}
-                                                className="form-control rounded-3 py-2 bg-light"
-                                                placeholder="¿A qué te dedicas? (Detalle)"
-                                            />
-                                        </div>
+                                            <div className="col-12 col-md-6">
+                                                <label className="form-label text-muted fw-bold text-uppercase small" style={{ fontSize: "11px" }}>
+                                                    Cargo
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    name="cargo"
+                                                    value={formData.cargo}
+                                                    onChange={handleInputChange}
+                                                    className="form-control rounded-3 py-2 bg-light"
+                                                    placeholder="Cargo"
+                                                />
+                                            </div>
 
-                                        <div className="col-12 col-md-6">
-                                            <label className="form-label text-muted fw-bold text-uppercase small" style={{ fontSize: "11px" }}>
-                                                Lugar de Trabajo / Estudio
-                                            </label>
-                                            <input
-                                                type="text"
-                                                name="lugarTrabajo"
-                                                value={formData.lugarTrabajo}
-                                                onChange={handleInputChange}
-                                                className="form-control rounded-3 py-2 bg-light"
-                                                placeholder="Lugar de Trabajo / Estudio"
-                                            />
-                                        </div>
+                                            <div className="col-12 col-md-6">
+                                                <label className="form-label text-muted fw-bold text-uppercase small" style={{ fontSize: "11px" }}>
+                                                    Estado de Revista
+                                                </label>
+                                                <select className="form-select " name="estadoRevista" id="estadoRevista" value={formData.estadoRevista} onChange={handleInputChange}>
+                                                    <option value="">Seleccionar</option>
+                                                    {revistaOptions.map((option, index) => (
+                                                        <option key={index} value={option}>
+                                                            {option}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
 
-                                        <div className="col-12 col-md-6">
-                                            <label className="form-label text-muted fw-bold text-uppercase small" style={{ fontSize: "11px" }}>
-                                                Cargo / Puesto / Tarea
-                                            </label>
-                                            <input
-                                                type="text"
-                                                name="cargoPuesto"
-                                                value={formData.cargoPuesto}
-                                                onChange={handleInputChange}
-                                                className="form-control rounded-3 py-2 bg-light"
-                                                placeholder="Cargo / Puesto / Tarea"
-                                            />
-                                        </div>
+                                            <div className="col-12 col-md-6">
+                                                <label className="form-label text-muted fw-bold text-uppercase small" style={{ fontSize: "11px" }}>
+                                                    Legajo Personal Contratado Completar Legajo con 0000
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    name="legajo"
+                                                    value={formData.legajo}
+                                                    onChange={handleInputChange}
+                                                    className="form-control rounded-3 py-2 bg-light"
+                                                    placeholder="Legajo"
+                                                />
+                                            </div>
 
-                                        <div className="col-12 col-md-6">
-                                            <label className="form-label text-muted fw-bold text-uppercase small" style={{ fontSize: "11px" }}>
-                                                Correo Electrónico Laboral
-                                            </label>
-                                            <input
-                                                type="email"
-                                                name="emailLaboral"
-                                                value={formData.emailLaboral}
-                                                onChange={handleInputChange}
-                                                className="form-control rounded-3 py-2 bg-light"
-                                                placeholder="Email Trabajo"
-                                            />
-                                        </div>
+                                            <div className="col-12 col-md-6">
+                                                <label className="form-label text-muted fw-bold text-uppercase small" style={{ fontSize: "11px" }}>
+                                                    Correo Electrónico Laboral
+                                                </label>
+                                                <input
+                                                    type="email"
+                                                    name="emailLaboral"
+                                                    value={formData.emailLaboral}
+                                                    onChange={handleInputChange}
+                                                    className="form-control rounded-3 py-2 bg-light"
+                                                    placeholder="correo@legislatura.gob.ar"
+                                                />
+                                            </div>
 
-                                        <div className="col-12 col-md-6">
-                                            <label className="form-label text-muted fw-bold text-uppercase small" style={{ fontSize: "11px" }}>
-                                                Teléfono Laboral
-                                            </label>
-                                            <input
-                                                type="tel"
-                                                name="telefonoLaboral"
-                                                value={formData.telefonoLaboral}
-                                                onChange={handleInputChange}
-                                                className="form-control rounded-3 py-2 bg-light"
-                                                placeholder="Teléfono Laboral"
-                                            />
-                                        </div>
+                                            <div className="col-12 col-md-6">
+                                                <label className="form-label text-muted fw-bold text-uppercase small" style={{ fontSize: "11px" }}>
+                                                    Teléfono Laboral
+                                                </label>
+                                                <input
+                                                    type="tel"
+                                                    name="telefonoLaboral"
+                                                    value={formData.telefonoLaboral}
+                                                    onChange={handleInputChange}
+                                                    className="form-control rounded-3 py-2 bg-light"
+                                                    placeholder="Teléfono laboral"
+                                                />
+                                            </div>
 
-                                        <div className="col-12">
-                                            <label className="form-label text-muted fw-bold text-uppercase small" style={{ fontSize: "11px" }}>
-                                                Info Complementaria / Nivel Educativo
-                                            </label>
-                                            <textarea
-                                                name="nivelEducativo"
-                                                rows={3}
-                                                value={formData.nivelEducativo}
-                                                onChange={handleInputChange}
-                                                className="form-control rounded-3 py-2 bg-light"
-                                                placeholder="Ejemplo: Nivel educativo: universitario completo"
-                                            />
+                                            <div className="col-12">
+                                                <label className="form-label text-muted fw-bold text-uppercase small" style={{ fontSize: "11px" }}>
+                                                    Info Complementaria
+                                                </label>
+                                                <textarea
+                                                    name="informacionAdicional"
+                                                    rows={3}
+                                                    value={formData.informacionAdicional}
+                                                    onChange={handleInputChange}
+                                                    className="form-control rounded-3 py-2 bg-light"
+                                                    placeholder="Información adicional..."
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
+                                    ) : (
+                                        /* CAMPOS PARA CIUDADANOS EXTERNOS */
+                                        <div className="row g-3">
+                                            <div className="col-12">
+                                                <label className="form-label text-muted fw-bold text-uppercase small" style={{ fontSize: "11px" }}>
+                                                    ¿A qué te dedicas?
+                                                </label>
+                                                <select
+                                                    name="dedicacionOpcion"
+                                                    value={formData.dedicacionOpcion}
+                                                    onChange={handleInputChange}
+                                                    className="form-select rounded-3 py-2 bg-light mb-2"
+                                                >
+                                                    <option value="">Seleccione una opción</option>
+                                                    <option value="empleado_publico">Empleado Público</option>
+                                                    <option value="empleado_privado">Empleado Privado</option>
+                                                    <option value="autonomo_independiente">Autónomo / Independiente</option>
+                                                    <option value="estudiante">Estudiante</option>
+                                                    <option value="docente">Docente</option>
+                                                    <option value="otro">Otro</option>
+                                                </select>
+
+                                                <input
+                                                    type="text"
+                                                    name="ocupacion"
+                                                    value={formData.ocupacion}
+                                                    onChange={handleInputChange}
+                                                    className="form-control rounded-3 py-2 bg-light"
+                                                    placeholder="¿A qué te dedicas? (Detalle)"
+                                                />
+                                            </div>
+
+                                            <div className="col-12 col-md-6">
+                                                <label className="form-label text-muted fw-bold text-uppercase small" style={{ fontSize: "11px" }}>
+                                                    Lugar de Trabajo / Estudio
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    name="lugarTrabajo"
+                                                    value={formData.lugarTrabajo}
+                                                    onChange={handleInputChange}
+                                                    className="form-control rounded-3 py-2 bg-light"
+                                                    placeholder="Lugar de Trabajo / Estudio"
+                                                />
+                                            </div>
+
+                                            <div className="col-12 col-md-6">
+                                                <label className="form-label text-muted fw-bold text-uppercase small" style={{ fontSize: "11px" }}>
+                                                    Cargo / Puesto / Tarea
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    name="cargoPuesto"
+                                                    value={formData.cargoPuesto}
+                                                    onChange={handleInputChange}
+                                                    className="form-control rounded-3 py-2 bg-light"
+                                                    placeholder="Cargo / Puesto / Tarea"
+                                                />
+                                            </div>
+
+                                            <div className="col-12 col-md-6">
+                                                <label className="form-label text-muted fw-bold text-uppercase small" style={{ fontSize: "11px" }}>
+                                                    Correo Electrónico Laboral
+                                                </label>
+                                                <input
+                                                    type="email"
+                                                    name="emailLaboral"
+                                                    value={formData.emailLaboral}
+                                                    onChange={handleInputChange}
+                                                    className="form-control rounded-3 py-2 bg-light"
+                                                    placeholder="Email Trabajo"
+                                                />
+                                            </div>
+
+                                            <div className="col-12 col-md-6">
+                                                <label className="form-label text-muted fw-bold text-uppercase small" style={{ fontSize: "11px" }}>
+                                                    Teléfono Laboral
+                                                </label>
+                                                <input
+                                                    type="tel"
+                                                    name="telefonoLaboral"
+                                                    value={formData.telefonoLaboral}
+                                                    onChange={handleInputChange}
+                                                    className="form-control rounded-3 py-2 bg-light"
+                                                    placeholder="Teléfono Laboral"
+                                                />
+                                            </div>
+
+                                            <div className="col-12">
+                                                <label className="form-label text-muted fw-bold text-uppercase small" style={{ fontSize: "11px" }}>
+                                                    Info Complementaria / Nivel Educativo
+                                                </label>
+                                                <textarea
+                                                    name="nivelEducativo"
+                                                    rows={3}
+                                                    value={formData.nivelEducativo}
+                                                    onChange={handleInputChange}
+                                                    className="form-control rounded-3 py-2 bg-light"
+                                                    placeholder="Ejemplo: Nivel educativo: universitario completo"
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="d-flex justify-content-end gap-3 pb-5">
@@ -815,10 +946,11 @@ export default function PerfilComponent({ menuItems, pageVw, logo }: any) {
                                         type="submit"
                                         disabled={saving}
                                         className="btn btn-primary rounded-pill px-5 py-2 fw-semibold shadow-sm d-flex align-items-center gap-2"
+                                        style={{ backgroundColor: "#00b4d8", borderColor: "#00b4d8" }}
                                     >
                                         {saving && <span className="spinner-border spinner-border-sm" role="status" />}
                                         <i className="ri-save-line" />
-                                        <span>Guardar Cambios</span>
+                                        <span>Actualizar Información Personal</span>
                                     </button>
                                 </div>
                             </form>

@@ -46,8 +46,9 @@ export default function Layout({ headerStyle, footerStyle, breadcrumbTitle, chil
 		setMobileMenu(!isMobileMenu)
 		!isMobileMenu ? document.body.classList.add("mobile-menu-active") : document.body.classList.remove("mobile-menu-active");
 	}
-
+	const address: string = pageVw?.seteos?.address || ""
 	useEffect(() => {
+		console.log(pageVw)
 		AOS.init()
 		const WOW: any = require('wowjs');
 		(window as any).wow = new WOW.WOW({
@@ -89,7 +90,7 @@ export default function Layout({ headerStyle, footerStyle, breadcrumbTitle, chil
 				{children}
 			</main>
 
-			< Footer menuItems={menuItems} logo={logo} />
+			< Footer menuItems={menuItems} logo={logo} address={address} />
 
 			<BackToTop />
 		</>
