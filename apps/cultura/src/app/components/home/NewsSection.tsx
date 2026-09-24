@@ -22,7 +22,9 @@ const COVER_MAX_RATIO = 2.1;
 
 function fitFor(img: HTMLImageElement): "cover" | "contain" {
   const ratio = img.naturalWidth / img.naturalHeight;
-  return ratio < COVER_MIN_RATIO || ratio > COVER_MAX_RATIO ? "contain" : "cover";
+  return ratio < COVER_MIN_RATIO || ratio > COVER_MAX_RATIO
+    ? "contain"
+    : "cover";
 }
 
 function CardMedia({ src }: { src: string | null }) {
@@ -99,7 +101,11 @@ function NewsCard({ post }: { post: HomePost }) {
           {desc && <p className="cl-card__desc">{desc}</p>}
         </div>
         <div className="cl-card__footer">
-          <Link href={href} className="cl-pill" aria-label={`Leer más: ${title}`}>
+          <Link
+            href={href}
+            className="cl-pill"
+            aria-label={`Leer más: ${title}`}
+          >
             <span>Leer más</span>
             <Icon name="arrow_forward" size={12} />
           </Link>
@@ -112,11 +118,9 @@ function NewsCard({ post }: { post: HomePost }) {
 export default function NewsSection({
   posts = [],
   title = "NOVEDADES",
-  eyebrow = "ACTUALIDAD Y ACTIVIDADES",
 }: {
   posts?: HomePost[];
   title?: string;
-  eyebrow?: string;
 }) {
   const [page, setPage] = useState(0);
   if (posts.length === 0) return null;
@@ -130,18 +134,24 @@ export default function NewsSection({
     <section className="cl-section cl-news" id="novedades">
       <div className="cl-news__head">
         <div>
-          <div className="cl-news__eyebrow">
-            <span className="cl-news__dot" aria-hidden="true" />
-            <span>{eyebrow}</span>
-          </div>
           <h2 className="cl-news__title">{title}</h2>
         </div>
         {pages > 1 && (
           <div className="cl-news__arrows">
-            <button type="button" className="cl-round-btn" aria-label="Anterior" onClick={() => go(-1)}>
+            <button
+              type="button"
+              className="cl-round-btn"
+              aria-label="Anterior"
+              onClick={() => go(-1)}
+            >
               <Icon name="chevron_left" size={18} />
             </button>
-            <button type="button" className="cl-round-btn" aria-label="Siguiente" onClick={() => go(1)}>
+            <button
+              type="button"
+              className="cl-round-btn"
+              aria-label="Siguiente"
+              onClick={() => go(1)}
+            >
               <Icon name="chevron_right" size={18} />
             </button>
           </div>

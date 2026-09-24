@@ -70,6 +70,44 @@ export async function getPosts(
   }
 }
 
+// Primer y último día del mes en curso, en formato "dd-mm-aaaa" (el que espera filtros[...] del backend).
+function getCurrentMonthRange() {
+  const now = new Date();
+  const first = new Date(now.getFullYear(), now.getMonth(), 1);
+  const last = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  const fmt = (d: Date) =>
+    `${String(d.getDate()).padStart(2, "0")}-${String(d.getMonth() + 1).padStart(2, "0")}-${d.getFullYear()}`;
+  return { fechaDesde: fmt(first), fechaHasta: fmt(last) };
+}
+
+// `upcomingOnly` del backend no filtra por mes y además rompe si se combina con `order`,
+// así que acá se pide directo el rango del mes en curso.
+async function getAgendaPosts() {
+  try {
+    const { fechaDesde, fechaHasta } = getCurrentMonthRange();
+    const params = new URLSearchParams({
+      table: "cultura_",
+      status: "true",
+      front: "true",
+      limit: "20",
+      "filtros[fechaDesde]": fechaDesde,
+      "filtros[fechaHasta]": fechaHasta,
+    });
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API}/posts?${params.toString()}`, {
+      next: { revalidate: 60 },
+    });
+    const data = await res.json();
+    const posts = Array.isArray(data) ? data : data.data || [];
+    return posts.sort(
+      (a: { fecha?: string }, b: { fecha?: string }) =>
+        new Date(a.fecha ?? 0).getTime() - new Date(b.fecha ?? 0).getTime(),
+    );
+  } catch (e) {
+    console.error("Failed to fetch agenda posts:", e);
+    return [];
+  }
+}
+
 async function getSocials() {
   try {
     const res = await fetch(
@@ -93,9 +131,12 @@ async function getMenuItems() {
   const cached = await PageServices.getNavMenu();
   if (cached.length > 0) return cached;
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API}/nav-menu/tree?pageId=3`, {
-      next: { revalidate: 5 },
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API}/nav-menu/tree?pageId=3`,
+      {
+        next: { revalidate: 5 },
+      },
+    );
     const data = await res.json();
     return Array.isArray(data) ? data : data.data || [];
   } catch (e) {
@@ -109,18 +150,23 @@ export default async function Home() {
   const socials = await getSocials();
   const postSlider = await getPostsSlider();
   const { posts } = await getPosts(NEWS_LIMIT, 0, true);
+  const agendaPosts = await getAgendaPosts();
   return (
     <div className={`cl-root ${libreFranklin.variable}`}>
       <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossOrigin="anonymous"
+      />
       <link rel="stylesheet" href={MATERIAL_SYMBOLS_URL} precedence="default" />
       <SiteHeader navItems={buildHeaderNav(menuItems)} />
       <main>
         <HeroSlider posts={postSlider} />
-        <NewsSection posts={posts} title="NOVEDADES" eyebrow="ACTUALIDAD Y ACTIVIDADES" />
+        <NewsSection posts={posts} title="NOVEDADES" />
         <AreasBento />
-        <ServicesBanner />
-        <WeeklyAgenda />
+        {/* <ServicesBanner /> */}
+        <WeeklyAgenda posts={agendaPosts} />
       </main>
       <SiteFooter menuItems={menuItems} socials={socials} />
     </div>

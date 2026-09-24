@@ -32,27 +32,70 @@ export default function LoginComponent({ type }: LoginComponentProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [pendingActivation, setPendingActivation] = useState(false);
 
-  // Transición entre /login/lcaba y /login/ext: se desvanece la card,
-  // se navega, y al llegar el contenido nuevo vuelve a aparecer.
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  // Transición entre /login/lcaba y /login/ext: la card gira sobre su eje
+  // vertical (efecto "swap"), a mitad de giro se navega y cambia el
+  // contenido, y termina de girar para revelar el lado nuevo.
+  const [flipPhase, setFlipPhase] = useState<"idle" | "exiting" | "entering">(
+    "idle",
+  );
   const prevTypeRef = useRef(type);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const pendingHrefRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (prevTypeRef.current !== type) {
       prevTypeRef.current = type;
-      const frame = requestAnimationFrame(() => setIsTransitioning(false));
-      return () => cancelAnimationFrame(frame);
+      // Arranca instantáneamente del lado opuesto (sin transición) y en el
+      // siguiente frame anima de vuelta a 0deg para completar el giro.
+      setFlipPhase("entering");
+      const raf1 = requestAnimationFrame(() => {
+        const raf2 = requestAnimationFrame(() => setFlipPhase("idle"));
+        return () => cancelAnimationFrame(raf2);
+      });
+      return () => cancelAnimationFrame(raf1);
     }
   }, [type]);
 
+  // Navega recién cuando termina de girar hacia afuera (transitionend), no
+  // con un timer a ciegas: si la navegación resolviera antes que la
+  // animación, el contenido cambiaría a mitad de giro y se vería un corte.
+  useEffect(() => {
+    const card = cardRef.current;
+    if (!card || flipPhase !== "exiting") return;
+
+    let settled = false;
+    const goToPending = () => {
+      if (settled) return;
+      settled = true;
+      const href = pendingHrefRef.current;
+      pendingHrefRef.current = null;
+      if (href) router.push(href);
+    };
+
+    const onTransitionEnd = (ev: TransitionEvent) => {
+      if (ev.target === card && ev.propertyName === "transform") {
+        goToPending();
+      }
+    };
+
+    card.addEventListener("transitionend", onTransitionEnd);
+    // Red de seguridad por si el evento no llega a disparar.
+    const fallback = setTimeout(goToPending, 450);
+
+    return () => {
+      card.removeEventListener("transitionend", onTransitionEnd);
+      clearTimeout(fallback);
+    };
+  }, [flipPhase, router]);
+
   const handleModeSwitch = (e: React.MouseEvent, href: string) => {
     const current = isLcaba ? "/login/lcaba" : "/login/ext";
-    if (href === current) return;
+    if (href === current || flipPhase !== "idle") return;
     e.preventDefault();
     setErrorMessage(null);
     setSeePass("password");
-    setIsTransitioning(true);
-    setTimeout(() => router.push(href), 280);
+    pendingHrefRef.current = href;
+    setFlipPhase("exiting");
   };
 
   const handleLcabaSubmit = async (e: React.FormEvent) => {
@@ -120,13 +163,20 @@ export default function LoginComponent({ type }: LoginComponentProps) {
     <section className="login-page-wrapper">
       <div className="container">
         <div className="row justify-content-center">
-          <div className="col-12 col-xl-10">
-            {/* 
+          <div className="col-12 col-xl-10 login-flip-perspective">
+            {/*
                             Si es LCABA: Banner gráfico a la DERECHA, formulario a la IZQUIERDA (flex-lg-row-reverse).
                             Si es Externo: Banner gráfico a la IZQUIERDA, formulario a la DERECHA (flex-lg-row).
                         */}
             <div
-              className={`login-split-card row g-0 ${isLcaba ? "flex-lg-row-reverse" : "flex-lg-row"} ${isTransitioning ? "is-transitioning" : ""}`}
+              ref={cardRef}
+              className={`login-split-card row g-0 ${isLcaba ? "flex-lg-row-reverse" : "flex-lg-row"} ${
+                flipPhase === "exiting"
+                  ? "is-flip-out"
+                  : flipPhase === "entering"
+                    ? "is-flip-in is-flip-instant"
+                    : ""
+              }`}
             >
               {/* COLUMNA 1: BANNER VISUAL */}
               <div

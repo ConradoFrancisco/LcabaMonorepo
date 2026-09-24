@@ -76,7 +76,11 @@ export default function HeroSlider({ posts = [] }: { posts?: HomePost[] }) {
       onBlur={() => setPaused(false)}
     >
       {posts.map((p, i) => (
-        <HeroBg key={p.id} urls={buildImageUrls(p.images, HERO_IMAGE_TYPES)} current={i === index} />
+        <HeroBg
+          key={p.id}
+          urls={buildImageUrls(p.images, HERO_IMAGE_TYPES)}
+          current={i === index}
+        />
       ))}
       <div className="cl-hero__scrim" />
 
@@ -93,16 +97,14 @@ export default function HeroSlider({ posts = [] }: { posts?: HomePost[] }) {
               <span>Ver más</span>
               <Icon name="arrow_forward" size={18} />
             </Link>
-            <Link href="/#visitas" className="cl-btn cl-btn--glass">
-              <Icon name="confirmation_number" size={18} />
-              <span>Reservar Ubicación</span>
-            </Link>
           </div>
         </div>
 
         <div className="cl-hero__footer">
           <div className="cl-hero__progress">
-            <span className="cl-hero__count cl-hero__count--current">{pad(index + 1)}</span>
+            <span className="cl-hero__count cl-hero__count--current">
+              {pad(index + 1)}
+            </span>
             <div className="cl-hero__track" aria-hidden="true">
               <div
                 className="cl-hero__fill"
