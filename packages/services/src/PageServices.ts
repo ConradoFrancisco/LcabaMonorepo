@@ -235,6 +235,22 @@ class PageServices {
             .replace(/[^a-z0-9]+/g, "-")
             .replace(/(^-|-$)/g, "");
     }
+    async getTranslation(keyword?: string, lang?: number) {
+        try {
+            const params = new URLSearchParams();
+            if (keyword) params.set('keyword', keyword);
+            if (lang) params.set('lang', lang.toString());
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_API}/general/translations?${params.toString()}`,
+                { next: { revalidate: 5 } } as any
+            );
+            if (!res.ok) return null;
+            return res.json();
+        } catch (e) {
+            console.error('Failed to fetch post by id:', e);
+            return null;
+        }
+    }
 }
 
 export default new PageServices();

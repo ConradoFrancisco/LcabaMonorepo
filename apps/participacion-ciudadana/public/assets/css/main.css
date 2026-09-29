@@ -15771,4 +15771,153 @@ textarea.message:focus {
     }
 }
 
+.audiencias-section {
+    background: #f8f9fc;
+}
+
+.audiencias-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--bs-primary, #6c5ce7);
+    background: rgba(108, 92, 231, 0.1);
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+.audiencia-card {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.25s, transform 0.25s;
+}
+
+.audiencia-card:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+}
+
+.audiencia-card--suspendida {
+    opacity: 0.65;
+}
+
+.audiencia-card__fecha {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: var(--bs-primary, #6c5ce7);
+    color: #fff;
+}
+
+.audiencia-card__dia {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.audiencia-card__mes {
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    opacity: 0.85;
+    margin-top: 2px;
+}
+
+.audiencia-card__body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.audiencia-tag {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+}
+
+.audiencia-tag--abierta {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.audiencia-tag--suspendida {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.audiencia-tag--formato {
+    background: #e0e7ff;
+    color: #3730a3;
+}
+
+.audiencia-card__titulo {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.5;
+    color: #1a1a2e;
+    flex: 1;
+    margin-bottom: 16px;
+}
+
+.audiencia-card__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.audiencia-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8125rem;
+    color: #6b7280;
+}
+
+.audiencia-meta-item svg {
+    flex-shrink: 0;
+    opacity: 0.6;
+}
+
+.audiencia-meta-item--expediente {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #374151;
+    background: #f3f4f6;
+    border-radius: 6px;
+    padding: 3px 8px;
+    display: inline-flex;
+    width: fit-content;
+}
+
+.audiencia-meta-item--expediente svg {
+    opacity: 0.5;
+}
+
+.audiencia-card__footer {
+    margin-top: auto;
+}
+
+@media (max-width: 768px) {
+    .audiencia-card__fecha {
+        flex-direction: row;
+        gap: 8px;
+        padding: 14px 20px;
+    }
+
+    .audiencia-card__dia {
+        font-size: 1.75rem;
+    }
+}
+
 /*# sourceMappingURL=main.css.map */

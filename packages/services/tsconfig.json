@@ -1,8 +1,9 @@
 {
   "extends": "@lcaba/typescript-config/nextjs.json",
   "compilerOptions": {
-    "outDir": "dist"
+    "outDir": "dist",
+    "types": ["node"]
   },
-  "include": ["src"],
+  "include": ["src", "labor"],
   "exclude": ["node_modules", "dist"]
 }

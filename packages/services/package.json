@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@lcaba/typescript-config": "*",
+    "@types/node": "*",
     "typescript": "^5"
   }
 }
