@@ -113,7 +113,7 @@ async function getPageData(pageId = "6") {
 
 async function getRevistaMenu() {
   try {
-    const items = await PageServices.getDynamicMenu("magazine_", 6);
+    const items = await PageServices.getDynamicMenu("magazine", 6);
     return items || [];
   } catch {
     return [];
@@ -237,7 +237,7 @@ export default async function SeccionPage({ params, searchParams }: SeccionPageP
 
     const wellbeingResponses = await Promise.all(
       wellbeingCategories.map((wellbeingCategory) =>
-        PageServices.getPosts("magazine_", false, 0, 1000, true, false, wellbeingCategory.id, "1"),
+        PageServices.getPosts("magazine", false, 0, 1000, true, false, wellbeingCategory.id, "1"),
       ),
     );
 
@@ -297,7 +297,7 @@ export default async function SeccionPage({ params, searchParams }: SeccionPageP
 
     if (targetIssue) {
       const resIssue = await PageServices.getPosts(
-        "magazine_",
+        "magazine",
         false,
         0,
         1,
@@ -313,7 +313,7 @@ export default async function SeccionPage({ params, searchParams }: SeccionPageP
 
     if (!postSummary) {
       const resGlobal = await PageServices.getPosts(
-        "magazine_",
+        "magazine",
         false,
         0,
         1,
@@ -840,7 +840,7 @@ export default async function SeccionPage({ params, searchParams }: SeccionPageP
   const issueFilter = isGlobalAllCategory ? undefined : targetIssue;
 
   const postsRes = await PageServices.getPosts(
-    "magazine_",
+    "magazine",
     false,
     offset,
     pageSize,

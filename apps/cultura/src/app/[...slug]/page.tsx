@@ -248,7 +248,7 @@ export default async function DynamicSectionPage({
 
   if (template === "posts-list") {
     const { data: posts } = await PageServices.getPosts(
-      "cultura_",
+      "cultura",
       false,
       0,
       9,

@@ -27,7 +27,7 @@ async function getPageVw(pageId: string = "6") {
 // Traer menú dinámico de Revista
 async function getRevistaMenu() {
   try {
-    const items = await PageServices.getDynamicMenu("magazine_", 6);
+    const items = await PageServices.getDynamicMenu("magazine", 6);
     return items || [];
   } catch (e) {
     console.error("Error fetching revista menu:", e);
@@ -81,7 +81,7 @@ async function getAllIssuesWithCovers() {
 async function getSliderPosts(issueNumber: number | string) {
   try {
     const res = await PageServices.getPosts(
-      "magazine_",
+      "magazine",
       false,
       0,
       6,
@@ -103,7 +103,7 @@ async function getSliderPosts(issueNumber: number | string) {
 async function getGridPosts(issueNumber: number | string, limit = 12, offset = 0) {
   try {
     const res = await PageServices.getPosts(
-      "magazine_",
+      "magazine",
       false,
       offset,
       3,
@@ -126,7 +126,7 @@ async function getGridPosts(issueNumber: number | string, limit = 12, offset = 0
 //Traer listado de EN ACCION
 async function getEnAccion(issueNumber: number | string, limit = 1, offset = 0) {
   try {
-    const { data: posts } = await PageServices.getPosts("magazine_", false, offset, limit, true, true, 95, "1", false, issueNumber);
+    const { data: posts } = await PageServices.getPosts("magazine", false, offset, limit, true, true, 95, "1", false, issueNumber);
 
     return posts;
   } catch (e) {

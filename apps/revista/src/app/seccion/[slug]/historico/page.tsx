@@ -33,7 +33,7 @@ async function getPageData(pageId = "6") {
 
 async function getRevistaMenu() {
   try {
-    const items = await PageServices.getDynamicMenu("magazine_", 6);
+    const items = await PageServices.getDynamicMenu("magazine", 6);
     return items || [];
   } catch {
     return [];
@@ -127,7 +127,7 @@ export default async function HistoricoPage({ params, searchParams }: HistoricoP
 
   // Traemos TODOS los posts de esta categoría (sin filtro de edición = histórico completo)
   const postsRes = await PageServices.getPosts(
-    "magazine_",
+    "magazine",
     false,
     offset,
     PAGE_SIZE,

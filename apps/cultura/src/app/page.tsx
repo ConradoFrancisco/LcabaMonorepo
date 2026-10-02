@@ -20,7 +20,7 @@ const NEWS_LIMIT = 9;
 async function getPostsSlider() {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/posts?slider=true&table=cultura_&limit=2&status=true&withImages=true`,
+      `${process.env.NEXT_PUBLIC_API}/posts?slider=true&table=cultura&limit=2&status=true&withImages=true`,
       {
         next: { revalidate: 60 },
       },
@@ -42,7 +42,7 @@ export async function getPosts(
 ) {
   try {
     const params = new URLSearchParams({
-      table: "cultura_",
+      table: "cultura",
       limit: String(limit),
       offset: String(offset),
       status: "true",

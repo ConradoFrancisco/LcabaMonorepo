@@ -53,7 +53,7 @@ async function getPageData(pageId = "6") {
 
 async function getRevistaMenu() {
   try {
-    const items = await PageServices.getDynamicMenu("magazine_", 6);
+    const items = await PageServices.getDynamicMenu("magazine", 6);
     return items || [];
   } catch {
     return [];
@@ -121,7 +121,7 @@ export default async function ArticlePage({
   const { id } = await params;
 
   const [post, menuItems, pageVw] = await Promise.all([
-    PageServices.getPostById(Number(id), "magazine_"),
+    PageServices.getPostById(Number(id), "magazine"),
     getRevistaMenu(),
     getPageData("6"),
   ]);
