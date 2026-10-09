@@ -86,7 +86,7 @@ async function getAgendaPosts() {
   try {
     const { fechaDesde, fechaHasta } = getCurrentMonthRange();
     const params = new URLSearchParams({
-      table: "cultura_",
+      table: "cultura",
       status: "true",
       front: "true",
       limit: "20",

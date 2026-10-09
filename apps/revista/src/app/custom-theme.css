@@ -6,7 +6,10 @@
   --revista-primary: #8b5cf6;
 }
 
+html,
 body {
+  max-width: 100%;
+  overflow-x: hidden;
   background-color: #ffffff;
   color: #1e293b;
   font-family: var(--font-rubik, 'Rubik', sans-serif);
@@ -39,6 +42,11 @@ body {
   color: #111827;
   text-decoration: none;
   text-transform: uppercase;
+  transition: opacity 0.2s ease;
+}
+
+.revista-logo:hover {
+  opacity: 0.9;
 }
 
 .revista-date-badge {
@@ -51,6 +59,7 @@ body {
   letter-spacing: 0.05em;
   text-transform: uppercase;
   display: inline-block;
+  white-space: nowrap;
 }
 
 .revista-digital-tag {
@@ -59,43 +68,80 @@ body {
   font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  margin-top: 6px;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+
+/* Hamburger button */
+.revista-hamburger-btn {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+  color: #1e293b;
+  flex-shrink: 0;
+}
+
+.revista-hamburger-btn:hover,
+.revista-hamburger-btn:active {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #7c3aed;
+}
+
+.revista-hamburger-btn span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background-color: currentColor;
+  border-radius: 2px;
+  transition: all 0.2s ease;
 }
 
 /* Navbar */
 .revista-nav {
   border-top: 1px solid #f1f5f9;
+  position: relative;
 }
 
-.revista-nav .navbar-nav {
+.revista-nav .revista-nav-list {
   display: flex;
   flex-direction: row;
   align-items: center;
-  flex-wrap: wrap;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
 .revista-nav-link {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   text-transform: uppercase;
   color: #334155;
-  padding: 10px 25px;
+  padding: 10px 18px;
   transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
   gap: 6px;
   text-decoration: none;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .revista-nav-link:hover {
   color: #7c3aed;
 }
 
-/* Template-style Dropdown on Hover */
+/* Template-style Dropdown on Hover (Desktop) */
 .revista-nav .nav-item.dropdown {
   position: relative;
 }
@@ -160,6 +206,171 @@ body {
 .revista-dropdown-item:hover .arrow-icon {
   opacity: 1;
   transform: translateX(0);
+}
+
+/* Responsive Rules for Header & Nav */
+@media (max-width: 991.98px) {
+  .revista-logo {
+    font-size: 1.65rem;
+  }
+
+  .revista-date-badge {
+    padding: 3px 10px;
+    font-size: 0.65rem;
+  }
+
+  .revista-digital-tag {
+    font-size: 0.75rem;
+    margin-top: 2px;
+  }
+
+  /* Ocultar completamente la barra horizontal en mobile — el drawer se encarga de la nav */
+  .revista-nav {
+    display: none !important;
+  }
+}
+
+/* Mobile Offcanvas Drawer */
+.revista-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1050;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.revista-drawer-backdrop.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.revista-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 86%;
+  max-width: 360px;
+  height: 100vh;
+  height: 100dvh;
+  background: #ffffff;
+  z-index: 1060;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -10px 0 35px rgba(0, 0, 0, 0.15);
+  transform: translateX(100%);
+  visibility: hidden;
+  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.32s ease;
+}
+
+.revista-drawer.open {
+  transform: translateX(0);
+  visibility: visible;
+}
+
+.revista-drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.revista-drawer-close {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.revista-drawer-close:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.revista-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 14px;
+}
+
+.revista-drawer-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.revista-drawer-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #1e293b;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.revista-drawer-link:hover,
+.revista-drawer-link:active {
+  background-color: #f8fafc;
+  color: #7c3aed;
+}
+
+.revista-drawer-submenu {
+  list-style: none;
+  padding: 4px 0 8px 14px;
+  margin: 4px 0 4px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-left: 2px solid #ede9fe;
+}
+
+.revista-drawer-sublink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #475569;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.revista-drawer-sublink:hover,
+.revista-drawer-sublink:active {
+  background-color: #f5f3ff;
+  color: #7c3aed;
+}
+
+.revista-drawer-footer {
+  padding: 14px 20px;
+  border-top: 1px solid #f1f5f9;
+  background: #fafafa;
 }
 
 /* Featured Hero Slider */

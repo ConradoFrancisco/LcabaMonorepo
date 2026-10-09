@@ -130,8 +130,6 @@ async function getAllActiveIssues() {
   }
 }
 
-
-
 // Busca el item del menú que corresponda al slug (comparando URL o título)
 function findCategoryInMenu(menuItems: any[], targetSlug: string) {
   const normalizedTarget = normalizeSlug(targetSlug);

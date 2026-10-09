@@ -112,8 +112,8 @@ export default function AgendaCard({ post, categoryColor }: AgendaCardProps) {
   const imgUrl = imgFile?.location && imgFile?.filename
     ? `${baseImg}/${imgFile.location}${imgFile.filename}${fileKey ? `?key=${fileKey}` : ""}`
     : post?.location && post?.filename
-    ? `${baseImg}/${post.location}/${post.filename}`
-    : null;
+      ? `${baseImg}/${post.location}/${post.filename}`
+      : null;
 
   // Días: buscar en distintos lugares posibles
   const originalDays: any[] = post?.dias || post?.detail?.dias || [];
@@ -160,40 +160,44 @@ export default function AgendaCard({ post, categoryColor }: AgendaCardProps) {
               padding: "8px",
             }}
           />
-
-          {/* Badge de días */}
-          {dayHeading && (
-            <div
-              style={{
-                position: "absolute",
-                bottom: "10px",
-                left: "10px",
-                right: "10px",
-                backgroundColor: categoryColor,
-                color: "#fff",
-                borderRadius: "8px",
-                padding: "4px 10px",
-                fontSize: "0.78rem",
-                fontWeight: 700,
-                textTransform: "uppercase",
-                letterSpacing: "0.04em",
-              }}
-            >
-              📅 {dayHeading}
-            </div>
-          )}
         </div>
 
         {/* Contenido */}
-        <div style={{ padding: "16px 18px", display: "flex", flexDirection: "column", gap: "10px", flex: 1 }}>
+        <div style={{ padding: "16px 18px", display: "flex", flexDirection: "column", gap: "12px", flex: 1 }}>
+          {/* Badge de días / fecha */}
+          {dayHeading && (
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                backgroundColor: categoryColor,
+                color: "#fff",
+                borderRadius: "8px",
+                padding: "6px 12px",
+                fontSize: "0.88rem",
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: "0.04em",
+                alignSelf: "flex-start",
+                lineHeight: 1.2,
+                boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+                width: '100%'
+              }}
+            >
+              <span>📅</span>
+              <span>{dayHeading}</span>
+            </div>
+          )}
+
           {/* Título */}
           <h3
             style={{
-              fontSize: "1rem",
+              fontSize: "1.05rem",
               fontWeight: 800,
               color: "#1e293b",
               margin: 0,
-              lineHeight: 1.3,
+              lineHeight: 1.35,
             }}
           >
             {titulo}
