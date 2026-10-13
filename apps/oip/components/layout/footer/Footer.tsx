@@ -1,9 +1,18 @@
 import Link from "next/link";
 import { NavMenuItem } from '@lcaba/services';
 
+function isFlagOn(value: unknown): boolean {
+    if (value === undefined || value === null) return true;
+    if (typeof value === "object" && "data" in (value as any)) {
+        return Number((value as { data: number[] }).data?.[0]) === 1;
+    }
+    return Number(value) === 1 || value === true;
+}
+
 export default function Footer({ menuItems = [], logo, pageVw }: { menuItems?: NavMenuItem[], logo?: any, pageVw?: any }) {
     const title = pageVw?.title || "Oficina de Integridad Pública";
     const address = pageVw?.shipping_info ? pageVw.shipping_info.replace(/<[^>]*>/g, '') : "Perú 160, Planta Principal Of. 17, C1067AAD Ciudad Autónoma de Buenos Aires, República Argentina 4338-3000 int.1195 / 7151";
+    const footerMenuItems = (menuItems || []).filter((item: any) => isFlagOn(item.show_bottom));
 
     return (
         <footer>
@@ -35,7 +44,7 @@ export default function Footer({ menuItems = [], logo, pageVw }: { menuItems?: N
                                     <span className="text-white opacity-75 hover-effect-1 fs-6">Inicio</span>
                                 </Link>
                             </li>
-                            {menuItems.map((item, index) => (
+                            {footerMenuItems.map((item, index) => (
                                 <li key={index}>
                                     <Link href={item.url || '#'}>
                                         <span className="text-white opacity-75 hover-effect-1 fs-6">{item.title}</span>

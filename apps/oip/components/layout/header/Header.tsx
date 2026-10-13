@@ -11,6 +11,14 @@ export function slugify(text: string): string {
         .replace(/(^-|-$)/g, "");
 }
 
+function isFlagOn(value: unknown): boolean {
+    if (value === undefined || value === null) return true;
+    if (typeof value === "object" && "data" in (value as any)) {
+        return Number((value as { data: number[] }).data?.[0]) === 1;
+    }
+    return Number(value) === 1 || value === true;
+}
+
 export function formatNavUrl(item: any, parent?: any): string {
     if (!item.url || item.url === "#") return "#";
     if (item.url.startsWith("http")) return item.url;
@@ -20,6 +28,8 @@ export function formatNavUrl(item: any, parent?: any): string {
 
 
 export default function Header({ scroll, isMobileMenu, handleMobileMenu, menuItems, logo }: any) {
+    const headerMenuItems = (menuItems || []).filter((item: any) => isFlagOn(item.show_top));
+
     return (
         <>
             <header>
@@ -35,7 +45,7 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu, menuIte
                             }
                             <div className="d-none d-lg-flex">
                                 <ul className="navbar-nav mx-auto gap-4 align-items-lg-center">
-                                    {menuItems.map((item: any) => {
+                                    {headerMenuItems.map((item: any) => {
                                         const hasSubItems =
                                             item.subItems && item.subItems.length > 0;
                                         const itemUrl = formatNavUrl(item);

@@ -2,9 +2,10 @@ import Link from 'next/link';
 import Layout from '@/components/layout/Layout';
 import { PageServices } from '@lcaba/services';
 import { notFound } from 'next/navigation';
+import DocumentsDataTable from '@/components/elements/DocumentsDataTable';
 
 const PAGE_ID = 7;
-const TABLE = 'evidencias_';
+const TABLE = 'evidencias';
 const LIMIT = 9;
 
 // helpers
@@ -128,21 +129,11 @@ function StaticPageTemplate({ section, menuItems, pageVw, logo }: any) {
                             {archivos.length > 0 && (
                                 <div className='mt-4'>
                                     <h6 className='fw-semibold mb-3'>Documentos</h6>
-                                    <ul className='list-group list-group-flush'>
-                                        {archivos.map((f: any, i: number) => {
-                                            const fileUrl = buildImageUrl(f);
-                                            return (
-                                                <li key={f.id ?? i} className='list-group-item d-flex align-items-center gap-3 px-0'>
-                                                    <i className={`bi bi-file-earmark-${f.mimetype === 'application/msword' || f.mimetype?.includes('word') ? 'word text-primary' : 'pdf text-danger'} fs-5`} />
-                                                    {fileUrl ? (
-                                                        <a href={fileUrl} target='_blank' rel='noreferrer' className='text-decoration-none fw-medium'>{f.title || f.filename || ('Archivo ' + (i + 1))}</a>
-                                                    ) : (
-                                                        <span>{f.title || f.filename || ('Archivo ' + (i + 1))}</span>
-                                                    )}
-                                                </li>
-                                            );
-                                        })}
-                                    </ul>
+                                    <DocumentsDataTable
+                                        documents={archivos}
+                                        sectionTitle={title}
+                                        siteTitle='Oficina de Integridad Pública (OIP)'
+                                    />
                                 </div>
                             )}
                         </div>
@@ -303,9 +294,9 @@ export default async function DynamicSectionPage({
 
     const logo = pageVw?.images?.find((img: any) => img.image_type === 'logo');
 
-    const isPostsListing = section?.template === 'posts-list' || 
-                           section?.section === 'cat' || 
-                           section?.loadcontent === '_posts_listall.php';
+    const isPostsListing = section?.template === 'posts-list' ||
+        section?.section === 'cat' ||
+        section?.loadcontent === '_posts_listall.php';
 
     if (isPostsListing) {
         const catId = section?.fk_idcat || section?.fk_menuid || null;

@@ -9,7 +9,7 @@ function buildImageUrl(img: any): string | null {
 }
 export default function PostSection({ posts, logo }: { posts: any[], logo?: any }) {
     if (!posts || posts.length === 0) return null;
-    console.log('estoy viendo los postSection', posts)
+
 
     return (
         <section className="py-120 bg-secondary-2">
