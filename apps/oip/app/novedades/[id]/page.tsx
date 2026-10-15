@@ -3,6 +3,7 @@ import Layout from '@/components/layout/Layout';
 import { PageServices } from '@lcaba/services';
 import { notFound } from 'next/navigation';
 import ArticleGallery from '@/components/elements/ArticleGallery';
+import ParlamentariaIndividualAccordions from '@/components/elements/ParlamentariaAccordion';
 
 const PAGE_ID = 7;
 const TABLE = 'evidencias_';
@@ -17,10 +18,14 @@ function buildImageUrl(img: any): string | null {
 
 export default async function NovedadDetailPage({
     params,
+    searchParams,
 }: {
     params: Promise<{ id: string }>;
+    searchParams?: Promise<{ preview?: string }>;
 }) {
     const { id } = await params;
+    const resolvedSearch = await searchParams;
+    const isPreview = resolvedSearch?.preview === 'true';
     const numId = parseInt(id, 10);
     if (isNaN(numId)) notFound();
 
@@ -43,6 +48,10 @@ export default async function NovedadDetailPage({
     const subtitle = textos?.subtitle || '';
     const extradesc = textos?.extradesc || '';
     const proyectos: any[] = infoParlamentaria?.proyectos || [];
+    const comisiones: any[] = infoParlamentaria?.comisiones || [];
+    const legisladores: any[] = infoParlamentaria?.legisladores || infoParlamentaria?.diputados || [];
+    const sesiones: any[] = infoParlamentaria?.sesiones || [];
+    const audiencias: any[] = infoParlamentaria?.audiencias || [];
 
     // Todas las imágenes válidas del posteo ordenadas (principal primero si existe)
     const mainImage = images.find((img: any) => img.image_type === 'main');
@@ -60,6 +69,144 @@ export default async function NovedadDetailPage({
         }
         return videoUrl;
     };
+
+    // En modo preview: wrapper mínimo sin header/footer
+    if (isPreview) {
+        return (
+            <>
+                {/* Banner de modo preview */}
+                <div
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        zIndex: 9999,
+                        background: 'linear-gradient(90deg, #f59e0b, #fbbf24)',
+                        color: '#1a1a1a',
+                        textAlign: 'center',
+                        padding: '8px 16px',
+                        fontSize: '0.8rem',
+                        fontWeight: 600,
+                        letterSpacing: '0.5px',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                    }}
+                >
+                    👁 MODO VISTA PREVIA — Esta vista no es pública · ID #{numId}
+                </div>
+
+                {/* Hero preview (sin imagen de fondo full, solo datos) */}
+                <section className='data-analysis-section-header position-relative overflow-hidden pt-5 pb-4' style={{ paddingTop: '56px' }}>
+                    <div className='container position-relative z-1'>
+                        <div className='row'>
+                            <div className='col-lg-8'>
+                                {seteos?.dt_ins && (
+                                    <span className='badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill mb-3 d-inline-flex align-items-center gap-2'>
+                                        <i className='bi bi-calendar3'></i>
+                                        {new Date(seteos.dt_ins).toLocaleDateString('es-AR', { day: '2-digit', month: 'long', year: 'numeric' })}
+                                    </span>
+                                )}
+                                <h1 className='mb-0' style={{ fontWeight: 700, fontSize: 'clamp(1.6rem, 4vw, 2.6rem)', lineHeight: 1.2 }}>{title}</h1>
+                                {subtitle && <p className='text-muted mt-3 mb-0 fs-5'>{subtitle}</p>}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Artículo */}
+                <article className='pt-5 pb-5'>
+                    <div className='container'>
+                        <div className='row g-5'>
+                            <div className='col-lg-8'>
+                                {allImageUrls.length > 0 && (
+                                    <ArticleGallery images={allImageUrls} title={title} />
+                                )}
+                                {shortdesc && (
+                                    <div
+                                        className='fw-semibold mb-4 fs-5'
+                                        style={{ borderLeft: '4px solid var(--tc-primary-color, #0d6efd)', paddingLeft: '1.25rem', lineHeight: 1.7 }}
+                                        dangerouslySetInnerHTML={{ __html: shortdesc }}
+                                    />
+                                )}
+                                {description && (
+                                    <div
+                                        className='post-body'
+                                        dangerouslySetInnerHTML={{ __html: description }}
+                                        style={{ lineHeight: 1.85, fontSize: '1.05rem' }}
+                                    />
+                                )}
+                                {extradesc && (
+                                    <div
+                                        className='post-body mt-5 pt-4 border-top'
+                                        dangerouslySetInnerHTML={{ __html: extradesc }}
+                                        style={{ lineHeight: 1.85, fontSize: '1.05rem' }}
+                                    />
+                                )}
+                                {videos.length > 0 && (
+                                    <div className='mt-5'>
+                                        <h6 className='fw-semibold mb-3 d-flex align-items-center gap-2'>
+                                            <i className='bi bi-play-btn text-danger'></i> Videos
+                                        </h6>
+                                        <div className='row g-4'>
+                                            {videos.map((v: any, i: number) => {
+                                                const embedUrl = getEmbedVideoUrl(v.url);
+                                                return (
+                                                    <div key={v.id || i} className='col-12'>
+                                                        {embedUrl && (
+                                                            <div className='ratio ratio-16x9 rounded-4 overflow-hidden shadow-sm'>
+                                                                <iframe src={embedUrl} title={v.title || `Video ${i + 1}`} allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowFullScreen />
+                                                            </div>
+                                                        )}
+                                                        {v.title && <h6 className='mt-2 fw-semibold text-dark'>{v.title}</h6>}
+                                                        {v.description && <p className='text-muted small mt-1'>{v.description}</p>}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
+                                <ParlamentariaIndividualAccordions
+                                    proyectos={proyectos}
+                                    comisiones={comisiones}
+                                    legisladores={legisladores}
+                                    sesiones={sesiones}
+                                    audiencias={audiencias}
+                                />
+                                {archivos.length > 0 && (
+                                    <div className='mt-5 p-4 rounded-4' style={{ backgroundColor: '#f8f9fa' }}>
+                                        <h6 className='fw-semibold mb-3 d-flex align-items-center gap-2'>
+                                            <i className='bi bi-paperclip text-primary'></i> Documentos adjuntos
+                                        </h6>
+                                        <ul className='list-group list-group-flush'>
+                                            {archivos.map((f: any, i: number) => {
+                                                const fileUrl = buildImageUrl(f);
+                                                const isWord = f.mimetype === 'application/msword' || f.mimetype?.includes('word');
+                                                return (
+                                                    <li key={f.id ?? i} className='list-group-item bg-transparent d-flex flex-wrap align-items-center gap-3 px-0 py-3'>
+                                                        <i className={`bi bi-file-earmark-${isWord ? 'word text-primary' : 'pdf text-danger'} fs-4`} />
+                                                        <div className='flex-grow-1'>
+                                                            <span className='fw-medium'>{f.title || f.filename || `Archivo ${i + 1}`}</span>
+                                                            {f.size && <small className='text-muted d-block'>{(parseInt(f.size) / 1024).toFixed(0)} KB</small>}
+                                                        </div>
+                                                        {fileUrl && (
+                                                            <a href={fileUrl} target='_blank' rel='noreferrer' className='btn btn-sm btn-outline-primary rounded-pill px-3 w-100 w-sm-auto'>
+                                                                <i className='bi bi-download me-1'></i> Descargar
+                                                            </a>
+                                                        )}
+                                                    </li>
+                                                );
+                                            })}
+                                        </ul>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </>
+        );
+    }
+
 
     return (
         <Layout menuItems={menuItems} pageVw={pageVw} logo={logo} breadcrumbTitle={title}>
@@ -171,56 +318,14 @@ export default async function NovedadDetailPage({
                                 </div>
                             )}
 
-                            {/* Expedientes Relacionados */}
-                            {proyectos.length > 0 && (
-                                <div className='mt-5 p-4 rounded-4' style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
-                                    <h6 className='fw-semibold mb-3 d-flex align-items-center gap-2 text-primary'>
-                                        <i className='bi bi-bank fs-5'></i> Expedientes Relacionados
-                                    </h6>
-                                    <div className='d-flex flex-column gap-3'>
-                                        {proyectos.map((proyecto: any, i: number) => {
-                                            const det = proyecto.detalleExpediente || proyecto;
-                                            const expNro = det?.nro_de_expediente || proyecto.expediente_id || `Expediente ${i + 1}`;
-                                            const sumario = det?.sumario || '';
-                                            const autor = det?.autor_des || '';
-                                            const tipo = det?.proyecto_tipo_des || '';
-
-                                            return (
-                                                <div
-                                                    key={proyecto.id || i}
-                                                    className='p-3 bg-white rounded-3 shadow-sm border border-light'
-                                                    style={{ borderLeft: '4px solid var(--tc-theme-primary, #0d6efd) !important' }}
-                                                >
-                                                    <div className='d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2'>
-                                                        <span className='fw-bold text-dark fs-6'>
-                                                            Expediente: {expNro}
-                                                        </span>
-                                                        {tipo && (
-                                                            <span className='badge bg-light text-secondary border px-3 py-1 rounded-pill' style={{ fontSize: '0.75rem' }}>
-                                                                {tipo}
-                                                            </span>
-                                                        )}
-                                                    </div>
-
-                                                    {sumario && (
-                                                        <p className='mb-2 text-secondary' style={{ fontSize: '0.92rem', lineHeight: 1.6 }}>
-                                                            <strong className='text-dark'>Sumario: </strong>
-                                                            {sumario}
-                                                        </p>
-                                                    )}
-
-                                                    {autor && (
-                                                        <div className='small text-muted'>
-                                                            <strong className='text-secondary'>Autor/es: </strong>
-                                                            {autor}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-                            )}
+                            {/* Información Parlamentaria en Acordeones Individuales */}
+                            <ParlamentariaIndividualAccordions
+                                proyectos={proyectos}
+                                comisiones={comisiones}
+                                legisladores={legisladores}
+                                sesiones={sesiones}
+                                audiencias={audiencias}
+                            />
 
                             {/* Archivos */}
                             {archivos.length > 0 && (

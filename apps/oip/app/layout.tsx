@@ -13,22 +13,19 @@ import "../public/assets/fonts/fontawesome/regular.min.css";
 import "../public/assets/css/main.css";
 import "../public/assets/css/style.css";
 
+// Fuentes locales (self-hosted via @fontsource — sin dependencia de Google)
+import '@fontsource/libre-franklin/300.css';
+import '@fontsource/libre-franklin/400.css';
+import '@fontsource/libre-franklin/500.css';
+import '@fontsource/libre-franklin/600.css';
+import '@fontsource/libre-franklin/700.css';
+import '@fontsource/rubik/300.css';
+import '@fontsource/rubik/400.css';
+import '@fontsource/rubik/500.css';
+import '@fontsource/rubik/600.css';
+import '@fontsource/rubik/700.css';
+
 import type { Metadata } from "next";
-import { Libre_Franklin, Rubik } from "next/font/google";
-
-const libreFranklinHeading = Libre_Franklin({
-    weight: ["300", "400", "500", "600", "700"],
-    subsets: ["latin"],
-    variable: "--tc-heading-font-family",
-    display: "swap",
-});
-
-const rubik = Rubik({
-    weight: ["300", "400", "500", "600", "700"],
-    subsets: ["latin"],
-    variable: "--tc-body-font-family",
-    display: "swap",
-});
 
 export const metadata: Metadata = {
     title: "OIP - Oficina de Integridad Pública | Legislatura CABA",
@@ -42,7 +39,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="es">
-            <body className={`${libreFranklinHeading.variable} ${rubik.variable}`}>{children}</body>
+            <body>{children}</body>
         </html>
     );
 }
