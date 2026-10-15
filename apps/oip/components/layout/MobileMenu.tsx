@@ -3,18 +3,26 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { formatNavUrl } from "./header/Header";
 
 interface MobileMenuProps {
     isMobileMenu: boolean;
     handleMobileMenu: () => void;
+    menuItems?: any[];
+    logo?: any;
 }
 
-export default function MobileMenu({ isMobileMenu, handleMobileMenu }: MobileMenuProps) {
-    const [isAccordion, setIsAccordion] = useState<number | null>(null);
+export default function MobileMenu({
+    isMobileMenu,
+    handleMobileMenu,
+    menuItems = [],
+    logo,
+}: MobileMenuProps) {
+    const [openSubmenu, setOpenSubmenu] = useState<number | null>(null);
     const pathname = usePathname();
 
     const handleAccordion = (key: number) => {
-        setIsAccordion((prevState) => (prevState === key ? null : key));
+        setOpenSubmenu((prev) => (prev === key ? null : key));
     };
 
     useEffect(() => {
@@ -23,93 +31,165 @@ export default function MobileMenu({ isMobileMenu, handleMobileMenu }: MobileMen
         }
     }, [pathname]);
 
+    const logoSrc = logo
+        ? `${process.env.NEXT_PUBLIC_IMAGES}/${logo.location}/${logo.filename}?key=${process.env.NEXT_PUBLIC_FILESERVER_KEY}`
+        : "/assets/logo.png";
+
     return (
         <>
             {isMobileMenu && <div className="mobile-menu-overlay" onClick={handleMobileMenu} />}
 
-            <div className={`mobile-header-active mobile-header-wrapper-style ${isMobileMenu ? "sidebar-visible" : ""}`}>
-                <div className="mobile-header-wrapper-inner">
-                    <div className="mobile-header-logo">
-                        <Link className="d-flex align-items-center gap-2" href="/">
-                            <svg xmlns="http://www.w3.org/2000/svg" width={40} height={40} viewBox="0 0 40 40" fill="none">
-                                <path className="fill-primary" d="M24.5043 9.79724L22.7082 18.3981L35.2929 17.1948L37.1117 7.00605L24.5043 9.79724Z" />
-                                <path className="fill-primary" d="M31.9171 17.6837L23.2697 20.6189L30.6333 30.3865L40.723 26.6545L31.9171 17.6837Z" />
-                                <path className="fill-primary" d="M28.4204 27.86L21.4605 22.2312L16.332 33.3249L24.7296 39.7347L28.4204 27.86Z" />
-                                <path className="fill-primary" d="M17.5913 29.998L19.1912 21.3633L6.63465 22.8288L5.04812 33.0511L17.5913 29.998Z" />
-                                <path className="fill-primary" d="M10.2917 22.1777L18.8717 19.0632L11.2859 9.45346L1.28177 13.3945L10.2917 22.1777Z" />
-                                <path className="fill-primary" d="M13.7243 12.2243L20.8121 17.7054L25.6875 6.50938L17.1442 0.277556L13.7243 12.2243Z" />
-                            </svg>
-                            <h5 className="mb-0">Astrax</h5>
+            <div
+                className={`mobile-header-active mobile-header-wrapper-style ${isMobileMenu ? "sidebar-visible" : ""}`}
+                style={{
+                    transform: isMobileMenu ? "translateX(0)" : "translateX(100%)",
+                    display: isMobileMenu ? "block" : "none",
+                }}
+            >
+                <div className="mobile-header-wrapper-inner d-flex flex-column h-100">
+                    {/* Header del drawer: Logo y botón cerrar */}
+                    <div className="mobile-header-logo d-flex align-items-center justify-content-between p-3 border-bottom">
+                        <Link className="d-flex align-items-center gap-2" href="/" onClick={handleMobileMenu}>
+                            <img
+                                src={logoSrc}
+                                alt="Oficina de Integridad Pública"
+                                style={{ maxHeight: "55px", maxWidth: "160px", width: "auto", height: "auto", objectFit: "contain" }}
+                            />
                         </Link>
-                        <div className={`burger-icon burger-icon-white border rounded-circle ${isMobileMenu ? "burger-close" : ""}`} onClick={handleMobileMenu}>
+                        <div
+                            className={`burger-icon burger-icon-white border rounded-circle ${isMobileMenu ? "burger-close" : ""}`}
+                            onClick={handleMobileMenu}
+                            style={{ cursor: "pointer" }}
+                        >
                             <span className="burger-icon-top" />
                             <span className="burger-icon-mid" />
                             <span className="burger-icon-bottom" />
                         </div>
                     </div>
-                    <div className="mobile-header-content-area">
+
+                    {/* Menú de navegación dinámico */}
+                    <div className="mobile-header-content-area flex-grow-1 overflow-auto">
                         <div className="perfect-scroll">
-                            <div className="mobile-menu-wrap mobile-header-border">
+                            <div className="mobile-menu-wrap mobile-header-border p-3">
                                 <nav>
-                                    <ul className="mobile-menu ps-0">
-                                        <li>
-                                            <Link href="/">Homepages</Link>
-                                        </li>
-                                        <li>
-                                            <Link href="/about">About Us</Link>
-                                        </li>
-                                        <li>
-                                            <Link href="/our-blog">Blog</Link>
-                                        </li>
-                                        <li className="has-children">
-                                            <span className="menu-expand" onClick={() => handleAccordion(1)}>
-                                                <i className="arrow-small-down" />
-                                            </span>
-                                            <Link href="#">Pages</Link>
-                                            <ul className="sub-menu" style={{ display: `${isAccordion == 1 ? "block" : "none"}` }}>
-                                                <li>
-                                                    <Link href="/services">Services</Link>
+                                    <ul className="mobile-menu ps-0 list-unstyled mb-0">
+
+                                        {menuItems.map((item: any) => {
+                                            const hasSub = item.subItems && item.subItems.length > 0;
+                                            const itemUrl = formatNavUrl(item);
+                                            const isOpen = openSubmenu === item.id;
+
+                                            if (hasSub) {
+                                                return (
+                                                    <li key={item.id} className="has-children border-bottom py-2">
+                                                        <div className="d-flex align-items-center justify-content-between">
+                                                            <Link
+                                                                href={itemUrl}
+                                                                className="fw-semibold text-dark text-uppercase fs-6 flex-grow-1"
+                                                                onClick={handleMobileMenu}
+                                                            >
+                                                                {item.title}
+                                                            </Link>
+                                                            <span
+                                                                className="menu-expand d-flex align-items-center justify-content-center p-2"
+                                                                style={{ cursor: "pointer", borderRadius: "6px" }}
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    handleAccordion(item.id);
+                                                                }}
+                                                            >
+                                                                <i className={`bi ${isOpen ? "bi-chevron-up" : "bi-chevron-down"} fs-6`} />
+                                                            </span>
+                                                        </div>
+                                                        <ul
+                                                            className="sub-menu list-unstyled ps-3 mt-2 border-start border-2 border-primary"
+                                                            style={{ display: isOpen ? "block" : "none" }}
+                                                        >
+                                                            {item.subItems.map((sub: any) => (
+                                                                <li key={sub.id} className="py-2">
+                                                                    <Link
+                                                                        href={formatNavUrl(sub, item)}
+                                                                        className="text-secondary text-capitalize fs-6 d-block"
+                                                                        onClick={handleMobileMenu}
+                                                                    >
+                                                                        {sub.title}
+                                                                    </Link>
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    </li>
+                                                );
+                                            }
+
+                                            return (
+                                                <li key={item.id} className="border-bottom py-2">
+                                                    <Link
+                                                        href={itemUrl}
+                                                        className="fw-semibold text-dark text-uppercase fs-6 d-block"
+                                                        onClick={handleMobileMenu}
+                                                    >
+                                                        {item.title}
+                                                    </Link>
                                                 </li>
-                                                <li>
-                                                    <Link href="/projects">projects</Link>
-                                                </li>
-                                                <li>
-                                                    <Link href="/pricing-plan">pricing</Link>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <Link href="/contact">Contact</Link>
-                                        </li>
+                                            );
+                                        })}
                                     </ul>
                                 </nav>
                             </div>
                         </div>
                     </div>
-                    <div className="tgmobile__menu-bottom mt-auto">
+
+                    {/* Footer del drawer: Info institucional de Legislatura CABA */}
+                    <div className="tgmobile__menu-bottom mt-auto p-3 border-top bg-light">
                         <div className="contact-info">
-                            <ul className="list-wrap">
-                                <li>
-                                    <span className="opacity-50">Mail:</span> <Link href="/mailto:info@valom.com">info@astrax.com</Link>
+                            <ul className="list-unstyled mb-0 small text-muted">
+                                <li className="mb-2 d-flex align-items-center gap-2">
+                                    <i className="bi bi-geo-alt text-primary"></i>
+                                    <span>Perú 160, CABA</span>
                                 </li>
-                                <li>
-                                    <span className="opacity-50">Phone:</span> <Link href="/tel:0123456789">+123 888 9999</Link>
+                                <li className="d-flex align-items-center gap-2">
+                                    <i className="bi bi-telephone text-primary"></i>
+                                    <span>(011) 4338-3000</span>
                                 </li>
                             </ul>
                         </div>
-                        <div className="social-links">
-                            <div className="social-icons gap-4 mt-4">
-                                <Link href="#" className="border border-opacity-10 border-white icon-shape icon-md">
+                        <div className="social-links mt-3">
+                            <div className="d-flex gap-2">
+                                <Link
+                                    href="https://www.facebook.com/LegisCABA"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center"
+                                    style={{ width: "34px", height: "34px" }}
+                                >
                                     <i className="bi bi-facebook" />
                                 </Link>
-                                <Link href="#" className="border border-opacity-10 border-white icon-shape icon-md">
+                                <Link
+                                    href="https://twitter.com/LegisCABA"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center"
+                                    style={{ width: "34px", height: "34px" }}
+                                >
                                     <i className="bi bi-twitter-x" />
                                 </Link>
-                                <Link href="#" className="border border-opacity-10 border-white icon-shape icon-md">
-                                    <i className="bi bi-linkedin" />
+                                <Link
+                                    href="https://www.instagram.com/legiscaba/"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center"
+                                    style={{ width: "34px", height: "34px" }}
+                                >
+                                    <i className="bi bi-instagram" />
                                 </Link>
-                                <Link href="#" className="border border-opacity-10 border-white icon-shape icon-md">
-                                    <i className="bi bi-behance" />
+                                <Link
+                                    href="https://www.youtube.com/c/LegisCABA"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center"
+                                    style={{ width: "34px", height: "34px" }}
+                                >
+                                    <i className="bi bi-youtube" />
                                 </Link>
                             </div>
                         </div>

@@ -32,6 +32,18 @@ function buildImageUrl(images: any[]): string | null {
     return `${IMAGES_BASE}/${img.location}/${img.filename}${FILESERVER_KEY ? `?key=${FILESERVER_KEY}` : ""}`;
 }
 
+/**
+ * Devuelve un fontSize clamp() responsivo según la longitud del título.
+ * ≤60 chars  → grande  (hasta 2.8rem)
+ * 61-100     → mediano (hasta 2.1rem)
+ * >100       → chico   (hasta 1.6rem)
+ */
+function getTitleFontSize(titleLen: number): string {
+    if (titleLen > 100) return "clamp(1.1rem, 2vw, 1.6rem)";
+    if (titleLen > 60)  return "clamp(1.4rem, 2.6vw, 2.1rem)";
+    return "clamp(1.8rem, 3.5vw, 2.8rem)";
+}
+
 export default function SliderInformes({ posts = [] }: { posts: any[] }) {
     if (!posts || posts.length === 0) return null;
 
@@ -46,7 +58,8 @@ export default function SliderInformes({ posts = [] }: { posts: any[] }) {
                     const title = post.titulo || post.title || post.textos?.title || post.textos?.titulo || "";
                     const subtitle = post.subtitle || post.textos?.subtitle || post.tipo || "INFORMACIÓN DESTACADA";
                     const shortdesc = post.shortdesc || post.copete || post.textos?.shortdesc || post.textos?.subtitle || "";
-                    const linkUrl = post.url ? (post.url.startsWith("http") || post.url.startsWith("/") ? post.url : `/${post.url}`) : `/informes/${post.id || ""}`;
+                    const linkUrl = `/novedades/${post.id}`;
+                    const titleFontSize = getTitleFontSize(title.length);
 
                     return (
                         <SwiperSlide key={post.id || idx} className="h-100">
@@ -57,9 +70,9 @@ export default function SliderInformes({ posts = [] }: { posts: any[] }) {
                                         className="position-absolute top-0 start-0 w-100 h-100"
                                         style={{
                                             backgroundImage: `url(${imgUrl})`,
-                                            backgroundSize: 'contain',
+                                            backgroundSize: "contain",
                                             backgroundPosition: "center",
-                                            backgroundRepeat: 'no-repeat',
+                                            backgroundRepeat: "no-repeat",
                                             zIndex: 0,
                                         }}
                                     />
@@ -73,7 +86,7 @@ export default function SliderInformes({ posts = [] }: { posts: any[] }) {
                                     />
                                 )}
 
-                                {/* Overlay gradient oscuro para contraste de textos */}
+                                {/* Overlay oscuro para contraste de textos */}
                                 <div
                                     className="position-absolute top-0 start-0 w-100 h-100"
                                     style={{
@@ -90,10 +103,10 @@ export default function SliderInformes({ posts = [] }: { posts: any[] }) {
                                                 <h1
                                                     className="text-white text-uppercase mb-2 fw-bold"
                                                     style={{
-                                                        fontSize: "clamp(1.8rem, 3.5vw, 2.8rem)",
+                                                        fontSize: titleFontSize,
                                                         lineHeight: 1.15,
                                                         letterSpacing: "0.5px",
-                                                        textShadow: "0 2px 10px rgba(0,0,0,0.7)"
+                                                        textShadow: "0 2px 10px rgba(0,0,0,0.7)",
                                                     }}
                                                 >
                                                     {title}
@@ -107,7 +120,7 @@ export default function SliderInformes({ posts = [] }: { posts: any[] }) {
                                                         fontSize: "0.95rem",
                                                         letterSpacing: "1.5px",
                                                         opacity: 0.9,
-                                                        textShadow: "0 1px 4px rgba(0,0,0,0.7)"
+                                                        textShadow: "0 1px 4px rgba(0,0,0,0.7)",
                                                     }}
                                                 >
                                                     {subtitle}
@@ -122,7 +135,7 @@ export default function SliderInformes({ posts = [] }: { posts: any[] }) {
                                                         lineHeight: 1.4,
                                                         maxWidth: "600px",
                                                         opacity: 0.95,
-                                                        textShadow: "0 1px 4px rgba(0,0,0,0.7)"
+                                                        textShadow: "0 1px 4px rgba(0,0,0,0.7)",
                                                     }}
                                                 >
                                                     {shortdesc}
@@ -139,7 +152,7 @@ export default function SliderInformes({ posts = [] }: { posts: any[] }) {
                                                         padding: "10px 28px",
                                                         borderRadius: "4px",
                                                         fontSize: "0.85rem",
-                                                        letterSpacing: "0.8px"
+                                                        letterSpacing: "0.8px",
                                                     }}
                                                 >
                                                     CONOCÉ MÁS
@@ -161,7 +174,7 @@ export default function SliderInformes({ posts = [] }: { posts: any[] }) {
                         width: "50px",
                         height: "50px",
                         backgroundColor: "rgba(0,0,0,0.3)",
-                        backdropFilter: "blur(2px)"
+                        backdropFilter: "blur(2px)",
                     }}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width={22} height={22} viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -177,7 +190,7 @@ export default function SliderInformes({ posts = [] }: { posts: any[] }) {
                         width: "50px",
                         height: "50px",
                         backgroundColor: "rgba(0,0,0,0.3)",
-                        backdropFilter: "blur(2px)"
+                        backdropFilter: "blur(2px)",
                     }}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width={22} height={22} viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">

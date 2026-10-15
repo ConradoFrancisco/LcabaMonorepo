@@ -17,13 +17,13 @@ export default async function Home() {
 	const logo = pageVw?.images?.find((img: any) => img.image_type === 'logo');
 
 	// Posts destacados de OIP (desa = 1 → se muestra en slider)
-	const sliderPostsData = await PageServices.getPosts('evidencias', true, 0, 10, true);
+	const sliderPostsData = await PageServices.getPosts('evidencias', true, 0, 10, true, true, null, 'true');
 	const sliderPosts = sliderPostsData?.data ?? sliderPostsData ?? [];
 
 
 	// Posts para post Section del Home
 
-	const postSectionData = await PageServices.getPosts('evidencias', false, 0, 3, true, true);
+	const postSectionData = await PageServices.getPosts('evidencias', false, 0, 3, true, true, null, 'true');
 	console.log(postSectionData)
 	const postSection = postSectionData?.data ?? postSectionData ?? [];
 

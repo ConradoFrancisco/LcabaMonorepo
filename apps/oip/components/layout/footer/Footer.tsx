@@ -13,7 +13,6 @@ export default function Footer({ menuItems = [], logo, pageVw }: { menuItems?: N
     const title = pageVw?.title || "Oficina de Integridad Pública";
     const address = pageVw?.shipping_info ? pageVw.shipping_info.replace(/<[^>]*>/g, '') : "Perú 160, Planta Principal Of. 17, C1067AAD Ciudad Autónoma de Buenos Aires, República Argentina 4338-3000 int.1195 / 7151";
     const footerMenuItems = (menuItems || []).filter((item: any) => isFlagOn(item.show_bottom));
-
     return (
         <footer>
 
@@ -39,11 +38,6 @@ export default function Footer({ menuItems = [], logo, pageVw }: { menuItems?: N
 
                         {/* Navigation Links */}
                         <ul className="list-unstyled d-flex flex-wrap align-items-center gap-4 mb-0 justify-content-center">
-                            <li>
-                                <Link href="/">
-                                    <span className="text-white opacity-75 hover-effect-1 fs-6">Inicio</span>
-                                </Link>
-                            </li>
                             {footerMenuItems.map((item, index) => (
                                 <li key={index}>
                                     <Link href={item.url || '#'}>

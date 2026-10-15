@@ -1,5 +1,18 @@
+html,
+body {
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
 * {
     --bs-primary-rgb: 121, 74, 255;
+}
+
+/* Botón ancho completo solo en mobile */
+@media (min-width: 576px) {
+    .w-sm-auto {
+        width: auto !important;
+    }
 }
 
 .data-analysis .custom-container {

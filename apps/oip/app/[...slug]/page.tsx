@@ -222,7 +222,7 @@ function PostsListTemplate({ section, posts, total, currentPage, totalPages, bas
                                                 <div className='position-relative overflow-hidden' style={{ height: '220px' }}>
                                                     <Link href={`/novedades/${post.id}`}>
                                                         {imageUrl ? (
-                                                            <img src={imageUrl} alt={postTitle} className='w-100 h-100 post-img' style={{ objectFit: 'cover' }} />
+                                                            <img src={imageUrl} alt={postTitle} className='w-100 h-100 post-img' style={{ objectFit: 'contain' }} />
                                                         ) : (
                                                             <div className='w-100 h-100 d-flex align-items-center justify-content-center bg-light'>
                                                                 <i className='bi bi-file-earmark-text text-muted' style={{ fontSize: '3rem' }}></i>

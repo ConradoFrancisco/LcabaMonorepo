@@ -22,9 +22,14 @@ export default function PostSection({ posts, logo }: { posts: any[], logo?: any 
                 }
             `}</style>
             <div className="container">
-                <div className="row mb-5">
+                <div className="row mb-4 mb-md-5">
                     <div className="col-12 text-center">
-                        <h2 className="text-anime-style-2">Últimas Novedades</h2>
+                        <h2
+                            className="text-anime-style-2 fw-bold"
+                            style={{ fontSize: 'clamp(1.75rem, 5vw, 2.75rem)', lineHeight: 1.25 }}
+                        >
+                            Últimas Novedades
+                        </h2>
                     </div>
                 </div>
                 <div className="row g-4">
@@ -54,7 +59,12 @@ export default function PostSection({ posts, logo }: { posts: any[], logo?: any 
                                     </div>
                                     <div className="card-body p-4 d-flex flex-column">
                                         <Link href={`/novedades/${post.id}`} className="text-decoration-none">
-                                            <h5 className="card-title fw-bold text-dark mb-3 link">{post.titulo}</h5>
+                                            <h5
+                                                className="card-title fw-bold text-dark mb-3 link"
+                                                style={{ fontSize: 'clamp(1.05rem, 2.5vw, 1.25rem)', lineHeight: 1.4 }}
+                                            >
+                                                {post.titulo}
+                                            </h5>
                                         </Link>
 
                                         {post.description && (

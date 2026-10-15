@@ -33,17 +33,26 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu, menuIte
     return (
         <>
             <header>
-                <div className="position-absolute top-0 start-0 w-100">
-                    <nav className={`navbar navbar-expand-lg navbar-transparent-2 z-5 ${scroll ? "navbar-stick top-0 position-fixed w-100" : ""}`}>
-                        <div className="container mt-3 mb-3">
-                            {
-                                logo && (
-                                    <Link className="navbar-brand" href="/">
-                                        <img src={`${process.env.NEXT_PUBLIC_IMAGES}/${logo.location}/${logo.filename}?key=${process.env.NEXT_PUBLIC_FILESERVER_KEY}`} alt={logo?.alt} width={150} height={95} />
-                                    </Link>
-                                )
-                            }
-                            <div className="d-none d-lg-flex">
+                <div className="position-absolute top-0 start-0 w-100" style={{ zIndex: 1030 }}>
+                    <nav className={`navbar navbar-expand-lg navbar-transparent-2 ${scroll ? "navbar-stick top-0 position-fixed w-100" : ""}`} style={{ zIndex: 1030 }}>
+                        <div className="container mt-2 mb-2 d-flex align-items-center justify-content-between">
+                            {/* Logo Principal (OIP) */}
+                            {logo ? (
+                                <Link className="navbar-brand d-flex align-items-center me-0" href="/">
+                                    <img
+                                        src={`${process.env.NEXT_PUBLIC_IMAGES}/${logo.location}/${logo.filename}?key=${process.env.NEXT_PUBLIC_FILESERVER_KEY}`}
+                                        alt={logo?.alt || "OIP"}
+                                        style={{ maxHeight: "65px", width: "auto", objectFit: "contain" }}
+                                    />
+                                </Link>
+                            ) : (
+                                <Link className="navbar-brand me-0" href="/">
+                                    <img src="/assets/logo.png" alt="OIP" style={{ maxHeight: "60px", width: "auto" }} />
+                                </Link>
+                            )}
+
+                            {/* Navegación Desktop */}
+                            <div className="d-none d-lg-flex flex-grow-1">
                                 <ul className="navbar-nav mx-auto gap-4 align-items-lg-center">
                                     {headerMenuItems.map((item: any) => {
                                         const hasSubItems =
@@ -93,9 +102,21 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu, menuIte
                                     })}
                                 </ul>
                             </div>
-                            <div className="d-flex align-items-center gap-4">
-                                <img src="https://www.legislatura.gob.ar/_pagedata/page/images/6lf3r7imj7_1664903744.8227.png" alt="" width={230} />
-                                <div className="burger-icon burger-icon-white border rounded-3 top-0 end-0" onClick={handleMobileMenu}>
+
+                            {/* Lado Derecho: Logo Legislatura (solo en desktop/tablet) y Botón Hamburguesa */}
+                            <div className="d-flex align-items-center gap-3">
+                                <img
+                                    src="https://www.legislatura.gob.ar/_pagedata/page/images/6lf3r7imj7_1664903744.8227.png"
+                                    alt="Legislatura CABA"
+                                    className="d-none d-md-block"
+                                    style={{ maxHeight: "55px", width: "auto" }}
+                                />
+                                <div
+                                    className="burger-icon burger-icon-white border rounded-3 p-2 d-lg-none"
+                                    onClick={handleMobileMenu}
+                                    style={{ cursor: "pointer" }}
+                                    title="Abrir menú"
+                                >
                                     <span className="burger-icon-top" />
                                     <span className="burger-icon-mid" />
                                     <span className="burger-icon-bottom" />
@@ -103,7 +124,12 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu, menuIte
                             </div>
                         </div>
                     </nav>
-                    <MobileMenu isMobileMenu={isMobileMenu} handleMobileMenu={handleMobileMenu} />
+                    <MobileMenu
+                        isMobileMenu={isMobileMenu}
+                        handleMobileMenu={handleMobileMenu}
+                        menuItems={headerMenuItems}
+                        logo={logo}
+                    />
                 </div>
             </header>
         </>

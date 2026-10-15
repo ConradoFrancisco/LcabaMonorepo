@@ -17,7 +17,7 @@ export default function PageInfoSection({ pageVw, logo }: { pageVw: any, logo: a
                         </div>
                         <div className="col-lg-9 ps-lg-5 mt-lg-0 mt-md-8 mt-5">
                             {pageVw.textos?.title && (
-                                <h2 className="text-anime-style-1">
+                                <h2 style={{ fontSize: 'clamp(1.75rem, 5vw, 2.75rem)' }} className="text-anime-style-1">
                                     {pageVw.textos?.title}
                                 </h2>
                             )}
