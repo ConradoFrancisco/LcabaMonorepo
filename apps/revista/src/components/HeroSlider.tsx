@@ -4,7 +4,12 @@ import { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules";
 import Link from "next/link";
-import { getCategoryColor, buildImageUrl, resolvePostCategory } from "../utils/categoryColors";
+import {
+  getCategoryColor,
+  buildImageUrl,
+  resolvePostCategory,
+  getPostCategoryColor,
+} from "../utils/categoryColors";
 import FallbackImage from "./FallbackImage";
 
 interface HeroSliderProps {
@@ -52,7 +57,6 @@ export default function HeroSlider({ posts = [], categoryColorMap = {} }: HeroSl
       </section>
     );
   }
-  console.log(posts)
   return (
     <section className="revista-hero-slider py-4">
       <div className="container-fluid position-relative">
@@ -79,7 +83,7 @@ export default function HeroSlider({ posts = [], categoryColorMap = {} }: HeroSl
             const imgUrl = buildImageUrl(post.images || []);
             const title = post.titulo || post.title || "";
             const category = resolvePostCategory(post);
-            const categoryBg = categoryColorMap[category?.toLowerCase()] || getCategoryColor(category);
+            const categoryBg = getPostCategoryColor(post, categoryColorMap);
             const postUrl = `/publicaciones/${post.id}`;
 
             return (

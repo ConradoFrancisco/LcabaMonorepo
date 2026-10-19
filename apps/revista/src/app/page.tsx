@@ -5,6 +5,7 @@ import IssueSelector from "../components/IssueSelector";
 import EnAccionGallery from "../components/EnAccionGallery";
 import Footer from "../components/Footer";
 import { PageServices } from "@lcaba/services";
+import { buildCategoryColorMap } from "../utils/categoryColors";
 
 // Helper para verificar si el status es 1 (soporta Buffer o número/boolean)
 function isStatusActive(status: any): boolean {
@@ -126,8 +127,19 @@ async function getGridPosts(issueNumber: number | string, limit = 12, offset = 0
 //Traer listado de EN ACCION
 async function getEnAccion(issueNumber: number | string, limit = 1, offset = 0) {
   try {
-    const { data: posts } = await PageServices.getPosts("magazine", false, offset, limit, true, true, 95, "1", false, issueNumber);
-
+    const res = await PageServices.getPosts(
+      "magazine",
+      false,
+      offset,
+      limit,
+      true,
+      true,
+      95,
+      "1",
+      false,
+      issueNumber
+    );
+    const posts = Array.isArray(res) ? res : (res?.data || []);
     return posts;
   } catch (e) {
     console.error("Error fetching en accion posts:", e);
@@ -164,7 +176,15 @@ export default async function HomePage({ searchParams }: PageProps) {
     getEnAccion(currentIssueNumber, 1, 0),
   ]);
 
-  const enAccionPost = Array.isArray(enAccionPosts) ? enAccionPosts[0] : enAccionPosts;
+  const enAccionPost = Array.isArray(enAccionPosts)
+    ? enAccionPosts[0]
+    : enAccionPosts?.id
+    ? enAccionPosts
+    : null;
+
+  const hasSlider = Array.isArray(sliderPosts) && sliderPosts.length > 0;
+  const hasGrid = Array.isArray(gridPosts) && gridPosts.length > 0;
+  const hasEnAccion = Boolean(enAccionPost && (enAccionPost.id || enAccionPost.textos));
 
   // Logo
   const logo = pageVw?.images?.find((img: any) => img.image_type === "logo");
@@ -175,20 +195,8 @@ export default async function HomePage({ searchParams }: PageProps) {
       ? `${baseImg}/${logo.location}${logo.filename}${fileKey ? `?key=${fileKey}` : ""}`
       : "";
 
-  // Construir mapa de colores desde el menú dinámico
-  const categoryColorMap: Record<string, string> = {};
-  menuItems.forEach((item: any) => {
-    if (item.menu_title && item.color) {
-      categoryColorMap[item.menu_title.trim().toLowerCase()] = item.color;
-    }
-    if (Array.isArray(item.submenus)) {
-      item.submenus.forEach((sub: any) => {
-        if (sub.submenu_title && sub.color) {
-          categoryColorMap[sub.submenu_title.trim().toLowerCase()] = sub.color;
-        }
-      });
-    }
-  });
+  // Construir mapa de colores desde el menú dinámico con herencia de color padre
+  const categoryColorMap = buildCategoryColorMap(menuItems);
 
   return (
     <>
@@ -197,17 +205,17 @@ export default async function HomePage({ searchParams }: PageProps) {
 
       <main className="py-4">
         {/* Slider Superior de Destacados del Issue Actual */}
-        {sliderPosts.length > 0 && (
-          <HeroSlider posts={sliderPosts} categoryColorMap={categoryColorMap} />
+        {hasSlider && (
+          <>
+            <HeroSlider posts={sliderPosts} categoryColorMap={categoryColorMap} />
+            <div className="container my-3">
+              <hr className="opacity-10" />
+            </div>
+          </>
         )}
 
-        {/* Separador sutil */}
-        <div className="container my-3">
-          <hr className="opacity-10" />
-        </div>
-
         {/* Grilla de Artículos del Issue Actual */}
-        <div className="">
+        {hasGrid && (
           <section className="container py-2">
             <div className="row g-4">
               {gridPosts.map((post: any) => (
@@ -218,24 +226,33 @@ export default async function HomePage({ searchParams }: PageProps) {
                 />
               ))}
             </div>
-
-
-            {gridPosts.length === 0 && (
-              <>
-                <div className="text-center py-5 text-muted">
-                  No hay publicaciones disponibles para esta edición.
-                </div>
-                <hr />
-              </>
-            )}
           </section>
-          <hr />
-        </div>
+        )}
+
+        {/* Separador entre Grilla y En Acción si ambos existen */}
+        {hasGrid && hasEnAccion && <hr />}
+
         {/* Carrusel de Galería En Acción */}
-        {enAccionPost && <EnAccionGallery post={enAccionPost} />}
+        {hasEnAccion && <EnAccionGallery post={enAccionPost} />}
+
+        {/* Banner institucional */}
         <hr />
-        <h2 className="text-center">LA REVISTA LA HACEMOS ENTRE TODOS</h2>
+        <h2
+          className="text-center"
+          style={{
+            fontFamily: "var(--font-franklin, 'Libre Franklin', sans-serif)",
+            fontWeight: 800,
+            fontSize: "1.5rem",
+            letterSpacing: "0.05em",
+            textTransform: "uppercase",
+            color: "#1e293b",
+            margin: "24px 0",
+          }}
+        >
+          LA REVISTA LA HACEMOS ENTRE TODOS
+        </h2>
         <hr />
+
         {/* Carrusel de Otras Ediciones */}
         {activeIssues.length > 0 && (
           <IssueSelector

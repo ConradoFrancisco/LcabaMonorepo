@@ -1,5 +1,10 @@
 import Link from "next/link";
-import { getCategoryColor, buildImageUrl, resolvePostCategory } from "../utils/categoryColors";
+import {
+  getCategoryColor,
+  buildImageUrl,
+  resolvePostCategory,
+  getPostCategoryColor,
+} from "../utils/categoryColors";
 import FallbackImage from "./FallbackImage";
 
 interface ArticleCardProps {
@@ -12,7 +17,7 @@ export default function ArticleCard({ post, categoryColorMap = {} }: ArticleCard
   const title = post.titulo || post.title || "";
   const desc = post.copete || post.shortdesc || "";
   const category = resolvePostCategory(post);
-  const categoryBg = categoryColorMap[category?.toLowerCase()] || getCategoryColor(category);
+  const categoryBg = getPostCategoryColor(post, categoryColorMap);
   const postUrl = `/publicaciones/${post.id}`;
 
   return (

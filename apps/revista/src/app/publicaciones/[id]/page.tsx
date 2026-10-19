@@ -5,6 +5,7 @@ import Header from "../../../components/Header";
 import ArticleGallery from "./ArticleGallery";
 import { getCategoryColor, resolvePostCategory } from "../../../utils/categoryColors";
 import Footer from "../../../components/Footer";
+import ParlamentariaIndividualAccordions from "../../../components/ParlamentariaAccordion";
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 
@@ -115,10 +116,14 @@ function getMenuCategoryColor(
 
 export default async function ArticlePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ preview?: string }>;
 }) {
   const { id } = await params;
+  const resolvedSearchParams = await searchParams;
+  const isPreview = resolvedSearchParams?.preview === 'true';
 
   const [post, menuItems, pageVw] = await Promise.all([
     PageServices.getPostById(Number(id), "magazine"),
@@ -137,6 +142,10 @@ export default async function ArticlePage({
   const category: string = resolvePostCategory(post) || seteos?.cat_name || seteos?.categoria || "";
   const categoryId = seteos?.idsubcategories || seteos?.cat_id || seteos?.category_id || post?.cat_id || post?.category_id;
   const proyectos: any[] = infoParlamentaria?.proyectos || [];
+  const comisiones: any[] = infoParlamentaria?.comisiones || [];
+  const legisladores: any[] = infoParlamentaria?.legisladores || infoParlamentaria?.diputados || [];
+  const sesiones: any[] = infoParlamentaria?.sesiones || [];
+  const audiencias: any[] = infoParlamentaria?.audiencias || [];
 
   // Logo
   const logo = pageVw?.images?.find((img: any) => img.image_type === "logo");
@@ -161,7 +170,31 @@ export default async function ArticlePage({
 
   return (
     <>
-      <Header menuItems={menuItems} logo={logoUrl} />
+      {!isPreview && <Header menuItems={menuItems} logo={logoUrl} />}
+
+      {/* Preview mode floating banner */}
+      {isPreview && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 9999,
+            backgroundColor: 'rgba(245, 158, 11, 0.95)',
+            color: '#fff',
+            textAlign: 'center',
+            padding: '6px 16px',
+            fontSize: '0.75rem',
+            fontWeight: 700,
+            letterSpacing: '0.05em',
+            textTransform: 'uppercase' as const,
+            backdropFilter: 'blur(8px)',
+          }}
+        >
+          ⚠ Modo Vista Previa — esta vista no es pública
+        </div>
+      )}
 
       <main style={{ backgroundColor: "#fff", minHeight: "100vh" }}>
         {/* Hero breadcrumb band */}
@@ -469,129 +502,14 @@ export default async function ArticlePage({
                 </div>
               )}
 
-              {/* Expedientes Relacionados */}
-              {proyectos.length > 0 && (
-                <div className="mt-5">
-                  <h5
-                    style={{
-                      fontWeight: 800,
-                      textTransform: "uppercase",
-                      letterSpacing: "0.05em",
-                      fontSize: "0.85rem",
-                      color: categoryColor,
-                      marginBottom: "16px",
-                      borderBottom: `2px solid ${categoryColor}`,
-                      paddingBottom: "6px",
-                    }}
-                  >
-                    🏛️ Expedientes Relacionados
-                  </h5>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-                    {proyectos.map((proyecto: any, i: number) => {
-                      const det = proyecto.detalleExpediente || proyecto;
-                      const expNro = det?.nro_de_expediente || proyecto.expediente_id || `Expediente ${i + 1}`;
-                      const sumario = det?.sumario || "";
-                      const autor = det?.autor_des || "";
-                      const tipo = det?.proyecto_tipo_des || "";
-                      const fechaInicio = det?.fch_inicio ? formatDate(det.fch_inicio) : "";
-                      const urlDoc = det?.urlDoc;
-
-                      return (
-                        <div
-                          key={proyecto.id || i}
-                          style={{
-                            backgroundColor: "#f8fafc",
-                            borderRadius: "12px",
-                            padding: "16px 20px",
-                            border: "1px solid #e2e8f0",
-                            borderLeft: `4px solid ${categoryColor}`,
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "8px",
-                          }}
-                        >
-                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "8px" }}>
-                            <span
-                              style={{
-                                fontWeight: 800,
-                                fontSize: "0.95rem",
-                                color: "#1e293b",
-                              }}
-                            >
-                              Expediente: {expNro}
-                            </span>
-                            {tipo && (
-                              <span
-                                style={{
-                                  fontSize: "0.75rem",
-                                  fontWeight: 700,
-                                  textTransform: "uppercase",
-                                  backgroundColor: "#e2e8f0",
-                                  color: "#475569",
-                                  padding: "3px 10px",
-                                  borderRadius: "999px",
-                                }}
-                              >
-                                {tipo}
-                              </span>
-                            )}
-                          </div>
-
-                          {sumario && (
-                            <p
-                              style={{
-                                margin: 0,
-                                fontSize: "0.9rem",
-                                color: "#334155",
-                                lineHeight: 1.6,
-                              }}
-                            >
-                              <strong style={{ color: "#1e293b" }}>Sumario: </strong>
-                              {sumario}
-                            </p>
-                          )}
-
-                          <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", fontSize: "0.82rem", color: "#64748b", marginTop: "4px" }}>
-                            {autor && (
-                              <span>
-                                <strong style={{ color: "#475569" }}>Autor/es: </strong>
-                                {autor}
-                              </span>
-                            )}
-                            {/*  {fechaInicio && (
-                              <span>
-                                <strong style={{ color: "#475569" }}>Fecha inicio: </strong>
-                                {fechaInicio}
-                              </span>
-                            )} */}
-                          </div>
-
-                          {/* {urlDoc && (
-                            <div style={{ marginTop: "6px" }}>
-                              <a
-                                href={urlDoc}
-                                target="_blank"
-                                rel="noreferrer"
-                                style={{
-                                  display: "inline-flex",
-                                  alignItems: "center",
-                                  gap: "6px",
-                                  fontSize: "0.85rem",
-                                  fontWeight: 600,
-                                  color: categoryColor,
-                                  textDecoration: "none",
-                                }}
-                              >
-                                📄 Ver Documento Oficial →
-                              </a>
-                            </div>
-                          )} */}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+              {/* Información Parlamentaria en Acordeones Individuales */}
+              <ParlamentariaIndividualAccordions
+                proyectos={proyectos}
+                comisiones={comisiones}
+                legisladores={legisladores}
+                sesiones={sesiones}
+                audiencias={audiencias}
+              />
             </div>
 
             {/* Sidebar */}
@@ -737,7 +655,7 @@ export default async function ArticlePage({
         </div>
       </main>
 
-      <Footer />
+      {!isPreview && <Footer />}
     </>
   );
 }
