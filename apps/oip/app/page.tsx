@@ -24,7 +24,7 @@ export default async function Home() {
 	// Posts para post Section del Home
 
 	const postSectionData = await PageServices.getPosts('evidencias', false, 0, 3, true, true, null, 'true');
-	console.log(postSectionData)
+
 	const postSection = postSectionData?.data ?? postSectionData ?? [];
 
 	return (

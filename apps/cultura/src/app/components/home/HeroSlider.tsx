@@ -31,6 +31,7 @@ function HeroBg({ urls, current }: { urls: string[]; current: boolean }) {
     <img
       ref={imgRef}
       src={src}
+      style={{ objectFit: "contain" }}
       alt=""
       aria-hidden="true"
       className={`cl-hero__bg ${current ? "is-current" : ""}`}

@@ -3,6 +3,7 @@ import HeroSlider from "../components/HeroSlider";
 import ArticleCard from "../components/ArticleCard";
 import IssueSelector from "../components/IssueSelector";
 import EnAccionGallery from "../components/EnAccionGallery";
+import AgendaCard from "../components/AgendaCard";
 import Footer from "../components/Footer";
 import { PageServices } from "@lcaba/services";
 import { buildCategoryColorMap } from "../utils/categoryColors";
@@ -146,6 +147,82 @@ async function getEnAccion(issueNumber: number | string, limit = 1, offset = 0) 
     return [];
   }
 }
+
+// Traer posts de AGENDA (categoría 105) — idéntico a SeccionPage
+// Sin filtro de issue (global), trae detalle por post y filtra solo eventos futuros
+async function getAgenda(limit = 8, offset = 0) {
+  try {
+    const res = await PageServices.getPosts(
+      "magazine",
+      false,
+      offset,
+      100,       // traer más para poder filtrar y quedarnos con los primeros `limit`
+      true,
+      false,
+      105,
+      "1",
+      false,
+      undefined, // sin filtro de issue
+      undefined,
+      undefined,
+      true       // upcomingOnly hint para la API
+    );
+    const posts = Array.isArray(res) ? res : (res?.data || []);
+    const activePosts = posts.filter((p: any) => {
+      const s = p.status;
+      if (s === 1 || s === "1" || s === true) return true;
+      if (s && typeof s === "object" && Array.isArray(s.data)) return s.data[0] === 1;
+      return false;
+    });
+
+    // Traer detalle completo de cada post (igual que SeccionPage)
+    const withDetail = await Promise.all(
+      activePosts.map(async (p: any) => {
+        try {
+          const detail = await PageServices.getPostById(p.id, "magazine_");
+          return { ...p, detail };
+        } catch {
+          return { ...p, detail: null };
+        }
+      })
+    );
+
+    // Filtrar eventos pasados (misma lógica que SeccionPage)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const upcoming = withDetail.filter((p: any) => {
+      const detail = p.detail || p;
+      const dias: any[] = detail?.dias || [];
+
+      if (dias.length > 0) {
+        return dias.some((dia: any) => {
+          if (dia.day && !dia.date) return true; // recurrente sin fecha → siempre mostrar
+          if (dia.date) {
+            const d = new Date(dia.date);
+            d.setHours(0, 0, 0, 0);
+            return d >= today;
+          }
+          return false;
+        });
+      }
+
+      const directDate = detail?.seteos?.date || detail?.date || p?.fecha_evento;
+      if (directDate) {
+        const d = new Date(directDate);
+        d.setHours(0, 0, 0, 0);
+        return d >= today;
+      }
+
+      return false;
+    });
+
+    return upcoming.slice(0, limit);
+  } catch (e) {
+    console.error("Error fetching agenda posts:", e);
+    return [];
+  }
+}
 interface PageProps {
   searchParams: Promise<{ edicion?: string }>;
 }
@@ -170,21 +247,23 @@ export default async function HomePage({ searchParams }: PageProps) {
     : (latestActiveIssue ? latestActiveIssue.id : 21);
 
   // 3. Traer los posts correspondientes al issue actual
-  const [sliderPosts, gridPosts, enAccionPosts] = await Promise.all([
+  const [sliderPosts, gridPosts, enAccionPosts, agendaPosts] = await Promise.all([
     getSliderPosts(currentIssueNumber),
     getGridPosts(currentIssueNumber, 12, 0),
     getEnAccion(currentIssueNumber, 1, 0),
+    getAgenda(8, 0),
   ]);
 
   const enAccionPost = Array.isArray(enAccionPosts)
     ? enAccionPosts[0]
     : enAccionPosts?.id
-    ? enAccionPosts
-    : null;
+      ? enAccionPosts
+      : null;
 
   const hasSlider = Array.isArray(sliderPosts) && sliderPosts.length > 0;
   const hasGrid = Array.isArray(gridPosts) && gridPosts.length > 0;
   const hasEnAccion = Boolean(enAccionPost && (enAccionPost.id || enAccionPost.textos));
+  const hasAgenda = Array.isArray(agendaPosts) && agendaPosts.length > 0;
 
   // Logo
   const logo = pageVw?.images?.find((img: any) => img.image_type === "logo");
@@ -235,6 +314,37 @@ export default async function HomePage({ searchParams }: PageProps) {
         {/* Carrusel de Galería En Acción */}
         {hasEnAccion && <EnAccionGallery post={enAccionPost} />}
 
+        {/* Sección Agenda */}
+        {hasAgenda && (
+          <>
+            <hr />
+            <section className="container py-4 text-center">
+              <h2
+                style={{
+                  fontFamily: "var(--font-franklin, 'Libre Franklin', sans-serif)",
+                  fontWeight: 800,
+                  fontSize: "1.8rem",
+                  letterSpacing: "0.05em",
+                  textTransform: "uppercase",
+                  color: "#1e293b",
+                  marginBottom: "24px",
+                }}
+              >
+                Agenda
+              </h2>
+              <div className="row g-4">
+                {agendaPosts.map((post: any) => (
+                  <AgendaCard
+                    key={post.id}
+                    post={post}
+                    categoryColor={categoryColorMap[String(post?.seteos?.idsubcategories || post?.seteos?.cat_id || 105)] || "#1e293b"}
+                  />
+                ))}
+              </div>
+            </section>
+          </>
+        )}
+
         {/* Banner institucional */}
         <hr />
         <h2
@@ -242,7 +352,7 @@ export default async function HomePage({ searchParams }: PageProps) {
           style={{
             fontFamily: "var(--font-franklin, 'Libre Franklin', sans-serif)",
             fontWeight: 800,
-            fontSize: "1.5rem",
+            fontSize: "1.8rem",
             letterSpacing: "0.05em",
             textTransform: "uppercase",
             color: "#1e293b",

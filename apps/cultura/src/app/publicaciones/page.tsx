@@ -1,5 +1,3 @@
-import Layout from "@lcaba/ui/astrax/components/layout/Layout";
-import { PageServices } from "@lcaba/services";
 import Link from "next/link";
 import { getPosts } from "../page";
 import { Paginator } from "./components/Paginator";
@@ -30,21 +28,6 @@ function formatDate(dateStr?: string): string {
 }
 
 // ── data fetchers ─────────────────────────────────────────────────────────────
-
-async function getSocials() {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/general/pages/3/socials`,
-      { next: { revalidate: 60 } }
-    );
-    const data = await res.json();
-    if (Array.isArray(data)) return data;
-    if (data.value && Array.isArray(data.value)) return data.value;
-    return [];
-  } catch {
-    return [];
-  }
-}
 
 // ── sub-components ────────────────────────────────────────────────────────────
 
@@ -158,20 +141,12 @@ export default async function PublicacionesPage({
   const { page: pageParam, search, fechaDesde, fechaHasta } = await searchParams;
   const currentPage = Math.max(1, parseInt(pageParam || "1", 10));
 
-  const [menuItems, socials, { posts, total }] = await Promise.all([
-    PageServices.getNavMenu(),
-    getSocials(),
-    getPosts(LIMIT, (currentPage - 1) * LIMIT, true, { search, fechaDesde, fechaHasta })
-  ]);
+  const { posts, total } = await getPosts(LIMIT, (currentPage - 1) * LIMIT, true, { search, fechaDesde, fechaHasta });
 
   const totalPages = Math.ceil(total / LIMIT) || 1;
 
   return (
-    <Layout
-      menuItems={menuItems}
-      socials={socials}
-      breadcrumbTitle="Publicaciones"
-    >
+    <>
       <section className="py-80">
         <div className="container">
           {/* Encabezado */}
@@ -219,6 +194,6 @@ export default async function PublicacionesPage({
           </p>
         </div>
       </section>
-    </Layout>
+    </>
   );
 }

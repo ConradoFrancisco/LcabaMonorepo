@@ -133,7 +133,7 @@ export default function SiteHeader({
           </nav>
 
           <div className="cl-header__actions">
-            <Link href="/publicaciones" className="cl-btn cl-btn--crimson cl-header__cta">
+            <Link href="/agenda" className="cl-btn cl-btn--crimson cl-header__cta">
               <Icon name="event" size={16} filled />
               <span>Ver Agenda</span>
             </Link>
@@ -201,7 +201,7 @@ export default function SiteHeader({
               })}
             </ul>
             <Link
-              href="/publicaciones"
+              href="/agenda"
               className="cl-btn cl-btn--crimson cl-mobile__cta"
               onClick={closeMobile}
             >

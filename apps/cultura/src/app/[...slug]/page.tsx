@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Layout from "@lcaba/ui/astrax/components/layout/Layout";
 import NewsSection from "@lcaba/ui/astrax/components/sections/home/NewsSection";
 import ImageGallery from "../publicaciones/[id]/ImageGallery";
 import { PageServices } from "@lcaba/services";
@@ -9,39 +8,11 @@ const PAGE_ID = 3;
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 
-function formatDate(dateStr?: string): string {
-  if (!dateStr) return "";
-  try {
-    return new Date(dateStr).toLocaleDateString("es-AR", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
-  } catch {
-    return "";
-  }
-}
-
 function buildImageUrl(img: any): string | null {
   if (!img?.location || !img?.filename) return null;
   const base = process.env.NEXT_PUBLIC_IMAGES;
   const key = process.env.NEXT_PUBLIC_FILESERVER_KEY;
   return `${base}/${img.location}/${img.filename}${key ? `?key=${key}` : ""}`;
-}
-
-async function getSocials() {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/general/pages/${PAGE_ID}/socials`,
-      { next: { revalidate: 60 } },
-    );
-    const data = await res.json();
-    if (Array.isArray(data)) return data;
-    if (data.value && Array.isArray(data.value)) return data.value;
-    return [];
-  } catch {
-    return [];
-  }
 }
 
 // ── Templates ─────────────────────────────────────────────────────────────────
@@ -50,7 +21,7 @@ async function getSocials() {
  * Template para secciones de tipo categoría o publicaciones filtradas.
  * Muestra la lista de publicaciones con la descripción y galería si existen.
  */
-function PostsListTemplate({ section, posts, menuItems, socials }: any) {
+function PostsListTemplate({ section, posts }: any) {
   const title = section?.title || "";
   const subtitle = section?.subtitle || "";
   const description = section?.description || "";
@@ -59,7 +30,7 @@ function PostsListTemplate({ section, posts, menuItems, socials }: any) {
   const allImageUrls = images.map(buildImageUrl).filter(Boolean) as string[];
 
   return (
-    <Layout menuItems={menuItems} socials={socials} breadcrumbTitle={title}>
+    <>
       {/* Intro text / description if exists for this section */}
       {(subtitle || shortdesc || description || allImageUrls.length > 0) && (
         <section className="pt-5 pb-2">
@@ -97,7 +68,7 @@ function PostsListTemplate({ section, posts, menuItems, socials }: any) {
         posts={posts}
         title={posts.length > 0 ? "Publicaciones" : ""}
       />
-    </Layout>
+    </>
   );
 }
 
@@ -105,7 +76,7 @@ function PostsListTemplate({ section, posts, menuItems, socials }: any) {
  * Template para secciones estáticas: muestra copete, galería de imágenes,
  * cuerpo HTML y archivos adjuntos.
  */
-function StaticPageTemplate({ section, menuItems, socials }: any) {
+function StaticPageTemplate({ section }: any) {
   const title = section?.title || "";
   const description = section?.description || "";
   const shortdesc = section?.shortdesc || "";
@@ -116,7 +87,7 @@ function StaticPageTemplate({ section, menuItems, socials }: any) {
   const allImageUrls = images.map(buildImageUrl).filter(Boolean) as string[];
 
   return (
-    <Layout menuItems={menuItems} socials={socials} breadcrumbTitle={title}>
+    <>
       {/* Content */}
       <section className="py-80">
         <div className="container">
@@ -214,7 +185,7 @@ function StaticPageTemplate({ section, menuItems, socials }: any) {
           </div>
         </div>
       </section>
-    </Layout>
+    </>
   );
 }
 
@@ -228,11 +199,7 @@ export default async function DynamicSectionPage({
   const { slug } = await params;
   const slugStr = Array.isArray(slug) ? slug.join("/") : slug;
 
-  const [section, menuItems, socials] = await Promise.all([
-    PageServices.getSectionByUrl(slugStr, PAGE_ID),
-    PageServices.getNavMenu(PAGE_ID),
-    getSocials(),
-  ]);
+  const section = await PageServices.getSectionByUrl(slugStr, PAGE_ID);
 
   if (!section) notFound();
 
@@ -261,8 +228,6 @@ export default async function DynamicSectionPage({
       <PostsListTemplate
         section={section}
         posts={posts}
-        menuItems={menuItems}
-        socials={socials}
       />
     );
   }
@@ -270,8 +235,6 @@ export default async function DynamicSectionPage({
   return (
     <StaticPageTemplate
       section={section}
-      menuItems={menuItems}
-      socials={socials}
     />
   );
 }

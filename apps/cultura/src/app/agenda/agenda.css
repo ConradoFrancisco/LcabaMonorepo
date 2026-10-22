@@ -1,0 +1,546 @@
+/* =========================================================
+ * Agenda Calendar — Cultura LCABA
+ * =========================================================
+ * Vive bajo .cl-root, hereda sus tokens CSS.
+ * Sin Tailwind; puro CSS custom + un toque de Bootstrap utils.
+ * ========================================================= */
+
+/* ── Página wrapper ── */
+.cl-agenda {
+  padding: 48px 0 80px;
+}
+
+.cl-agenda__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.cl-agenda__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--cl-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cl-crimson);
+  margin-bottom: 12px;
+}
+
+.cl-agenda__eyebrow::before {
+  content: "";
+  display: block;
+  width: 28px;
+  height: 2px;
+  background: var(--cl-crimson);
+  border-radius: 1px;
+}
+
+.cl-agenda__title {
+  font-family: var(--cl-display);
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--cl-on-bg);
+}
+
+.cl-agenda__subtitle {
+  font-size: 15px;
+  color: var(--cl-on-variant);
+  margin-top: 6px;
+}
+
+/* ── Calendar nav ── */
+.cl-cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 12px;
+}
+
+.cl-cal-nav__month {
+  font-family: var(--cl-display);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--cl-on-bg);
+  text-align: center;
+  flex: 1;
+  text-transform: capitalize;
+}
+
+.cl-cal-nav__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--cl-surface-container);
+  border: 1px solid var(--cl-outline-variant);
+  color: var(--cl-on-bg);
+  cursor: pointer;
+  transition: background 0.18s, transform 0.15s;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.cl-cal-nav__btn:hover {
+  background: var(--cl-surface-container-high);
+  transform: scale(1.05);
+}
+
+.cl-cal-nav__today {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  background: var(--cl-crimson);
+  color: #fff;
+  font-family: var(--cl-display);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  transition: background 0.18s, transform 0.15s;
+}
+
+.cl-cal-nav__today:hover {
+  background: var(--cl-crimson-dark);
+  transform: scale(1.02);
+}
+
+/* ── Calendar grid ── */
+.cl-cal {
+  background: #fff;
+  border: 1px solid var(--cl-outline-variant);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* Weekday header row */
+.cl-cal__weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: var(--cl-inverse);
+}
+
+.cl-cal__wd {
+  padding: 10px 0;
+  text-align: center;
+  font-family: var(--cl-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.cl-cal__wd:first-child {
+  color: rgba(201, 0, 61, 0.85);
+}
+
+/* The event layer wrapper per week row */
+.cl-cal__rows {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Each week = a "band" */
+.cl-cal__week {
+  position: relative;
+  border-top: 1px solid var(--cl-outline-variant);
+  min-height: 100px;
+}
+
+/* Day cells inside a week — bottom layer */
+.cl-cal__days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  height: 100%;
+}
+
+.cl-cal__day {
+  position: relative;
+  min-height: 100px;
+  padding: 6px 8px 40px;
+  border-right: 1px solid var(--cl-outline-variant);
+  cursor: pointer;
+  transition: background 0.14s;
+}
+
+.cl-cal__day:last-child {
+  border-right: none;
+}
+
+.cl-cal__day:hover {
+  background: var(--cl-surface-container);
+}
+
+.cl-cal__day--today .cl-cal__day-num {
+  background: var(--cl-crimson);
+  color: #fff;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cl-cal__day--outside {
+  background: var(--cl-cream);
+}
+
+.cl-cal__day--outside .cl-cal__day-num {
+  color: var(--cl-outline);
+}
+
+.cl-cal__day--sun .cl-cal__day-num {
+  color: var(--cl-crimson);
+}
+
+.cl-cal__day-num {
+  font-family: var(--cl-display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cl-on-bg);
+  line-height: 1;
+  margin-bottom: 4px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Event bars layer (absolute, stacked above day cells) ── */
+.cl-cal__events-layer {
+  position: absolute;
+  top: 36px; /* below day numbers */
+  left: 0;
+  right: 0;
+  bottom: 4px;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 0 0 4px;
+}
+
+.cl-cal__event-row {
+  position: relative;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+/* Each event bar sits inside a row */
+.cl-cal__event {
+  position: absolute;
+  top: 0;
+  height: 22px;
+  border-radius: 4px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  cursor: pointer;
+  pointer-events: all;
+  transition: filter 0.15s, transform 0.15s;
+  z-index: 1;
+  white-space: nowrap;
+}
+
+.cl-cal__event:hover {
+  filter: brightness(0.9);
+  transform: scaleY(1.05);
+  z-index: 10;
+}
+
+.cl-cal__event-label {
+  font-family: var(--cl-display);
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+/* Start / end / middle / single caps */
+.cl-cal__event--start {
+  border-radius: 4px 0 0 4px;
+  margin-left: 4px;
+}
+
+.cl-cal__event--end {
+  border-radius: 0 4px 4px 0;
+  margin-right: 4px;
+}
+
+.cl-cal__event--middle {
+  border-radius: 0;
+  margin: 0;
+}
+
+.cl-cal__event--single {
+  border-radius: 4px;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+/* Color palette for events (rotates) */
+.cl-cal__event--c0 { background: var(--cl-crimson); }
+.cl-cal__event--c1 { background: var(--cl-tertiary); }
+.cl-cal__event--c2 { background: var(--cl-primary); }
+.cl-cal__event--c3 { background: #7b5ea7; }
+.cl-cal__event--c4 { background: #1976a8; }
+.cl-cal__event--c5 { background: #2e7d32; }
+
+/* +N more indicator inside a day cell */
+.cl-cal__more {
+  position: absolute;
+  bottom: 6px;
+  left: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  font-family: var(--cl-display);
+  color: var(--cl-on-variant);
+  background: var(--cl-surface-container-high);
+  border-radius: 3px;
+  padding: 1px 5px;
+  pointer-events: all;
+  cursor: pointer;
+}
+
+/* ── Legend ── */
+.cl-agenda__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+  align-items: center;
+}
+
+.cl-agenda__legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--cl-on-variant);
+}
+
+.cl-agenda__legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+/* ── Event Detail Panel (sidebar) ── */
+.cl-agenda__layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .cl-agenda__layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cl-agenda__detail {
+  position: sticky;
+  top: 90px;
+  background: #fff;
+  border: 1px solid var(--cl-outline-variant);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+}
+
+.cl-agenda__detail-head {
+  padding: 20px;
+  border-bottom: 1px solid var(--cl-outline-variant);
+}
+
+.cl-agenda__detail-title {
+  font-family: var(--cl-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--cl-on-bg);
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+
+.cl-agenda__detail-date {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--cl-on-variant);
+}
+
+.cl-agenda__detail-body {
+  padding: 16px 20px;
+}
+
+.cl-agenda__detail-desc {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--cl-on-variant);
+}
+
+.cl-agenda__detail-empty {
+  padding: 40px 24px;
+  text-align: center;
+  color: var(--cl-outline);
+}
+
+.cl-agenda__detail-empty-icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+  opacity: 0.4;
+}
+
+.cl-agenda__detail-empty p {
+  font-size: 13px;
+}
+
+.cl-agenda__detail-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.cl-agenda__detail-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+  padding: 10px 16px;
+  border-radius: 9999px;
+  background: var(--cl-crimson);
+  color: #fff;
+  font-family: var(--cl-display);
+  font-size: 13px;
+  font-weight: 600;
+  width: fit-content;
+  transition: background 0.18s;
+}
+
+.cl-agenda__detail-link:hover {
+  background: var(--cl-crimson-dark);
+  color: #fff;
+}
+
+/* Day events list (when clicking a day) */
+.cl-agenda__day-events {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cl-agenda__day-event-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.cl-agenda__day-event-item:hover {
+  background: var(--cl-surface-container);
+}
+
+.cl-agenda__day-event-item.is-selected {
+  background: var(--cl-surface-container-high);
+}
+
+.cl-agenda__day-event-stripe {
+  width: 4px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  align-self: stretch;
+  min-height: 36px;
+}
+
+.cl-agenda__day-event-name {
+  font-family: var(--cl-display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cl-on-bg);
+  line-height: 1.3;
+  margin-bottom: 3px;
+}
+
+.cl-agenda__day-event-range {
+  font-size: 11px;
+  color: var(--cl-on-variant);
+}
+
+/* ── Count badge on header ── */
+.cl-agenda__count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  background: var(--cl-surface-container-high);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--cl-display);
+  color: var(--cl-on-variant);
+}
+
+/* ── Mobile: stack day numbers more compact ── */
+@media (max-width: 640px) {
+  .cl-cal__day {
+    min-height: 64px;
+    padding: 6px 4px 28px;
+  }
+
+  .cl-cal__day-num {
+    font-size: 11px;
+  }
+
+  .cl-cal__event-label {
+    display: none;
+  }
+
+  .cl-cal__event {
+    height: 8px;
+    border-radius: 4px;
+    padding: 0;
+  }
+
+  .cl-cal__events-layer {
+    top: 28px;
+    gap: 2px;
+  }
+
+  .cl-cal__event-row {
+    height: 10px;
+  }
+}
