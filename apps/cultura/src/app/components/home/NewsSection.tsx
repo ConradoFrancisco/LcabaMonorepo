@@ -31,6 +31,9 @@ function CardMedia({ src }: { src: string | null }) {
   const [fit, setFit] = useState<"cover" | "contain">("cover");
   const [failed, setFailed] = useState(false);
 
+  const isFallback = !src || failed;
+  const currentSrc = isFallback ? "/logoCultura.png" : src;
+
   // La imagen puede terminar de cargar (o fallar) antes de la hidratación: onLoad/onError no se dispararían.
   const imgRef = useCallback((img: HTMLImageElement | null) => {
     if (!img?.complete) return;
@@ -38,17 +41,9 @@ function CardMedia({ src }: { src: string | null }) {
     else setFailed(true);
   }, []);
 
-  if (!src || failed) {
-    return (
-      <div className="cl-card__placeholder" aria-hidden="true">
-        <Icon name="image" size={40} />
-      </div>
-    );
-  }
-
   return (
     <>
-      {fit === "contain" && (
+      {!isFallback && fit === "contain" && (
         <div
           className="cl-card__media-bg"
           aria-hidden="true"
@@ -58,13 +53,20 @@ function CardMedia({ src }: { src: string | null }) {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         ref={imgRef}
-        src={src}
+        src={currentSrc}
         alt=""
         loading="lazy"
         decoding="async"
-        className={`cl-card__img cl-card__img--${fit}`}
-        onLoad={(e) => setFit(fitFor(e.currentTarget))}
-        onError={() => setFailed(true)}
+        className={`cl-card__img ${isFallback ? "cl-card__img--contain" : `cl-card__img--${fit}`}`}
+        style={isFallback ? { padding: "1.5rem" } : undefined}
+        onLoad={(e) => {
+          if (!isFallback) {
+            setFit(fitFor(e.currentTarget));
+          }
+        }}
+        onError={() => {
+          if (!failed) setFailed(true);
+        }}
       />
     </>
   );

@@ -32,3 +32,14 @@
 .badge {
   background-color: var(--bs-primary) !important;
 }
+
+/* Sub-section navigation cards (slug page children grid) */
+.sub-item-card {
+  background-color: #fff;
+  transition: box-shadow 0.22s ease, transform 0.22s ease;
+}
+.sub-item-card:hover {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.13);
+  transform: translateY(-3px);
+}
+

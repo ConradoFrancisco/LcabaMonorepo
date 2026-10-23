@@ -73,7 +73,7 @@ export function buildHeaderNav(menuItems: NavItem[]): HeaderNavItem[] {
     id: item.id,
     title: item.title.trim(),
     href: formatNavUrl(item),
-    subItems: (item.subItems ?? []).map((sub) => ({
+    subItems: (item.subItems ?? []).reverse().map((sub) => ({
       id: sub.id,
       title: sub.title.trim(),
       href: formatNavUrl(sub, item),
@@ -171,11 +171,11 @@ export function postTitle(post: HomePost): string {
 export function postExcerpt(post: HomePost, maxLen?: number): string {
   return excerpt(
     post.shortdesc ||
-      post.copete ||
-      post.description ||
-      post.content ||
-      post.texto ||
-      "",
+    post.copete ||
+    post.description ||
+    post.content ||
+    post.texto ||
+    "",
     maxLen,
   );
 }
